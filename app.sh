@@ -8,8 +8,8 @@ NC='\033[0m'
 
 declare -A services
 services["api"]="medHealthAPI"
-# services["ms"]="microservice-directory"
-# services["front"]="frontend-directory"
+#services["ms"]="medHealthMS"
+#services["front"]="medHealthFE"
 
 if command -v docker &> /dev/null && docker compose version &> /dev/null; then
   DOCKER_COMPOSE="docker compose"
@@ -54,7 +54,7 @@ run_in_service() {
   local command_to_run=$@
 
   if [ -z "${services[$service_key]}" ]; then
-    echo -e "${RED}❌ Unknown service: '$service_key'. Available services: api.${NC}"
+    echo -e "${RED}❌ Unknown service: '$service_key'. Available services: api, ms, front.${NC}"
     exit 1
   fi
 
@@ -66,24 +66,37 @@ run_in_service() {
 
 case "$1" in
   "clean")
-    run_in_service "$2" "mvn clean"
+    if [ "$2" == "front" ]; then
+        run_in_service "$2" "rm -rf node_modules dist"
+    else
+        run_in_service "$2" "mvn clean"
+    fi
     ;;
   "run")
     echo -e "${YELLOW}🚀 Running application '$2'...${NC}"
-    if ! is_db_up; then
+    if [ "$2" != "front" ] && ! is_db_up; then
       echo -e "${RED}❌ Database is not up. Please start the database first using './app.sh start-db'${NC}"
       exit 1
     fi
 
-    run_in_service "$2" "mvn spring-boot:run"
+    if [ "$2" == "front" ]; then
+        run_in_service "$2" "npm run dev"
+    else
+        run_in_service "$2" "mvn spring-boot:run"
+    fi
     ;;
   "test")
     echo -e "${YELLOW}🧪 Running tests for '$2'...${NC}"
-    if ! is_db_up; then
+    if [ "$2" != "front" ] && ! is_db_up; then
       echo -e "${RED}❌ Database is not up. Please start the database first using './app.sh start-db'${NC}"
       exit 1
     fi
-    run_in_service "$2" "mvn test"
+
+    if [ "$2" == "front" ]; then
+        run_in_service "$2" "npm run test"
+    else
+        run_in_service "$2" "mvn test"
+    fi
     ;;
 
   "start-db"|"up")
