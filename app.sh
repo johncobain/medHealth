@@ -6,6 +6,11 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m'
 
+declare -A services
+services["api"]="medHealthAPI"
+# services["ms"]="microservice-directory"
+# services["front"]="frontend-directory"
+
 if command -v docker &> /dev/null && docker compose version &> /dev/null; then
   DOCKER_COMPOSE="docker compose"
 elif command -v docker-compose &> /dev/null; then
@@ -37,37 +42,53 @@ wait_for_db() {
 
 is_db_up() {
   DB_CONTAINER=$($DOCKER_COMPOSE ps -q db)
-  if docker exec "$DB_CONTAINER" pg_isready -U meduser &>/dev/null; then
+  if [ -n "$DB_CONTAINER" ] && docker exec "$DB_CONTAINER" pg_isready -U meduser &>/dev/null; then
     return 0
   fi
   return 1
 }
 
+run_in_service() {
+  local service_key=$1
+  shift
+  local command_to_run=$@
+
+  if [ -z "${services[$service_key]}" ]; then
+    echo -e "${RED}❌ Unknown service: '$service_key'. Available services: api.${NC}"
+    exit 1
+  fi
+
+  local service_dir=${services[$service_key]}
+  echo -e "${BLUE}Executing in '$service_dir'...${NC}"
+  (cd "$service_dir" && $command_to_run)
+}
+
+
 case "$1" in
   "clean")
-    mvn clean
+    run_in_service "$2" "mvn clean"
     ;;
   "run")
-    echo -e "${YELLOW}🚀 Running application...${NC}"
+    echo -e "${YELLOW}🚀 Running application '$2'...${NC}"
     if ! is_db_up; then
       echo -e "${RED}❌ Database is not up. Please start the database first using './app.sh start-db'${NC}"
       exit 1
     fi
 
-    mvn spring-boot:run
+    run_in_service "$2" "mvn spring-boot:run"
     ;;
   "test")
-    echo -e "${YELLOW}🧪 Running tests...${NC}"
+    echo -e "${YELLOW}🧪 Running tests for '$2'...${NC}"
     if ! is_db_up; then
       echo -e "${RED}❌ Database is not up. Please start the database first using './app.sh start-db'${NC}"
       exit 1
     fi
-    mvn test
+    run_in_service "$2" "mvn test"
     ;;
 
   "start-db"|"up")
     echo -e "${YELLOW}🚀 Starting database...${NC}"
-    $DOCKER_COMPOSE up -d
+    $DOCKER_COMPOSE up -d db
     wait_for_db
     ;;
   "stop-db"|"down")
@@ -86,7 +107,7 @@ case "$1" in
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
       $DOCKER_COMPOSE down -v
-      $DOCKER_COMPOSE up -d
+      $DOCKER_COMPOSE up -d db
 
       echo -e "${GREEN}✅ Database reset! Waiting for initialization...${NC}"
 
@@ -107,7 +128,7 @@ case "$1" in
     $DOCKER_COMPOSE exec db psql -U meduser -d medhealth -c "\dt"
     ;;
   "logs")
-    $DOCKER_COMPOSE logs -f
+    $DOCKER_COMPOSE logs -f "$2"
     ;;
   "status")
     $DOCKER_COMPOSE ps
@@ -123,12 +144,14 @@ case "$1" in
     $DOCKER_COMPOSE up -d
     ;;
   *)
-    echo -e "${BLUE}medHealthApi - App Manager${NC}"
+    echo -e "${BLUE}medHealth - App Manager${NC}"
     echo
-    echo -e "${YELLOW}Application commands:${NC}"
-    echo -e "  ${GREEN}clean${NC}         - Clean application"
-    echo -e "  ${GREEN}run${NC}           - Run application"
-    echo -e "  ${GREEN}test${NC}          - Run tests"
+    echo -e "${YELLOW}Usage:${NC} ./app.sh [command] [service]"
+    echo
+    echo -e "${YELLOW}Application commands (service: api, ms, front):${NC}"
+    echo -e "  ${GREEN}clean [service]${NC} - Clean application"
+    echo -e "  ${GREEN}run [service]${NC}   - Run application"
+    echo -e "  ${GREEN}test [service]${NC}  - Run tests"
     echo
     echo -e "${YELLOW}Database commands:${NC}"
     echo -e "  ${GREEN}start-db/up${NC}   - Start database"
@@ -140,7 +163,7 @@ case "$1" in
     echo -e "  ${GREEN}fix${NC}           - Fix container conflicts"
     echo
     echo -e "${YELLOW}Utils:${NC}"
-    echo -e "  ${GREEN}logs${NC}          - View logs"
+    echo -e "  ${GREEN}logs [service]${NC} - View logs for a service (or all if none specified)"
     echo -e "  ${GREEN}status${NC}        - Container status"
     echo -e "  ${GREEN}clean-vol${NC}     - Clean volumes"
     echo
