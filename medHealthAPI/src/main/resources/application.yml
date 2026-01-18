@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: medHealth
+  datasource:
+    url: jdbc:postgresql://localhost:5400/medhealth
+    username: meduser
+    password: medpass
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+server:
+  error:
+    include-stacktrace: never
+info:
+  app:
+    version: @project.version@
+api:
+  security:
+    token:
+      secret: f153a0b668051fdf01c0549d2f9febe3

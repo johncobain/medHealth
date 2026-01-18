@@ -1,0 +1,13 @@
+CREATE TABLE patients (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    cpf VARCHAR(14) UNIQUE NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(18) NOT NULL,
+    address_id INT NOT NULL,
+    status VARCHAR(255) DEFAULT 'ACTIVE',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (address_id) REFERENCES addresses(id)
+)

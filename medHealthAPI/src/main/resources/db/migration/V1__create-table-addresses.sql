@@ -1,0 +1,12 @@
+CREATE TABLE addresses (
+    id SERIAL PRIMARY KEY,
+    state VARCHAR(255) NOT NULL,
+    city VARCHAR(255) NOT NULL,
+    neighborhood VARCHAR(255) NOT NULL,
+    street VARCHAR(255) NOT NULL,
+    number VARCHAR(255),
+    complement VARCHAR(255),
+    zip_code VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
