@@ -11,5 +11,18 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
 
+  db-mail:
+    image: postgres:16.0-alpine3.18
+    restart: always
+    ports:
+      - "5401:5432"
+    environment:
+      POSTGRES_USER: mailuser
+      POSTGRES_PASSWORD: mailpass
+      POSTGRES_DB: maildb
+    volumes:
+      - db-mail-data:/var/lib/postgresql/data
+
 volumes:
   db-data:
+  db-mail-data:
