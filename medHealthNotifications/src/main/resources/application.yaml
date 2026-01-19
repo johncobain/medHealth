@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: medHealthNotifications
+  datasource:
+    url: jdbc:postgresql://localhost:5401/maildb
+    username: mailuser
+    password: mailpass
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+server:
+  port: 8082
+  error:
+    include-stacktrace: never
