@@ -8,8 +8,8 @@ NC='\033[0m'
 
 declare -A services
 services["api"]="medHealthAPI"
-#services["ms"]="medHealthMS"
-#services["front"]="medHealthFE"
+services["ms"]="medHealthNotifications"
+services["front"]="medHealthFE"
 
 if command -v docker &> /dev/null && docker compose version &> /dev/null; then
   DOCKER_COMPOSE="docker compose"
