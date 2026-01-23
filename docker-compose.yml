@@ -1,7 +1,8 @@
 services:
   db:
     image: postgres:16.0-alpine3.18
-    restart: always
+    container_name: medhealth-db
+    restart: unless-stopped
     ports:
       - "5400:5432"
     environment:
@@ -10,10 +11,18 @@ services:
       POSTGRES_DB: medhealth
     volumes:
       - db-data:/var/lib/postgresql/data
+    networks:
+      - medhealth-backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   db-mail:
     image: postgres:16.0-alpine3.18
-    restart: always
+    container_name: mail-db
+    restart: unless-stopped
     ports:
       - "5401:5432"
     environment:
@@ -22,7 +31,39 @@ services:
       POSTGRES_DB: maildb
     volumes:
       - db-mail-data:/var/lib/postgresql/data
+    networks:
+      - medhealth-backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: medhealth-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbituser
+      RABBITMQ_DEFAULT_PASS: rabbitpass
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - medhealth-backend
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 volumes:
   db-data:
   db-mail-data:
+  rabbitmq-data:
+
+networks:
+  medhealth-backend:
+    driver: bridge
