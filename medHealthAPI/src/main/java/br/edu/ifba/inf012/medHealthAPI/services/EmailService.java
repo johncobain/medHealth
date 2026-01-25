@@ -15,9 +15,10 @@ public class EmailService {
   }
 
   public void sendUserRegistrationEmail(String emailTo, String userName) {
-    String subject = "Bem Vindo ao MedHealth!";
+    String subject = "Cadastro realizado com sucesso - Bem Vindo ao MedHealth!";
     String text = "Olá " + userName + ",\n\n" +
-                  "Obrigado por se registrar no MedHealth. Estamos felizes em tê-lo conosco!\n\n" +
+                  "Seu cadastro no MedHealth foi realizado com sucesso!\n" +
+                  "Agora você pode utilizar o nosso sistema de agendamento de consultas.\n\n" +
                   "Atenciosamente,\n" +
                   "Equipe MedHealth";
     EmailDto emailDto = new EmailDto(emailTo, subject, text);
