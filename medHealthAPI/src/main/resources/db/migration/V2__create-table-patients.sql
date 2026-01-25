@@ -2,7 +2,7 @@ CREATE TABLE patients (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     cpf VARCHAR(14) UNIQUE NOT NULL,
-    email VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
     phone VARCHAR(18) NOT NULL,
     address_id INT NOT NULL,
     status VARCHAR(255) DEFAULT 'ACTIVE',

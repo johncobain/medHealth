@@ -15,11 +15,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final EmailService emailService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
+        this.emailService = emailService;
     }
 
     public UserDto register(UserFormDto userForm){
@@ -29,6 +31,10 @@ public class UserService {
         Role defaultRole = roleRepository.findByRole("ROLE_USER")
                 .orElseThrow(() -> new EntityNotFoundException("Default role not found"));
         user.setRole(defaultRole);
-        return UserDto.fromEntity(userRepository.save(user));
+
+        UserDto userSaved = UserDto.fromEntity(userRepository.save(user));
+
+        emailService.sendUserRegistrationEmail(userSaved.email(), userSaved.username());
+        return userSaved;
     }
 }

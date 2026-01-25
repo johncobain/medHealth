@@ -10,18 +10,31 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  rabbitmq:
+    addresses:
+    - localhost:5672
+    username: rabbituser
+    password: rabbitpass
+
+broker:
+  queue:
+    email-name: medHealthEmailQueue  
+
 springdoc:
   api-docs:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
+
 server:
   port: 8081
   error:
     include-stacktrace: never
+
 info:
   app:
     version: @project.version@
+
 api:
   security:
     token:
