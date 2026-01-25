@@ -24,16 +24,19 @@ public class Email {
   private String text;
   private LocalDateTime sentAt;
   @Enumerated(EnumType.STRING)
-  private EmailStatus status = EmailStatus.SENT;
+  private EmailStatus status;
 
-  public Email(){}
+  public Email(){
+    this.sentAt = LocalDateTime.now();
+    this.status = EmailStatus.SENT;
+  }
 
   public Email(EmailDto dto){
-    this.mailFrom = dto.mailFrom();
     this.mailTo = dto.mailTo();
     this.subject = dto.subject();
     this.text = dto.text();
     this.sentAt = LocalDateTime.now();
+    this.status = EmailStatus.SENT;
   }
 
   public Long getId() {
