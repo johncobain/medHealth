@@ -10,7 +10,18 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  rabbitmq:
+    addresses:
+    - localhost:5672
+    username: rabbituser
+    password: rabbitpass
+
+broker:
+  queue:
+    email-name: medHealthEmailQueue
+
 server:
   port: 8082
   error:
     include-stacktrace: never
+
