@@ -59,6 +59,60 @@ services:
       timeout: 10s
       retries: 5
 
+  api:
+    build:
+      context: ./medHealthAPI
+      dockerfile: Dockerfile
+    container_name: medhealth-api
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/medhealth
+      SPRING_RABBITMQ_ADDRESSES: rabbitmq:5672
+      SPRING_RABBITMQ_USERNAME: rabbituser
+      SPRING_RABBITMQ_PASSWORD: rabbitpass
+    ports:
+      - "8081:8081"
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - medhealth-backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  notifications:
+    build:
+      context: ./medHealthNotifications
+      dockerfile: Dockerfile
+    container_name: medhealth-notifications
+    restart: unless-stopped
+    env_file:
+      - ./medHealthNotifications/.env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db-mail:5432/maildb
+      SPRING_RABBITMQ_ADDRESSES: rabbitmq:5672
+      SPRING_RABBITMQ_USERNAME: rabbituser
+      SPRING_RABBITMQ_PASSWORD: rabbitpass
+    ports:
+      - "8082:8082"
+    depends_on:
+      db-mail:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - medhealth-backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   db-data:
   db-mail-data:

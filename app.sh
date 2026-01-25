@@ -22,9 +22,7 @@ fi
 
 wait_for_db() {
   echo -e "${YELLOW}⏳ Waiting for database to be ready...${NC}"
-
   DB_CONTAINER=$($DOCKER_COMPOSE ps -q db)
-
   for i in {1..30}; do
     if docker exec "$DB_CONTAINER" pg_isready -U meduser &>/dev/null; then
       echo -e "${GREEN}✅ Database is ready!${NC}"
@@ -33,7 +31,6 @@ wait_for_db() {
     echo -e "${YELLOW}⏳ Attempt $i/30 - Database not ready yet...${NC}"
     sleep 2
   done
-
   if [ $i -eq 30 ]; then
     echo -e "${RED}⚠️  Database may not be fully ready. Try waiting a bit more before starting the application.${NC}"
     return 1
@@ -156,6 +153,30 @@ case "$1" in
     docker container prune -f
     $DOCKER_COMPOSE up -d
     ;;
+  # -------- Docker Stack Completo --------
+  "docker-build")
+    echo -e "${YELLOW}🔨 Building images...${NC}"
+    $DOCKER_COMPOSE build --no-cache
+    ;;
+  "docker-up")
+    echo -e "${YELLOW}🚀 Starting full stack (db, db-mail, rabbitmq, api, notifications, front)...${NC}"
+    $DOCKER_COMPOSE up -d
+    ;;
+  "docker-down")
+    echo -e "${YELLOW}🛑 Stopping all containers...${NC}"
+    $DOCKER_COMPOSE down
+    ;;
+  "docker-clean")
+    echo -e "${YELLOW}🧹 Stopping and removing containers, networks, volumes, and images...${NC}"
+    $DOCKER_COMPOSE down -v --rmi all
+    ;;
+  "docker-logs")
+    echo -e "${YELLOW}📜 Logs (all services)...${NC}"
+    $DOCKER_COMPOSE logs -f
+    ;;
+  "docker-status")
+    $DOCKER_COMPOSE ps
+    ;;
   *)
     echo -e "${BLUE}medHealth - App Manager${NC}"
     echo
@@ -173,7 +194,14 @@ case "$1" in
     echo -e "  ${GREEN}reset-db${NC}      - Reset database (all data will be lost)"
     echo -e "  ${GREEN}access-db${NC}     - Access database cli"
     echo -e "  ${GREEN}show-tables/tables${NC}   - Show all tables in database"
-    echo -e "  ${GREEN}fix${NC}           - Fix container conflicts"
+    echo
+    echo -e "${YELLOW}Docker full stack:${NC}"
+    echo -e "  ${GREEN}docker-build${NC}   - Build all images"
+    echo -e "  ${GREEN}docker-up${NC}      - Start full stack"
+    echo -e "  ${GREEN}docker-down${NC}    - Stop full stack"
+    echo -e "  ${GREEN}docker-clean${NC}   - Stop and remove images/volumes"
+    echo -e "  ${GREEN}docker-logs${NC}    - Follow logs for all"
+    echo -e "  ${GREEN}docker-status${NC}  - Show running containers"
     echo
     echo -e "${YELLOW}Utils:${NC}"
     echo -e "  ${GREEN}logs [service]${NC} - View logs for a service (or all if none specified)"
