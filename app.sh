@@ -199,13 +199,13 @@ case "$1" in
     ;;
 
   # ============ COMANDOS DE FRONTEND DOCKER ============
-  "front-docker")
+  "frontend")
     echo -e "${YELLOW}🎨 Starting frontend in Docker...${NC}"
     $DOCKER_COMPOSE up -d frontend
     echo -e "${GREEN}✅ Frontend running at http://localhost:5173${NC}"
     ;;
 
-  "front-stop")
+  "frontend-stop")
     echo -e "${YELLOW}🛑 Stopping frontend...${NC}"
     $DOCKER_COMPOSE stop frontend
     ;;
@@ -301,16 +301,16 @@ case "$1" in
     echo -e "  ${GREEN}rabbit${NC}            Start RabbitMQ"
     echo -e "  ${GREEN}rabbit-stop${NC}       Stop RabbitMQ"
     echo
-    echo -e "${YELLOW}BACKEND (Docker):${NC}"
+    echo -e "${YELLOW}BACKEND DOCKER:${NC}"
     echo -e "  ${GREEN}backend${NC}           Start backend stack (API + MS + RabbitMQ)"
     echo -e "  ${GREEN}backend-stop${NC}      Stop backend"
     echo -e "  ${GREEN}backend-logs${NC}      View backend logs"
     echo
-    echo -e "${YELLOW}FRONTEND (Docker):${NC}"
-    echo -e "  ${GREEN}front-docker${NC}      Start frontend in Docker"
-    echo -e "  ${GREEN}front-stop${NC}        Stop frontend"
+    echo -e "${YELLOW}FRONTEND DOCKER:${NC}"
+    echo -e "  ${GREEN}frontend${NC}          Start frontend in Docker"
+    echo -e "  ${GREEN}frontend-stop${NC}     Stop frontend"
     echo
-    echo -e "${YELLOW}FULL STACK (Docker):${NC}"
+    echo -e "${YELLOW}FULL STACK DOCKER:${NC}"
     echo -e "  ${GREEN}up${NC}                Start everything"
     echo -e "  ${GREEN}down${NC}              Stop everything"
     echo -e "  ${GREEN}restart${NC}           Restart all services"
