@@ -26,6 +26,17 @@ spring:
           auth: true
           starttls:
             enable: true
+  devtools:
+    restart:
+      enabled: true
+      poll-interval: 1s
+      quiet-period: 400ms
+      additional-paths: src/main/java
+    livereload:
+      enabled: true
+    remote:
+      restart:
+        enabled: true
 
 broker:
   queue:

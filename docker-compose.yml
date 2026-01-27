@@ -77,6 +77,9 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+    volumes:
+      - ./medHealthAPI/src:/app/src
+      - ./medHealthAPI/pom.xml:/app/pom.xml
     networks:
       - medhealth-backend
     healthcheck:
@@ -105,6 +108,9 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+    volumes:
+      - ./medHealthNotifications/src:/app/src
+      - ./medHealthNotifications/pom.xml:/app/pom.xml
     networks:
       - medhealth-backend
     healthcheck:
