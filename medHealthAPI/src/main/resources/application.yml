@@ -26,7 +26,17 @@ spring:
     remote:
       restart:
         enabled: true
-        
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8080/eureka/
+
+server:
+  port: 8081
+  error:
+    include-stacktrace: never
+
 broker:
   queue:
     email-name: medHealthEmailQueue  
@@ -36,11 +46,6 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
-
-server:
-  port: 8081
-  error:
-    include-stacktrace: never
 
 info:
   app:

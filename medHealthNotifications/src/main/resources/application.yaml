@@ -38,12 +38,18 @@ spring:
       restart:
         enabled: true
 
-broker:
-  queue:
-    email-name: medHealthEmailQueue
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8080/eureka/
 
 server:
   port: 8082
   error:
     include-stacktrace: never
+
+broker:
+  queue:
+    email-name: medHealthEmailQueue
+
 

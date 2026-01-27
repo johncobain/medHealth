@@ -9,6 +9,7 @@ NC='\033[0m'
 declare -A services
 services["api"]="medHealthAPI"
 services["ms"]="medHealthNotifications"
+services["eureka"]="medHealthEureka"
 services["front"]="medHealthFE"
 
 if command -v docker &> /dev/null && docker compose version &> /dev/null; then
@@ -50,7 +51,7 @@ run_local() {
   
   if [ -z "${services[$service_key]}" ]; then
     echo -e "${RED}❌ Unknown service: '$service_key'${NC}"
-    echo -e "${YELLOW}Available: api, ms, front${NC}"
+    echo -e "${YELLOW}Available: api, ms, eureka, front${NC}"
     exit 1
   fi
 
@@ -82,7 +83,7 @@ case "$1" in
 
   "clean")
     if [ -z "$2" ]; then
-      echo -e "${RED}❌ Specify service: api, ms, front${NC}"
+      echo -e "${RED}❌ Specify service: api, ms, eureka, front${NC}"
       exit 1
     fi
     
@@ -98,7 +99,7 @@ case "$1" in
 
   "test")
     if [ -z "$2" ]; then
-      echo -e "${RED}❌ Specify service: api, ms, front${NC}"
+      echo -e "${RED}❌ Specify service: api, ms, eureka, front${NC}"
       exit 1
     fi
     
@@ -177,13 +178,13 @@ case "$1" in
 
   # ============ COMANDOS DE BACKEND DOCKER ============
   "backend")
-    echo -e "${YELLOW}🔧 Starting backend stack (DB + RabbitMQ + API + MS)...${NC}"
+    echo -e "${YELLOW}🔧 Starting backend stack (DB + RabbitMQ + API + MS + EUREKA)...${NC}"
     $DOCKER_COMPOSE up -d db db-mail rabbitmq
     wait_for_service "db"
     wait_for_service "db-mail"
     wait_for_service "rabbitmq"
     
-    $DOCKER_COMPOSE up -d api notifications
+    $DOCKER_COMPOSE up -d api notifications eureka
     echo -e "${GREEN}✅ Backend running!${NC}"
     echo -e "${BLUE}   API: http://localhost:8081${NC}"
     echo -e "${BLUE}   Notifications: http://localhost:8082${NC}"
@@ -191,11 +192,11 @@ case "$1" in
 
   "backend-stop")
     echo -e "${YELLOW}🛑 Stopping backend...${NC}"
-    $DOCKER_COMPOSE stop api notifications rabbitmq
+    $DOCKER_COMPOSE stop api notifications eureka rabbitmq
     ;;
 
   "backend-logs")
-    $DOCKER_COMPOSE logs -f api notifications rabbitmq
+    $DOCKER_COMPOSE logs -f api notifications eureka rabbitmq
     ;;
 
   # ============ COMANDOS DE FRONTEND DOCKER ============
@@ -286,7 +287,7 @@ case "$1" in
     echo -e "${BLUE}═══════════════════════════════════════════════${NC}"
     echo
     echo -e "${YELLOW}LOCAL DEVELOPMENT:${NC}"
-    echo -e "  ${GREEN}run <service>${NC}      Run locally (api|ms|front)"
+    echo -e "  ${GREEN}run <service>${NC}      Run locally (api|ms|eureka|front)"
     echo -e "  ${GREEN}clean <service>${NC}    Clean build artifacts"
     echo -e "  ${GREEN}test <service>${NC}     Run tests"
     echo
@@ -302,7 +303,7 @@ case "$1" in
     echo -e "  ${GREEN}rabbit-stop${NC}       Stop RabbitMQ"
     echo
     echo -e "${YELLOW}BACKEND DOCKER:${NC}"
-    echo -e "  ${GREEN}backend${NC}           Start backend stack (API + MS + RabbitMQ)"
+    echo -e "  ${GREEN}backend${NC}           Start backend stack (API + MS + RabbitMQ + Eureka)"
     echo -e "  ${GREEN}backend-stop${NC}      Stop backend"
     echo -e "  ${GREEN}backend-logs${NC}      View backend logs"
     echo
@@ -329,9 +330,10 @@ case "$1" in
     echo -e "${YELLOW}Recommended workflow:${NC}"
     echo -e "   ${BLUE}1.${NC} ./app.sh db              ${GREEN}# Start databases${NC}"
     echo -e "   ${BLUE}2.${NC} ./app.sh rabbit          ${GREEN}# Start RabbitMQ${NC}"
-    echo -e "   ${BLUE}3.${NC} ./app.sh run api         ${GREEN}# Run API locally${NC}"
-    echo -e "   ${BLUE}4.${NC} ./app.sh run ms          ${GREEN}# Run MS locally${NC}"
-    echo -e "   ${BLUE}5.${NC} ./app.sh run front       ${GREEN}# Run frontend locally${NC}"
+    echo -e "   ${BLUE}3.${NC} ./app.sh run eureka      ${GREEN}# Run Eureka locally${NC}"
+    echo -e "   ${BLUE}4.${NC} ./app.sh run api         ${GREEN}# Run API locally${NC}"
+    echo -e "   ${BLUE}5.${NC} ./app.sh run ms          ${GREEN}# Run MS locally${NC}"
+    echo -e "   ${BLUE}6.${NC} ./app.sh run front       ${GREEN}# Run frontend locally${NC}"
     echo
     echo -e "${YELLOW}Or use Docker for everything:${NC}"
     echo -e "   ${BLUE}./app.sh up${NC}                ${GREEN}# Start full stack${NC}"

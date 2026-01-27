@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: medHealthEureka
+  devtools:
+    restart:
+      enabled: true
+      poll-interval: 1s
+      quiet-period: 400ms
+      additional-paths: src/main/java
+    livereload:
+      enabled: true
+    remote:
+      restart:
+        enabled: true
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://localhost:8080/eureka/
+  instance:
+    hostname: localhost 
+
+server:
+  port: 8080

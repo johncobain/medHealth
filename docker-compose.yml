@@ -12,7 +12,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:
-      - medhealth-backend
+      - medhealth-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
@@ -32,7 +32,7 @@ services:
     volumes:
       - db-mail-data:/var/lib/postgresql/data
     networks:
-      - medhealth-backend
+      - medhealth-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
@@ -52,11 +52,27 @@ services:
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
     networks:
-      - medhealth-backend
+      - medhealth-network
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 30s
       timeout: 10s
+      retries: 5
+
+  eureka:
+    build:
+      context: ./medHealthEureka
+      dockerfile: Dockerfile
+    container_name: medhealth-eureka
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    networks:
+      - medhealth-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 10s
+      timeout: 5s
       retries: 5
 
   api:
@@ -81,7 +97,7 @@ services:
       - ./medHealthAPI/src:/app/src
       - ./medHealthAPI/pom.xml:/app/pom.xml
     networks:
-      - medhealth-backend
+      - medhealth-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8081/"]
       interval: 10s
@@ -112,7 +128,7 @@ services:
       - ./medHealthNotifications/src:/app/src
       - ./medHealthNotifications/pom.xml:/app/pom.xml
     networks:
-      - medhealth-backend
+      - medhealth-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8082/"]
       interval: 10s
@@ -131,7 +147,7 @@ services:
       - ./medHealthFE:/app
       - /app/node_modules
     networks:
-      - medhealth-backend
+      - medhealth-network
     healthcheck:
       test:
         [
@@ -152,5 +168,5 @@ volumes:
   rabbitmq-data:
 
 networks:
-  medhealth-backend:
+  medhealth-network:
     driver: bridge
