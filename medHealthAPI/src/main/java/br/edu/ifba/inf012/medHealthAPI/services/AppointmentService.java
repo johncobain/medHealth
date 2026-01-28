@@ -8,6 +8,7 @@ import br.edu.ifba.inf012.medHealthAPI.models.entities.Appointment;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Cancellation;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Doctor;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Patient;
+import br.edu.ifba.inf012.medHealthAPI.models.enums.AppointmentStatus;
 import br.edu.ifba.inf012.medHealthAPI.models.enums.CancellationReason;
 import br.edu.ifba.inf012.medHealthAPI.repositories.AppointmentRepository;
 import br.edu.ifba.inf012.medHealthAPI.repositories.CancellationRepository;
@@ -62,7 +63,7 @@ public class AppointmentService {
     appointment.setPatient(patient);
     appointment.setDoctor(doctor);
     appointment.setDate(appointmentFormDto.date());
-    appointment.setStatus("SCHEDULED");
+    appointment.setStatus(AppointmentStatus.SCHEDULED);
 
     return AppointmentDto.fromEntity(appointmentRepository.save(appointment));
   }
@@ -72,17 +73,13 @@ public class AppointmentService {
     Appointment appointment = appointmentRepository.findById(appointmentId)
         .orElseThrow(() -> new EntityNotFoundException(Appointment.class.getSimpleName(), appointmentId));
 
-    if("CANCELED".equalsIgnoreCase(appointment.getStatus())){
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Appointment has already been canceled.");
-    }
-
     cancellationValidators.forEach(v -> v.validate(appointment));
 
     if(cancellationFormDto.reason() == CancellationReason.OTHER && (cancellationFormDto.message() == null || cancellationFormDto.message().isBlank())){
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Message is required when reason is 'OUTROS'.");
     }
 
-    appointment.setStatus("CANCELED");
+    appointment.setStatus(AppointmentStatus.CANCELED);
     appointmentRepository.save(appointment);
 
     Cancellation cancellation = new Cancellation(appointment, cancellationFormDto.reason(), cancellationFormDto.message());

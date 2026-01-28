@@ -3,6 +3,8 @@ package br.edu.ifba.inf012.medHealthAPI.dtos.appointment;
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.patient.PatientDto;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Appointment;
+import br.edu.ifba.inf012.medHealthAPI.models.enums.AppointmentStatus;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.sql.Timestamp;
@@ -13,7 +15,7 @@ public record AppointmentDto (
     Timestamp date,
     DoctorDto doctor,
     PatientDto patient,
-    String status
+    AppointmentStatus status
 ){
     public AppointmentDto(Appointment appointment){
         this(appointment.getId(), appointment.getDate(), DoctorDto.fromEntity(appointment.getDoctor()), PatientDto.fromEntity(appointment.getPatient()), appointment.getStatus());
