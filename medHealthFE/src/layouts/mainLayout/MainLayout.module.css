@@ -1,0 +1,37 @@
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+}
+
+.nav {
+  display: flex;
+  gap: var(--spacing-lg);
+}
+
+.nav a {
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
+  transition: color var(--transition-base);
+}
+
+.nav a:hover {
+  color: var(--color-primary);
+}
+
+.nav a.active {
+  color: var(--color-primary);
+  text-shadow: 0.5px 0 var(--color-primary);
+}
+
+.footer {
+  margin-top: auto;
+  padding: var(--spacing-lg);
+  text-align: center;
+  border-top: 1px solid var(--color-border);
+}
