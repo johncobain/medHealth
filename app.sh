@@ -11,7 +11,7 @@ services["api"]="medHealthAPI"
 services["ms"]="medHealthNotifications"
 services["eureka"]="medHealthEureka"
 services["gateway"]="medHealthGateway"
-services["front"]="medHealthFE"
+services["frontend"]="medHealthFE"
 
 if command -v docker &> /dev/null && docker compose version &> /dev/null; then
   DOCKER_COMPOSE="docker compose"
@@ -52,14 +52,14 @@ run_local() {
   
   if [ -z "${services[$service_key]}" ]; then
     echo -e "${RED}❌ Unknown service: '$service_key'${NC}"
-    echo -e "${YELLOW}Available: api, ms, eureka, gateway, front${NC}"
+    echo -e "${YELLOW}Available: api, ms, eureka, gateway, frontend${NC}"
     exit 1
   fi
 
   local service_dir=${services[$service_key]}
   echo -e "${BLUE}🚀 Running $service_key locally...${NC}"
   
-  if [ "$service_key" == "front" ]; then
+  if [ "$service_key" == "frontend" ]; then
     (cd "$service_dir" && npm run dev)
   else
     (cd "$service_dir" && mvn spring-boot:run)
@@ -70,11 +70,11 @@ case "$1" in
   # =========== COMANDOS DE DESENVOLVIMENTO LOCAL ============
   "run")
     if [ -z "$2" ]; then
-      echo -e "${RED}❌ Specify service: api, ms, eureka, gateway, front${NC}"
+      echo -e "${RED}❌ Specify service: api, ms, eureka, gateway, frontend${NC}"
       exit 1
     fi
     
-    if [ "$2" != "front" ] && ! is_db_up; then
+    if [ "$2" != "frontend" ] && ! is_db_up; then
       echo -e "${RED}❌ Database not running. Start with: ./app.sh db${NC}"
       exit 1
     fi
@@ -84,14 +84,14 @@ case "$1" in
 
   "clean")
     if [ -z "$2" ]; then
-      echo -e "${RED}❌ Specify service: api, ms, eureka, gateway, front${NC}"
+      echo -e "${RED}❌ Specify service: api, ms, eureka, gateway, frontend${NC}"
       exit 1
     fi
     
     local service_dir=${services[$2]}
     echo -e "${YELLOW}🧹 Cleaning $2...${NC}"
     
-    if [ "$2" == "front" ]; then
+    if [ "$2" == "frontend" ]; then
       (cd "$service_dir" && rm -rf node_modules dist)
     else
       (cd "$service_dir" && mvn clean)
@@ -100,11 +100,11 @@ case "$1" in
 
   "test")
     if [ -z "$2" ]; then
-      echo -e "${RED}❌ Specify service: api, ms, eureka, gateway, front${NC}"
+      echo -e "${RED}❌ Specify service: api, ms, eureka, gateway, frontend${NC}"
       exit 1
     fi
     
-    if [ "$2" != "front" ] && ! is_db_up; then
+    if [ "$2" != "frontend" ] && ! is_db_up; then
       echo -e "${RED}❌ Database not running. Start with: ./app.sh db${NC}"
       exit 1
     fi
@@ -112,7 +112,7 @@ case "$1" in
     local service_dir=${services[$2]}
     echo -e "${YELLOW}🧪 Testing $2...${NC}"
     
-    if [ "$2" == "front" ]; then
+    if [ "$2" == "frontend" ]; then
       (cd "$service_dir" && npm run test)
     else
       (cd "$service_dir" && mvn test)
@@ -206,6 +206,13 @@ case "$1" in
     $DOCKER_COMPOSE up -d frontend
     echo -e "${GREEN}✅ Frontend running at http://localhost:5173${NC}"
     ;;
+  
+  "frontend-rebuild")
+    echo -e "${YELLOW}🔨 Rebuilding frontend...${NC}"
+    $DOCKER_COMPOSE build --no-cache frontend
+    $DOCKER_COMPOSE up -d frontend
+    echo -e "${GREEN}✅ Frontend rebuilt and running at http://localhost:5173${NC}"
+    ;;
 
   "frontend-stop")
     echo -e "${YELLOW}🛑 Stopping frontend...${NC}"
@@ -288,7 +295,7 @@ case "$1" in
     echo -e "${BLUE}═══════════════════════════════════════════════${NC}"
     echo
     echo -e "${YELLOW}LOCAL DEVELOPMENT:${NC}"
-    echo -e "  ${GREEN}run <service>${NC}      Run locally (api|ms|eureka|gateway|front)"
+    echo -e "  ${GREEN}run <service>${NC}      Run locally (api|ms|eureka|gateway|frontend)"
     echo -e "  ${GREEN}clean <service>${NC}    Clean build artifacts"
     echo -e "  ${GREEN}test <service>${NC}     Run tests"
     echo
@@ -310,6 +317,7 @@ case "$1" in
     echo
     echo -e "${YELLOW}FRONTEND DOCKER:${NC}"
     echo -e "  ${GREEN}frontend${NC}          Start frontend in Docker"
+    echo -e "  ${GREEN}frontend-rebuild${NC}  Rebuild and restart frontend(for changes in package.json)"
     echo -e "  ${GREEN}frontend-stop${NC}     Stop frontend"
     echo
     echo -e "${YELLOW}FULL STACK DOCKER:${NC}"
@@ -335,7 +343,7 @@ case "$1" in
     echo -e "   ${BLUE}4.${NC} ./app.sh run gateway     ${GREEN}# Run Gateway locally${NC}"
     echo -e "   ${BLUE}5.${NC} ./app.sh run api         ${GREEN}# Run API locally${NC}"
     echo -e "   ${BLUE}6.${NC} ./app.sh run ms          ${GREEN}# Run MS locally${NC}"
-    echo -e "   ${BLUE}7.${NC} ./app.sh run front       ${GREEN}# Run frontend locally${NC}"
+    echo -e "   ${BLUE}7.${NC} ./app.sh run frontend       ${GREEN}# Run frontend locally${NC}"
     echo
     echo -e "${YELLOW}Or use Docker for everything:${NC}"
     echo -e "   ${BLUE}./app.sh up${NC}                ${GREEN}# Start full stack${NC}"
