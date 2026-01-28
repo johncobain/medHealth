@@ -89,6 +89,9 @@ public class AppointmentService {
     cancellationRepository.save(cancellation);
   }
 
+  @Transactional
+  public void attend(Long appointmentId){}// TODO: implement
+
   private Doctor chooseDoctor(AppointmentFormDto dto){
     if(dto.doctorId() != null){
       return doctorRepository.findById(dto.doctorId())
