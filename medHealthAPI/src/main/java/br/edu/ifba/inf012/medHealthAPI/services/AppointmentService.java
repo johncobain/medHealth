@@ -34,14 +34,16 @@ public class AppointmentService {
   private final CancellationRepository cancellationRepository;
   private final List<AppointmentValidator> validators;
   private final List<CancellationValidator> cancellationValidators;
+  private final EmailService emailService;
 
-  public AppointmentService(AppointmentRepository appointmentRepository, PatientRepository patientRepository, DoctorRepository doctorRepository, CancellationRepository cancellationRepository, List<AppointmentValidator> validators, List<CancellationValidator> cancellationValidators){
+  public AppointmentService(AppointmentRepository appointmentRepository, PatientRepository patientRepository, DoctorRepository doctorRepository, CancellationRepository cancellationRepository, List<AppointmentValidator> validators, List<CancellationValidator> cancellationValidators, EmailService emailService){
     this.appointmentRepository = appointmentRepository;
     this.patientRepository = patientRepository;
     this.doctorRepository = doctorRepository;
     this.cancellationRepository = cancellationRepository;
     this.validators = validators;
     this.cancellationValidators = cancellationValidators;
+	  this.emailService = emailService;
   }
 
   public Page<AppointmentDto> getAll(Pageable pageable, Long doctorId, Long patientId, String status, Timestamp startDate, Timestamp endDate){
@@ -64,7 +66,12 @@ public class AppointmentService {
     appointment.setDate(appointmentFormDto.date());
     appointment.setStatus("SCHEDULED");
 
-    return AppointmentDto.fromEntity(appointmentRepository.save(appointment));
+    AppointmentDto appointmentDtoSaved = AppointmentDto.fromEntity(appointmentRepository.save(appointment));
+
+    emailService.sendAppointmentConfirmationToDoctor(doctor.getEmail(), appointmentDtoSaved);
+    emailService.sendAppointmentConfirmationToPatient(patient.getEmail(), appointmentDtoSaved);
+
+    return appointmentDtoSaved;
   }
 
   @Transactional
@@ -87,10 +94,15 @@ public class AppointmentService {
 
     Cancellation cancellation = new Cancellation(appointment, cancellationFormDto.reason(), cancellationFormDto.message());
     cancellationRepository.save(cancellation);
+
+    AppointmentDto appointmentDto = AppointmentDto.fromEntity(appointment);
+
+    emailService.sendAppointmentCancelationToDoctor(appointmentDto.doctor().email(), appointmentDto, cancellation);
+    emailService.sendAppointmentCancelationToPatient(appointmentDto.patient().email(), appointmentDto, cancellation);
   }
 
   @Transactional
-  public void attend(Long appointmentId){}// TODO: implement
+  public void attend(Long appointmentId){}// TODO: implement && email
 
   private Doctor chooseDoctor(AppointmentFormDto dto){
     if(dto.doctorId() != null){
