@@ -21,7 +21,7 @@ const HomePage = () => {
 
     fetchStatus();
 
-    const interval = setInterval(fetchStatus, 1000);
+    const interval = setInterval(fetchStatus, 5000);
 
     return () => {
       clearInterval(interval);

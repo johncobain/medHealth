@@ -17,16 +17,28 @@ const MainLayout = () => {
             Home
           </NavLink>
           <NavLink 
-            to="/agendamentos"
-            className={({ isActive }) => isActive ? styles.active : ''}
-          >
-            Agendamentos
-          </NavLink>
-          <NavLink 
-            to="/pacientes"
+            to="/patients"
             className={({ isActive }) => isActive ? styles.active : ''}
           >
             Pacientes
+          </NavLink>
+          <NavLink 
+            to="/doctors"
+            className={({ isActive }) => isActive ? styles.active : ''}
+          >
+            Médicos
+          </NavLink>
+          <NavLink 
+            to="/appointments"
+            className={({ isActive }) => isActive ? styles.active : ''}
+          >
+            Consultas
+          </NavLink>
+          <NavLink
+            to="/settings"
+            className={({ isActive }) => isActive ? styles.active : ''}
+          >
+            Configurações
           </NavLink>
         </nav>
       </header>
