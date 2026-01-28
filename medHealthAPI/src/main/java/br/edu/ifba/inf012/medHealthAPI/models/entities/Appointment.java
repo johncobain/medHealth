@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 import java.sql.Timestamp;
 
+import br.edu.ifba.inf012.medHealthAPI.models.enums.AppointmentStatus;
+
 @Entity
 @Table(name = "appointments")
 public class Appointment {
@@ -20,7 +22,8 @@ public class Appointment {
     @JoinColumn(name = "patient_id")
     private Patient patient;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private AppointmentStatus status;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
@@ -62,11 +65,11 @@ public class Appointment {
         this.patient = patient;
     }
 
-    public String getStatus() {
+    public AppointmentStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(AppointmentStatus status) {
         this.status = status;
     }
 
