@@ -38,8 +38,10 @@ eureka:
 
 server:
   port: 8081
-  error:
-    include-stacktrace: never
+  forward-headers-strategy: framework
+  tomcat:
+    remoteip:
+      internal-proxies: '.*'
 
 broker:
   queue:

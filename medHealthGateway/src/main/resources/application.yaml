@@ -7,6 +7,11 @@ spring:
         locator:
           enabled: true
           lower-case-service-id: true
+      routes:
+        - id: medHealthAPI-root
+          uri: lb://MEDHEALTH
+          predicates:
+            - Path=/**
 
 eureka:
   client:
@@ -17,3 +22,6 @@ eureka:
 
 server:
   port: 8080
+  tomcat:
+    remoteip:
+      internal-proxies: '.*'

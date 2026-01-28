@@ -10,6 +10,7 @@ declare -A services
 services["api"]="medHealthAPI"
 services["ms"]="medHealthNotifications"
 services["eureka"]="medHealthEureka"
+services["gateway"]="medHealthGateway"
 services["front"]="medHealthFE"
 
 if command -v docker &> /dev/null && docker compose version &> /dev/null; then
@@ -51,7 +52,7 @@ run_local() {
   
   if [ -z "${services[$service_key]}" ]; then
     echo -e "${RED}❌ Unknown service: '$service_key'${NC}"
-    echo -e "${YELLOW}Available: api, ms, eureka, front${NC}"
+    echo -e "${YELLOW}Available: api, ms, eureka, gateway, front${NC}"
     exit 1
   fi
 
@@ -69,7 +70,7 @@ case "$1" in
   # =========== COMANDOS DE DESENVOLVIMENTO LOCAL ============
   "run")
     if [ -z "$2" ]; then
-      echo -e "${RED}❌ Specify service: api, ms, front${NC}"
+      echo -e "${RED}❌ Specify service: api, ms, eureka, gateway, front${NC}"
       exit 1
     fi
     
@@ -83,7 +84,7 @@ case "$1" in
 
   "clean")
     if [ -z "$2" ]; then
-      echo -e "${RED}❌ Specify service: api, ms, eureka, front${NC}"
+      echo -e "${RED}❌ Specify service: api, ms, eureka, gateway, front${NC}"
       exit 1
     fi
     
@@ -99,7 +100,7 @@ case "$1" in
 
   "test")
     if [ -z "$2" ]; then
-      echo -e "${RED}❌ Specify service: api, ms, eureka, front${NC}"
+      echo -e "${RED}❌ Specify service: api, ms, eureka, gateway, front${NC}"
       exit 1
     fi
     
@@ -178,13 +179,13 @@ case "$1" in
 
   # ============ COMANDOS DE BACKEND DOCKER ============
   "backend")
-    echo -e "${YELLOW}🔧 Starting backend stack (DB + RabbitMQ + API + MS + EUREKA)...${NC}"
-    $DOCKER_COMPOSE up -d db db-mail rabbitmq
+    echo -e "${YELLOW}🔧 Starting backend stack (DB + RabbitMQ + API + MS + EUREKA + GATEWAY)...${NC}"
+    $DOCKER_COMPOSE up -d db db-mail rabbitmq eureka
     wait_for_service "db"
     wait_for_service "db-mail"
     wait_for_service "rabbitmq"
     
-    $DOCKER_COMPOSE up -d api notifications eureka
+    $DOCKER_COMPOSE up -d api notifications gateway
     echo -e "${GREEN}✅ Backend running!${NC}"
     echo -e "${BLUE}   API: http://localhost:8081${NC}"
     echo -e "${BLUE}   Notifications: http://localhost:8082${NC}"
@@ -192,11 +193,11 @@ case "$1" in
 
   "backend-stop")
     echo -e "${YELLOW}🛑 Stopping backend...${NC}"
-    $DOCKER_COMPOSE stop api notifications eureka rabbitmq
+    $DOCKER_COMPOSE stop api notifications eureka gateway rabbitmq
     ;;
 
   "backend-logs")
-    $DOCKER_COMPOSE logs -f api notifications eureka rabbitmq
+    $DOCKER_COMPOSE logs -f api notifications eureka gateway rabbitmq
     ;;
 
   # ============ COMANDOS DE FRONTEND DOCKER ============
@@ -217,8 +218,8 @@ case "$1" in
     $DOCKER_COMPOSE up -d
     echo -e "${GREEN}✅ All services running!${NC}"
     echo -e "${BLUE}   Frontend: http://localhost:5173${NC}"
-    echo -e "${BLUE}   API: http://localhost:8081${NC}"
-    echo -e "${BLUE}   Notifications: http://localhost:8082${NC}"
+    echo -e "${BLUE}   API Gateway: http://localhost:8080/medHealth${NC}"
+    echo -e "${BLUE}   Eureka: http://localhost:8761${NC}"
     echo -e "${BLUE}   RabbitMQ: http://localhost:15672${NC}"
     ;;
 
@@ -287,7 +288,7 @@ case "$1" in
     echo -e "${BLUE}═══════════════════════════════════════════════${NC}"
     echo
     echo -e "${YELLOW}LOCAL DEVELOPMENT:${NC}"
-    echo -e "  ${GREEN}run <service>${NC}      Run locally (api|ms|eureka|front)"
+    echo -e "  ${GREEN}run <service>${NC}      Run locally (api|ms|eureka|gateway|front)"
     echo -e "  ${GREEN}clean <service>${NC}    Clean build artifacts"
     echo -e "  ${GREEN}test <service>${NC}     Run tests"
     echo
@@ -303,7 +304,7 @@ case "$1" in
     echo -e "  ${GREEN}rabbit-stop${NC}       Stop RabbitMQ"
     echo
     echo -e "${YELLOW}BACKEND DOCKER:${NC}"
-    echo -e "  ${GREEN}backend${NC}           Start backend stack (API + MS + RabbitMQ + Eureka)"
+    echo -e "  ${GREEN}backend${NC}           Start backend stack (API + MS + RabbitMQ + Eureka + Gateway)"
     echo -e "  ${GREEN}backend-stop${NC}      Stop backend"
     echo -e "  ${GREEN}backend-logs${NC}      View backend logs"
     echo
@@ -331,9 +332,10 @@ case "$1" in
     echo -e "   ${BLUE}1.${NC} ./app.sh db              ${GREEN}# Start databases${NC}"
     echo -e "   ${BLUE}2.${NC} ./app.sh rabbit          ${GREEN}# Start RabbitMQ${NC}"
     echo -e "   ${BLUE}3.${NC} ./app.sh run eureka      ${GREEN}# Run Eureka locally${NC}"
-    echo -e "   ${BLUE}4.${NC} ./app.sh run api         ${GREEN}# Run API locally${NC}"
-    echo -e "   ${BLUE}5.${NC} ./app.sh run ms          ${GREEN}# Run MS locally${NC}"
-    echo -e "   ${BLUE}6.${NC} ./app.sh run front       ${GREEN}# Run frontend locally${NC}"
+    echo -e "   ${BLUE}4.${NC} ./app.sh run gateway     ${GREEN}# Run Gateway locally${NC}"
+    echo -e "   ${BLUE}5.${NC} ./app.sh run api         ${GREEN}# Run API locally${NC}"
+    echo -e "   ${BLUE}6.${NC} ./app.sh run ms          ${GREEN}# Run MS locally${NC}"
+    echo -e "   ${BLUE}7.${NC} ./app.sh run front       ${GREEN}# Run frontend locally${NC}"
     echo
     echo -e "${YELLOW}Or use Docker for everything:${NC}"
     echo -e "   ${BLUE}./app.sh up${NC}                ${GREEN}# Start full stack${NC}"

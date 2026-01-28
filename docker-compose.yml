@@ -87,11 +87,6 @@ services:
       SPRING_RABBITMQ_USERNAME: rabbituser
       SPRING_RABBITMQ_PASSWORD: rabbitpass
 
-      SERVER_FORWARD_HEADERS_STRATEGY: framework
-      SPRINGDOC_SWAGGER_UI_CONFIG_URL: /medhealth/v3/api-docs/swagger-config
-      SPRINGDOC_SWAGGER_UI_URL: /medhealth/v3/api-docs
-      SPRINGDOC_SWAGGER_UI_DISABLE_SWAGGER_DEFAULT_URL: "true"
-      GATEWAY_URL: http://localhost:8080/medhealth
     ports:
       - "8081:8081"
     depends_on:
@@ -160,6 +155,9 @@ services:
     depends_on:
       eureka:
         condition: service_healthy
+    volumes:
+      - ./medHealthGateway/src:/app/src
+      - ./medHealthGateway/pom.xml:/app/pom.xml
     networks:
       - medhealth-network
     extra_hosts:
