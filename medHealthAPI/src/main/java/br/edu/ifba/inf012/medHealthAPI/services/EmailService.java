@@ -38,7 +38,7 @@ public class EmailService {
             ⚠️ Por segurança, recomendamos alterar sua senha no primeiro acesso.
             
             Acesse a plaforma e realize o seu login.
-            Após o login, vá em "Perfil" > "Alterar Senha"
+            Após o login, vá em "Configurações" > "Alterar Senha"
             
             Atenciosamente,
             Equipe MedHealth
