@@ -13,12 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
-import java.util.List;
 
 @EnableWebSecurity
 @Configuration
@@ -35,15 +29,19 @@ public class SecurityConfigurations {
         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
         .requestMatchers(HttpMethod.POST, "/auth/forgot-password").permitAll()
         .requestMatchers(HttpMethod.POST, "/auth/reset-password").permitAll()
-
+        
+        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**").permitAll()
         .requestMatchers(HttpMethod.GET, "/").permitAll()
+
+        .requestMatchers(HttpMethod.GET, "/doctors/**").hasAnyRole("ADMIN", "PATIENT", "DOCTOR") 
+        .requestMatchers(HttpMethod.GET, "/patients/**").hasAnyRole("ADMIN", "DOCTOR")
+        .requestMatchers(HttpMethod.POST, "/appointments").hasAnyRole("ADMIN", "PATIENT", "DOCTOR")
 
         .requestMatchers(HttpMethod.POST, "/patients").hasRole("ADMIN")
         .requestMatchers(HttpMethod.POST, "/doctors").hasRole("ADMIN")
         .requestMatchers(HttpMethod.DELETE, "/patients/**").hasRole("ADMIN")
         .requestMatchers(HttpMethod.DELETE, "/doctors/**").hasRole("ADMIN")
 
-        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**").permitAll()
 
         .anyRequest().authenticated()
       )

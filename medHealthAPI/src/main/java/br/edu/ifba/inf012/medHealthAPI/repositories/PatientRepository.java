@@ -17,6 +17,9 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
   @Query("SELECT p FROM Patient p WHERE p.person.cpf = :cpf")
   Optional<Patient> findByPersonCpf(String cpf);
 
+  @Query("SELECT p FROM Patient p WHERE p.person.id = :personId")
+  Optional<Patient> findByPersonId(Long personId);
+
   boolean existsByPersonId(Long personId);
 
   Page<Patient> findByStatus(PatientStatus status, Pageable pageable);

@@ -3,14 +3,11 @@ package br.edu.ifba.inf012.medHealthAPI.controllers;
 import br.edu.ifba.inf012.medHealthAPI.dtos.user.*;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Role;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.User;
-import br.edu.ifba.inf012.medHealthAPI.services.JWTTokenService;
+import br.edu.ifba.inf012.medHealthAPI.services.AuthenticationService;
 import br.edu.ifba.inf012.medHealthAPI.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,24 +17,17 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationContoller {
-  @Autowired
-  private AuthenticationManager authenticationManager;
 
   @Autowired
-  private JWTTokenService tokenService;
+  private AuthenticationService authenticationService;
 
   @Autowired
   private UserService userService;
 
   @PostMapping("/login")
-  public ResponseEntity<JWTTokenData> login(@RequestBody AuthenticationDto dto){
-      var usernamePassword = new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
-      Authentication auth = this.authenticationManager.authenticate(usernamePassword);
-
-      User user = (User) auth.getPrincipal();
-      var token = this.tokenService.generateToken(user);
-
-      return ResponseEntity.ok(new JWTTokenData(token));
+  public ResponseEntity<LoginResponseDto> login(@RequestBody AuthenticationDto dto){
+      LoginResponseDto response = authenticationService.login(dto);
+      return ResponseEntity.ok(response);
   }
 
   @GetMapping("/profile")
