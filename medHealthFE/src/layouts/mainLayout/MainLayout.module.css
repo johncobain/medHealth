@@ -2,6 +2,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--color-primary-light);
 }
 
 .main {
@@ -11,6 +12,7 @@
 
 .nav {
   display: flex;
+  align-items: center;
   gap: var(--spacing-lg);
 }
 
@@ -29,9 +31,25 @@
   text-shadow: 0.5px 0 var(--color-primary);
 }
 
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding-left: var(--spacing-lg);
+  border-left: 1px solid var(--color-border);
+  margin-left: var(--spacing-md);
+}
+
+.userSection span {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-light);
+  font-weight: var(--font-weight-medium);
+}
+
 .footer {
   margin-top: auto;
   padding: var(--spacing-lg);
   text-align: center;
+  background-color: var(--color-surface);
   border-top: 1px solid var(--color-border);
 }

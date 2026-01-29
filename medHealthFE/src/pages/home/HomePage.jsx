@@ -52,8 +52,12 @@ const HomePage = () => {
         )}
       </section>
       <div className={styles.actions}>
-        <Button variant="primary" size="md">Novo Paciente</Button>
-        <Button variant="outline" size="md">Ver Agendamentos</Button>
+        <Button variant="primary" size="md">
+          Novo Paciente
+        </Button>
+        <Button variant="outline" size="md">
+          Ver Agendamentos
+        </Button>
       </div>
     </>
   );

@@ -11,15 +11,20 @@
   /* Cores neutras */
   --color-background: #ffffff;
   --color-surface: #f9fafb;
-  --color-border: #e5e7eb;
+  --color-border: #cacccf;
   --color-text: #111827;
   --color-text-light: #6b7280;
+  --color-input: #f3f4f6;
 
   /* Status */
   --color-success: #10b981;
+  --color-success-light: #d1fae5;
   --color-error: #ef4444;
+  --color-error-light: #fee2e2;
   --color-warning: #f59e0b;
+  --color-warning-light: #ffedd5;
   --color-info: #3b82f6;
+  --color-info-light: #dbeafe;
 
   /* Espaçamentos */
   --spacing-xs: 0.25rem; /* 4px */

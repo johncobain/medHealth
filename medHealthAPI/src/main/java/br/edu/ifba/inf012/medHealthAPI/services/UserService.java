@@ -1,13 +1,11 @@
 package br.edu.ifba.inf012.medHealthAPI.services;
 
 import br.edu.ifba.inf012.medHealthAPI.dtos.user.*;
-import br.edu.ifba.inf012.medHealthAPI.exceptions.EntityNotFoundException;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Person;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Role;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.User;
 import br.edu.ifba.inf012.medHealthAPI.repositories.RoleRepository;
 import br.edu.ifba.inf012.medHealthAPI.repositories.UserRepository;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -44,11 +41,13 @@ public class UserService {
 
     String tempPassword = generateTempPassword();
 
-    Role userRole = roleRepository.findByRole("ROLE_USER")
-        .orElseThrow(() -> new RuntimeException("Role ROLE_USER não encontrada"));
+    String roleName = isDoctor ? "ROLE_DOCTOR" : "ROLE_PATIENT";
+
+    Role role = roleRepository.findByRole(roleName)
+      .orElseThrow(() -> new RuntimeException("Role " + roleName + " não encontrada"));
 
     Set<Role> roles = new HashSet<>();
-    roles.add(userRole);
+    roles.add(role);
 
     User user = new User(person, passwordEncoder.encode(tempPassword), roles);
     User savedUser = userRepository.save(user);

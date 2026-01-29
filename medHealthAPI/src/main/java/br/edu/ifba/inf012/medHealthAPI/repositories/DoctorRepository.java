@@ -18,6 +18,9 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
   @Query("SELECT d FROM Doctor d WHERE d.person.cpf = :cpf")
   Optional<Doctor> findByPersonCpf(String cpf);
 
+  @Query("SELECT d FROM Doctor d WHERE d.person.id = :personId")
+  Optional<Doctor> findByPersonId(Long personId);
+
   Optional<Doctor> findByCrm(String crm);
 
   boolean existsByCrm(String crm);

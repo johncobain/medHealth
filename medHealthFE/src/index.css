@@ -3,5 +3,6 @@
 @import './styles/base/typography.css';
 
 @import './styles/layouts/header.css';
+@import './styles/layouts/input.css';
 
 @import './styles/utils/mixins.css';

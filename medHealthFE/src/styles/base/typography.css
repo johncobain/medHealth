@@ -45,8 +45,20 @@ p {
   font-size: var(--font-size-lg);
 }
 
+.text-primary {
+  color: var(--color-primary);
+}
+
 .text-light {
   color: var(--color-text-light);
+}
+
+.text-success {
+  color: var(--color-success);
+}
+
+.text-error {
+  color: var(--color-error);
 }
 
 .text-bold {
@@ -54,4 +66,22 @@ p {
 }
 .text-center {
   text-align: center;
+}
+.text-right {
+  text-align: right;
+}
+.text-left {
+  text-align: left;
+}
+
+.link {
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.pre-line{
+  white-space: pre-line;
 }
