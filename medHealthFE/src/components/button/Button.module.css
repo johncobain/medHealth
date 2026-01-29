@@ -59,3 +59,8 @@
   padding: var(--spacing-md) var(--spacing-xl);
   font-size: var(--font-size-lg);
 }
+
+.fit {
+  width: auto;
+  padding: var(--spacing-sm) var(--spacing-lg);
+}
