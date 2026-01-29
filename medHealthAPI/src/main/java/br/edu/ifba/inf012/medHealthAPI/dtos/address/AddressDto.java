@@ -1,6 +1,7 @@
 package br.edu.ifba.inf012.medHealthAPI.dtos.address;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -15,9 +16,7 @@ public record AddressDto(
   String street,
   String number,
   String complement,
-  String zipCode,
-  Timestamp createdAt,
-  Timestamp updatedAt
+  String zipCode
 ) {
 
   public AddressDto(Address address){
@@ -28,9 +27,7 @@ public record AddressDto(
          address.getStreet(),
          address.getNumber(),
          address.getComplement(),
-         address.getZipCode(),
-         address.getCreatedAt(),
-         address.getUpdatedAt()
+         address.getZipCode()
          );
   }
 

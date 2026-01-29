@@ -17,7 +17,7 @@ public class AdvanceNoticeValidator implements AppointmentValidator {
     long minutes = Duration.between(now, appointmentDate).toMinutes();
 
     if (minutes < 30){
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Appointment must be scheduled at least 30 minutes in advance.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Consulta deve ser agendada com pelo menos 30 minutos de antecedência.");
     }
   }
 }

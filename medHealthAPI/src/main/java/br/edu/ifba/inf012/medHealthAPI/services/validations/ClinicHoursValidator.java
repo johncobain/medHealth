@@ -17,7 +17,7 @@ public class ClinicHoursValidator implements AppointmentValidator{
     int hour = appointmentDate.getHour();
 
     if (dayOfWeek == DayOfWeek.SUNDAY || hour < 7 || hour >=19){
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Appointment outside clinic opening hours (Mon-Sat, 7am-7pm).");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Consulta fora dos horários da clínica (7h a 19h).");
     }
   }
 }

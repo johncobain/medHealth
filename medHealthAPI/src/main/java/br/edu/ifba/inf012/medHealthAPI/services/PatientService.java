@@ -7,7 +7,12 @@ import br.edu.ifba.inf012.medHealthAPI.exceptions.EntityNotFoundException;
 import br.edu.ifba.inf012.medHealthAPI.exceptions.UniqueAttributeAlreadyRegisteredException;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Address;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Patient;
+import br.edu.ifba.inf012.medHealthAPI.models.entities.Person;
+import br.edu.ifba.inf012.medHealthAPI.models.enums.PatientStatus;
+import br.edu.ifba.inf012.medHealthAPI.models.enums.PersonStatus;
+import br.edu.ifba.inf012.medHealthAPI.repositories.AddressRepository;
 import br.edu.ifba.inf012.medHealthAPI.repositories.PatientRepository;
+import br.edu.ifba.inf012.medHealthAPI.repositories.PersonRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,65 +20,130 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PatientService {
-    private final PatientRepository patientRepository;
+  private final PatientRepository patientRepository;
+  private final PersonRepository personRepository;
+  private final AddressRepository addressRepository;
+  private final UserService userService;
 
-    public PatientService(PatientRepository patientRepository){
-        this.patientRepository = patientRepository;
+  public PatientService(
+      PatientRepository patientRepository,
+      PersonRepository personRepository,
+      AddressRepository addressRepository,
+      UserService userService
+      ){
+      this.patientRepository = patientRepository;
+      this.personRepository = personRepository;
+      this.addressRepository = addressRepository;
+      this.userService = userService;
+  }
+
+  public Page<PatientDto> findAll(Pageable pageable) {
+      return this.patientRepository.findAll(pageable)
+          .map(PatientDto::fromEntity);
+  }
+
+  public PatientDto findById(Long id){
+      Patient patient = this.patientRepository.findById(id)
+          .orElseThrow(() -> new EntityNotFoundException(Patient.class.getSimpleName(), id));
+      return PatientDto.fromEntity(patient);
+  }
+
+  public PatientDto findByEmail(String email) {
+    Patient patient = patientRepository.findByPersonEmail(email)
+        .orElseThrow(() -> new EntityNotFoundException(Patient.class.getSimpleName(), "email", email));
+    return PatientDto.fromEntity(patient);
+  }
+
+  public PatientDto findByCpf(String cpf) {
+    Patient patient = patientRepository.findByPersonCpf(cpf)
+        .orElseThrow(() -> new EntityNotFoundException(Patient.class.getSimpleName(), "cpf", cpf));
+    return PatientDto.fromEntity(patient);
+  }
+
+  public Page<PatientDto> findByStatus(PatientStatus status, Pageable pageable) {
+    return patientRepository.findByStatus(status, pageable)
+        .map(PatientDto::fromEntity);
+  }
+
+  @Transactional
+  public PatientDto save(PatientFormDto dto){
+    if (personRepository.existsByEmail(dto.email())) {
+      throw new UniqueAttributeAlreadyRegisteredException(Patient.class.getSimpleName(), "email");
+    }
+    if (personRepository.existsByCpf(dto.cpf())) {
+      throw new UniqueAttributeAlreadyRegisteredException(Patient.class.getSimpleName(), "cpf");
     }
 
-    public Page<PatientDto> getAll(Pageable pageable) {
-        return this.patientRepository.findByStatus(pageable, "ACTIVE").map(PatientDto::new);
+    Address address = new Address(dto.address());
+    address = addressRepository.save(address);
+
+    Person person = new Person(
+        dto.fullName(),
+        dto.email(),
+        dto.phone(),
+        dto.cpf(),
+        address
+    );
+    person = personRepository.save(person);
+
+    Patient patient = new Patient(person);
+    patient = patientRepository.save(patient);
+
+    userService.createUserForPerson(person, false);
+
+    return PatientDto.fromEntity(patient);
+  }
+
+  @Transactional
+  public PatientDto update(Long id, PatientUpdateDto patient){
+    Patient storedPatient = patientRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException(Patient.class.getSimpleName(), id));
+
+    if(patient.fullName() != null){
+      storedPatient.getPerson().setFullName(patient.fullName());
     }
 
-    public PatientDto getOne(Long id){
-        Patient patient = this.patientRepository.findByIdAndStatus(id, "ACTIVE");
-        if (patient == null) throw new EntityNotFoundException(Patient.class.getSimpleName(), id);
-        return PatientDto.fromEntity(patient);
+    if(patient.phone() != null){
+      storedPatient.getPerson().setPhone(patient.phone());
     }
 
-    @Transactional
-    public PatientDto save(PatientFormDto patient){
-        if (this.patientRepository.existsByCpfAndStatus(patient.cpf(), "ACTIVE")){
-            throw new UniqueAttributeAlreadyRegisteredException(Patient.class.getSimpleName(), "CPF");
-        }
-
-        if (this.patientRepository.existsByCpfAndStatus(patient.cpf(), "INACTIVE")){
-          Patient storedPatient = this.patientRepository.findByCpfAndStatus(patient.cpf(), "INACTIVE");
-          storedPatient.setStatus("ACTIVE");
-          storedPatient.setName(patient.name());
-          storedPatient.setPhone(patient.phone());
-          storedPatient.setAddress(new Address(patient.address()));
-          return PatientDto.fromEntity(this.patientRepository.save(storedPatient));
-        }
-
-        return PatientDto.fromEntity(this.patientRepository.save(new Patient(patient)));
+    if(patient.address() != null){
+      storedPatient.getPerson().setAddress(addressRepository.save(new Address(patient.address())));
     }
+    this.personRepository.save(storedPatient.getPerson());
 
-    @Transactional
-    public PatientDto update(PatientUpdateDto patient, Long id){
-      Patient storedPatient = this.patientRepository.findByIdAndStatus(id, "ACTIVE");
-      if (storedPatient == null) throw new EntityNotFoundException(Patient.class.getSimpleName(), id);
+    return PatientDto.fromEntity(storedPatient);
+  }
 
-      if(patient.name() != null){
-        storedPatient.setName(patient.name());
-      }
+  @Transactional
+  public void deactivate(Long id) {
+    Patient patient = patientRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException(Patient.class.getSimpleName(), id));
 
-      if(patient.phone() != null){
-        storedPatient.setPhone(patient.phone());
-      }
+    patient.setStatus(PatientStatus.INACTIVE);
+    patient.getPerson().setStatus(PersonStatus.INACTIVE);
 
-      if(patient.address() != null){
-        storedPatient.setAddress(new Address(patient.address()));
-      }
+    personRepository.save(patient.getPerson());
+    patientRepository.save(patient);
+  }
 
-      return PatientDto.fromEntity(this.patientRepository.save(storedPatient));
+  @Transactional
+  public void activate(Long id) {
+    Patient patient = patientRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException(Patient.class.getSimpleName(), id));
+
+    patient.setStatus(PatientStatus.ACTIVE);
+    patient.getPerson().setStatus(PersonStatus.ACTIVE);
+
+    personRepository.save(patient.getPerson());
+    patientRepository.save(patient);
+  }
+
+  @Transactional
+  public void delete(Long id) {
+    if (!patientRepository.existsById(id)) {
+      throw new EntityNotFoundException(Patient.class.getSimpleName(), id);
     }
-
-    @Transactional
-    public PatientDto delete(Long id){
-      Patient storedPatient = this.patientRepository.findByIdAndStatus(id, "ACTIVE");
-      if (storedPatient == null) throw new EntityNotFoundException(Patient.class.getSimpleName(), id);
-      storedPatient.setStatus("INACTIVE");
-      return PatientDto.fromEntity(this.patientRepository.save(storedPatient));
-    }
+    patientRepository.deleteById(id);
+  }
 }

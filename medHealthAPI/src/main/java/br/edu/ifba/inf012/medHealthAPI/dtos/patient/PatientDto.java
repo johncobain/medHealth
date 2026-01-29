@@ -4,12 +4,12 @@ import br.edu.ifba.inf012.medHealthAPI.models.entities.Patient;
 
 public record PatientDto(
         Long id,
-        String name,
+        String fullName,
         String email,
         String cpf
 ) {
     public PatientDto(Patient patient){
-        this(patient.getId(), patient.getName(), patient.getEmail(), patient.getCpf());
+        this(patient.getId(), patient.getPerson().getFullName(), patient.getPerson().getEmail(), patient.getPerson().getCpf());
     }
 
     public static PatientDto fromEntity(Patient patient){

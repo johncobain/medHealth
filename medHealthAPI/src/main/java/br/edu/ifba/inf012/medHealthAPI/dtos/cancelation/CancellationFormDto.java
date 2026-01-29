@@ -5,11 +5,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
 public record CancellationFormDto (
-    @NotNull(message = "Reason is required")
-    @Schema(description = "Reason for cancellation", example = "PATIENT_CANCELED")
+    @NotNull(message = "Motivo é obrigatório")
+    @Schema(description = "Motivo do cancelamento", example = "PATIENT_CANCELED")
     CancellationReason reason,
 
-    @Schema(description = "Additional message if reason is 'OUTROS'", example = "O paciente não poderá comparecer por conta de imprevistos.")
+    @Schema(description = "Mensagem adicional (obrigatória caso motivo seja OUTROS)", example = "O paciente não poderá comparecer por conta de imprevistos.")
     String message
 ){
 }

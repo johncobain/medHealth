@@ -1,116 +1,139 @@
 package br.edu.ifba.inf012.medHealthAPI.models.entities;
 
+import br.edu.ifba.inf012.medHealthAPI.dtos.address.AddressDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.address.AddressFormDto;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "addresses")
 public class Address {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String state;
-    private String city;
-    private String neighborhood;
-    private String street;
-    private String number;
-    private String complement;
-    private String zipCode;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
+  @Column(nullable = false)
+  private String state;
 
-    protected Address() { }
+  @Column(nullable = false)
+  private String city;
 
-    public Address(AddressFormDto addressFormDto){
-        this.state = addressFormDto.state();
-        this.city = addressFormDto.city();
-        this.neighborhood = addressFormDto.neighborhood();
-        this.street = addressFormDto.street();
-        this.number = addressFormDto.number();
-        this.complement = addressFormDto.complement();
-        this.zipCode = addressFormDto.zipCode();
-    }
+  @Column(nullable = false)
+  private String neighborhood;
 
-    public Long getId() {
-        return id;
-    }
+  @Column(nullable = false)
+  private String street;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  private String number;
 
-    public String getState() {
-        return state;
-    }
+  private String complement;
 
-    public void setState(String state) {
-        this.state = state;
-    }
+  @Column(name = "zip_code", nullable = false, length = 9)
+  private String zipCode;
 
-    public String getCity() {
-        return city;
-    }
+  @Column(name = "created_at", updatable = false)
+  private Timestamp createdAt;
 
-    public void setCity(String city) {
-        this.city = city;
-    }
+  @Column(name = "updated_at")
+  private Timestamp updatedAt;
 
-    public String getNeighborhood() {
-        return neighborhood;
-    }
+  @PrePersist
+  protected void onCreate() {
+    Timestamp now = new Timestamp(System.currentTimeMillis());
+    createdAt = now;
+    updatedAt = now;
+  }
 
-    public void setNeighborhood(String neighborhood) {
-        this.neighborhood = neighborhood;
-    }
+  @PreUpdate
+  protected void onUpdate() {
+    Timestamp now = new Timestamp(System.currentTimeMillis());
+    updatedAt = now;
+  }
 
-    public String getStreet() {
-        return street;
-    }
+  protected Address() { }
 
-    public void setStreet(String street) {
-        this.street = street;
-    }
+  public Address(AddressDto addressDto){
+      this.state = addressDto.state();
+      this.city = addressDto.city();
+      this.neighborhood = addressDto.neighborhood();
+      this.street = addressDto.street();
+      this.number = addressDto.number();
+      this.complement = addressDto.complement();
+      this.zipCode = addressDto.zipCode();
+  }
 
-    public String getNumber() {
-        return number;
-    }
+  public Address(AddressFormDto addressFormDto){
+      this.state = addressFormDto.state();
+      this.city = addressFormDto.city();
+      this.neighborhood = addressFormDto.neighborhood();
+      this.street = addressFormDto.street();
+      this.number = addressFormDto.number();
+      this.complement = addressFormDto.complement();
+      this.zipCode = addressFormDto.zipCode();
+  }
 
-    public void setNumber(String number) {
-        this.number = number;
-    }
+  public Long getId() {
+      return id;
+  }
+  public void setId(Long id) {
+      this.id = id;
+  }
 
-    public String getComplement() {
-        return complement;
-    }
+  public String getState() {
+      return state;
+  }
+  public void setState(String state) {
+      this.state = state;
+  }
 
-    public void setComplement(String complement) {
-        this.complement = complement;
-    }
+  public String getCity() {
+      return city;
+  }
+  public void setCity(String city) {
+      this.city = city;
+  }
 
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
+  public String getNeighborhood() {
+      return neighborhood;
+  }
+  public void setNeighborhood(String neighborhood) {
+      this.neighborhood = neighborhood;
+  }
 
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
+  public String getStreet() {
+      return street;
+  }
+  public void setStreet(String street) {
+      this.street = street;
+  }
 
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
+  public String getNumber() {
+      return number;
+  }
+  public void setNumber(String number) {
+      this.number = number;
+  }
 
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public String getComplement() {
+      return complement;
+  }
+  public void setComplement(String complement) {
+      this.complement = complement;
+  }
 
-    public String getZipCode() {
-        return zipCode;
-    }
+  public Timestamp getCreatedAt() {
+      return createdAt;
+  }
+  public Timestamp getUpdatedAt() {
+      return updatedAt;
+  }
 
-    public void setZipCode(String zipCode) {
+  public String getZipCode() {
+      return zipCode;
+  }
+  public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
     }
 }

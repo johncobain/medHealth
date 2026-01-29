@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import br.edu.ifba.inf012.medHealthNotifications.dtos.EmailDto;
 import br.edu.ifba.inf012.medHealthNotifications.models.enums.EmailStatus;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -21,6 +22,7 @@ public class Email {
   private String mailFrom;
   private String mailTo;
   private String subject;
+  @Column(columnDefinition = "TEXT")
   private String text;
   private LocalDateTime sentAt;
   @Enumerated(EnumType.STRING)

@@ -27,6 +27,11 @@ public class EmailService {
 
   @Transactional
   public Email sendEmail(Email email){
+    if (email.getMailTo().equals(mailFrom)) {
+      System.out.println("Tentativa de enviar email para o mesmo endereço: " + email.getMailTo());
+      email.setStatus(EmailStatus.ERROR);
+      return emailRepository.save(email);
+    }
     try{
       email.setMailFrom(mailFrom);
 

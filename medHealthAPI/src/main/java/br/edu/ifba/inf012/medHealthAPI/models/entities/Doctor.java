@@ -1,152 +1,84 @@
 package br.edu.ifba.inf012.medHealthAPI.models.entities;
 
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorFormDto;
+import br.edu.ifba.inf012.medHealthAPI.models.enums.DoctorStatus;
 import br.edu.ifba.inf012.medHealthAPI.models.enums.Specialty;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "doctors")
 public class Doctor {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    @Column(unique = true)
-    private String email;
-    private String phone;
-    @Column(unique = true)
-    private String crm;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "address_id")
-    private Address address;
+  @OneToOne
+  @JoinColumn(name = "person_id", nullable = false, unique = true)
+  private Person person;
 
-    @Enumerated(EnumType.STRING)
-    private Specialty specialty;
+  @Column(unique = true, nullable = false, length = 14)
+  private String crm;
 
-    private String status;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private Specialty specialty;
 
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
+  @Enumerated(EnumType.STRING)
+  @Column(length = 20)
+  private DoctorStatus status = DoctorStatus.ACTIVE;
 
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
-    private List<Appointment> appointments;
+  @Column(name = "created_at", updatable = false)
+  private Timestamp createdAt;
 
-    public Doctor() {}
+  @Column(name = "updated_at")
+  private Timestamp updatedAt;
 
-    public Doctor(DoctorFormDto doctorFormDto) {
-        this.name = doctorFormDto.name();
-        this.email = doctorFormDto.email();
-        this.phone = doctorFormDto.phone();
-        this.crm = doctorFormDto.crm();
-        this.address = new Address(doctorFormDto.address());
-        this.specialty = Specialty.valueOf(doctorFormDto.specialty().toUpperCase());
-        this.status = "ACTIVE";
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-        this.createdAt = now;
-        this.updatedAt = now;
-    }
+  @PrePersist
+  protected void onCreate() {
+    Timestamp now = new Timestamp(System.currentTimeMillis());
+    createdAt = now;
+    updatedAt = now;
+  }
 
-    @PrePersist
-    protected void onCreate() {
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-        this.createdAt = now;
-        this.updatedAt = now;
-    }
+  @PreUpdate
+  protected void onUpdate() {
+    Timestamp now = new Timestamp(System.currentTimeMillis());
+    updatedAt = now;
+  }
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = new Timestamp(System.currentTimeMillis());
-    }
+  @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
+  private List<Appointment> appointments;
 
-    public Long getId() {
-        return id;
-    }
+  public Doctor() {}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public Doctor(Person person, String crm, Specialty specialty) {
+    this.person = person;
+    this.crm = crm;
+    this.specialty = specialty;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public Long getId() {return id;}
+  public void setId(Long id) {this.id = id;}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public Person getPerson() {return person;}
+  public void setPerson(Person person) {this.person = person;}
 
-    public String getEmail() {
-        return email;
-    }
+  public String getCrm() {return crm;}
+  public void setCrm(String crm) {this.crm = crm;}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+  public Specialty getSpecialty() {return specialty;}
+  public void setSpecialty(Specialty specialty) {this.specialty = specialty;}
 
-    public String getPhone() {
-        return phone;
-    }
+  public DoctorStatus getStatus() {return status;}
+  public void setStatus(DoctorStatus status) {this.status = status;}
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+  public Timestamp getCreatedAt() {return createdAt;}
+  public Timestamp getUpdatedAt() {return updatedAt;}
 
-    public String getCrm() {
-        return crm;
-    }
-
-    public void setCrm(String crm) {
-        this.crm = crm;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
-    public Specialty getSpecialty() {
-        return specialty;
-    }
-
-    public void setSpecialty(Specialty specialty) {
-        this.specialty = specialty;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public List<Appointment> getAppointments() {
-        return appointments;
-    }
-
-    public void setAppointments(List<Appointment> appointments) {
-        this.appointments = appointments;
-    }
+  public List<Appointment> getAppointments() {return appointments;}
+  public void setAppointments(List<Appointment> appointments) {this.appointments = appointments; }
 }

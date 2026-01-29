@@ -1,139 +1,68 @@
 package br.edu.ifba.inf012.medHealthAPI.models.entities;
 
-import br.edu.ifba.inf012.medHealthAPI.dtos.patient.PatientFormDto;
+import br.edu.ifba.inf012.medHealthAPI.models.enums.PatientStatus;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "patients")
 public class Patient {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    @Column(unique = true)
-    private String email;
-    private String phone;
-    @Column(unique = true)
-    private String cpf;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "address_id")
-    private Address address;
+  @OneToOne
+  @JoinColumn(name = "person_id", nullable = false, unique = true)
+  private Person person;
 
-    private String status;
+  @Enumerated(EnumType.STRING)
+  @Column(length = 20)
+  private PatientStatus status = PatientStatus.ACTIVE;
 
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
+  @Column(name = "created_at", updatable = false)
+  private Timestamp createdAt;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
-    private List<Appointment> appointments;
+  @Column(name = "updated_at")
+  private Timestamp updatedAt;
 
-    public Patient() {}
+  @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+  private List<Appointment> appointments;
 
-    public Patient(PatientFormDto patientFormDto) {
-        this.name = patientFormDto.name();
-        this.email = patientFormDto.email();
-        this.phone = patientFormDto.phone();
-        this.cpf = patientFormDto.cpf();
-        this.address = new Address(patientFormDto.address());
-        this.status = "ACTIVE";
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-        this.createdAt = now;
-        this.updatedAt = now;
-    }
+  @PrePersist
+  protected void onCreate() {
+    Timestamp now = new Timestamp(System.currentTimeMillis());
+    this.createdAt = now;
+    this.updatedAt = now;
+  }
 
-    @PrePersist
-    protected void onCreate() {
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-        this.createdAt = now;
-        this.updatedAt = now;
-    }
+  @PreUpdate
+  protected void onUpdate() {
+    Timestamp now = new Timestamp(System.currentTimeMillis());
+    this.updatedAt = now;
+  }
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = new Timestamp(System.currentTimeMillis());
-    }
+  public Patient() {
+  }
 
-    public Long getId() {
-        return id;
-    }
+  public Patient(Person person) {
+    this.person = person;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public Long getId() {return id;}
+  public void setId(Long id) {this.id = id;}
 
-    public String getName() {
-        return name;
-    }
+  public Person getPerson() {return person;}
+  public void setPerson(Person person) {this.person = person;}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public PatientStatus getStatus() {return status;}
+  public void setStatus(PatientStatus status) {this.status = status;}
 
-    public String getEmail() {
-        return email;
-    }
+  public Timestamp getCreatedAt() {return createdAt;}
+  public Timestamp getUpdatedAt() {return updatedAt;}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getCpf() {
-        return this.cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public List<Appointment> getAppointments() {
-        return appointments;
-    }
-
-    public void setAppointments(List<Appointment> appointments) {
-        this.appointments = appointments;
-    }
+  public List<Appointment> getAppointments() {return appointments;}
+  public void setAppointments(List<Appointment> appointments) {this.appointments = appointments;}
 }

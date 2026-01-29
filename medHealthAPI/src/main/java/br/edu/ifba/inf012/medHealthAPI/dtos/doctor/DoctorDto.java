@@ -5,7 +5,7 @@ import br.edu.ifba.inf012.medHealthAPI.models.enums.Specialty;
 
 public record DoctorDto(
         Long id,
-        String name,
+        String fullName,
         String email,
         String crm,
         Specialty specialty
@@ -13,8 +13,8 @@ public record DoctorDto(
     public DoctorDto(Doctor doctor){
         this(
                 doctor.getId(),
-                doctor.getName(),
-                doctor.getEmail(),
+                doctor.getPerson().getFullName(),
+                doctor.getPerson().getEmail(),
                 doctor.getCrm(),
                 doctor.getSpecialty()
         );

@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
     });
 
     response.put("status", ex.getStatusCode().toString());
-    response.put("reason", "Validation failed");
+    response.put("reason", "Erro de validação");
     response.put("path", request.getRequestURI());
     response.put("errors", errors);
 
@@ -59,7 +59,7 @@ public class GlobalExceptionHandler {
   public ResponseEntity<Map<String, String>> handleNoResourceFoundException(NoResourceFoundException ex, HttpServletRequest request){
     Map<String, String> error = new HashMap<>();
     error.put("status", ex.getStatusCode().toString());
-    error.put("reason", "Resource not found");
+    error.put("reason", "Recurso não encontrado");
     error.put("path", request.getRequestURI());
     error.put("method", ex.getHttpMethod().toString());
     return ResponseEntity.status(ex.getStatusCode()).body(error);
@@ -69,7 +69,7 @@ public class GlobalExceptionHandler {
   public ResponseEntity<Map<String, String>> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex,  HttpServletRequest request){
     Map<String, String> error = new HashMap<>();
     error.put("status", ex.getStatusCode().toString());
-    error.put("reason", "Method " + ex.getMethod() + " not allowed");
+    error.put("reason", "Método " + ex.getMethod() + " não permitido");
     error.put("path", request.getRequestURI());
     error.put("method", ex.getMethod());
     return ResponseEntity.status(ex.getStatusCode()).body(error);
@@ -79,12 +79,12 @@ public class GlobalExceptionHandler {
   public ResponseEntity<Map<String, String>> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, HttpServletRequest request) {
     Map<String, String> error = new HashMap<>();
     HttpStatus status = HttpStatus.BAD_REQUEST;
-    String reason = "Invalid JSON format";
+    String reason = "Formato JSON inválido";
 
     Throwable cause = ex.getRootCause();
     if (cause instanceof UnrecognizedPropertyException unrecognizedPropertyException) {
       String fieldName = unrecognizedPropertyException.getPropertyName();
-      reason = "Field '" + fieldName + "' is not allowed.";
+      reason = "Campo '" + fieldName + "' não permitido";
     }
 
     error.put("status", String.valueOf(status.value()));
@@ -93,10 +93,21 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(status).body(error);
   }
 
+  @ExceptionHandler(RuntimeException.class)
+  public ResponseEntity<Map<String, String>> handleGenericRuntimeException(RuntimeException ex, HttpServletRequest request) {
+    Map<String, String> error = new HashMap<>();
+    HttpStatus status = HttpStatus.BAD_REQUEST;
+
+    error.put("status", String.valueOf(status.value()));
+    error.put("reason", ex.getMessage());
+    error.put("path", request.getRequestURI());
+    return ResponseEntity.status(status).body(error);
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Map<String, String>> handleGenericException(Exception ex, HttpServletRequest request) {
     Map<String, String> error = new HashMap<>();
-    HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+    HttpStatus status = HttpStatus.BAD_REQUEST;
 
     error.put("status", String.valueOf(status.value()));
     error.put("reason", ex.getMessage());

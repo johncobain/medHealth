@@ -26,41 +26,65 @@ public class PatientController {
   }
 
   @GetMapping
-  @Operation(summary = "Get All active Patients")
+  @Operation(summary = "Retorna todos os pacientes")
   @ApiResponse(responseCode = "200")
-  public ResponseEntity<Page<PatientDto>> getAll(
+  public ResponseEntity<Page<PatientDto>> findAll(
           @ParameterObject
-          @PageableDefault(size = 10, sort = {"name"}, direction = Sort.Direction.ASC)
+          @PageableDefault(size = 10, sort = {"person.fullName"}, direction = Sort.Direction.ASC)
           Pageable pageable
   ){
-    return ResponseEntity.ok(patientService.getAll(pageable));
+    return ResponseEntity.ok(patientService.findAll(pageable));
   }
 
   @GetMapping("/{id}")
-  @Operation(summary = "Return an Active Patient")
+  @Operation(summary = "Retorna um paciente")
   @ApiResponse(responseCode = "200")
-  public ResponseEntity<PatientDto> getOne(@PathVariable Long id){
-    return ResponseEntity.ok(patientService.getOne(id));
+  public ResponseEntity<PatientDto> findById(@PathVariable Long id) {
+    return ResponseEntity.ok(patientService.findById(id));
+  }
+
+  @GetMapping("/email/{email}")
+  @Operation(summary = "Retorna um paciente por email")
+  @ApiResponse(responseCode = "200")
+  public ResponseEntity<PatientDto> findByEmail(@PathVariable String email) {
+    return ResponseEntity.ok(patientService.findByEmail(email));
+  }
+
+  @GetMapping("/cpf/{cpf}")
+  @Operation(summary = "Retorna um paciente por cpf")
+  @ApiResponse(responseCode = "200")
+  public ResponseEntity<PatientDto> findByCpf(@PathVariable String cpf) {
+    return ResponseEntity.ok(patientService.findByCpf(cpf));
   }
 
   @PostMapping
   @Operation(summary = "Create a new Patient")
   @ApiResponse(responseCode = "201")
-  public ResponseEntity<PatientDto> create(@Valid @RequestBody PatientFormDto patient) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(patientService.save(patient));
+  public ResponseEntity<PatientDto> create(@Valid @RequestBody PatientFormDto dto) {
+    PatientDto patient = patientService.save(dto);
+    return ResponseEntity.status(HttpStatus.CREATED).body(patient);
   }
 
   @PutMapping("/{id}")
-  @Operation(summary = "Update an Active Patient")
+  @Operation(summary = "Atualiza um paciente")
   @ApiResponse(responseCode = "200")
-  public ResponseEntity<PatientDto> update(@Valid @RequestBody PatientUpdateDto patient, @PathVariable Long id){
-    return ResponseEntity.ok(patientService.update(patient, id));
+  public ResponseEntity<PatientDto> update(@PathVariable Long id, @Valid @RequestBody PatientUpdateDto patient){
+    return ResponseEntity.ok(patientService.update(id, patient));
   }
 
   @DeleteMapping("/{id}")
-  @Operation(summary = "Delete an Active Patient")
-  @ApiResponse(responseCode = "200")
-  public ResponseEntity<PatientDto> delete(@PathVariable Long id){
-    return ResponseEntity.ok(patientService.delete(id));
+  @Operation(summary = "Deleta um paciente (soft delete)")
+  @ApiResponse(responseCode = "204")
+  public ResponseEntity<Void> delete(@PathVariable Long id){
+    patientService.deactivate(id);
+    return ResponseEntity.noContent().build();
+  }
+
+  @PatchMapping("/{id}/activate")
+  @Operation(summary = "Ativa um paciente")
+  @ApiResponse(responseCode = "204")
+  public ResponseEntity<Void> activate(@PathVariable Long id) {
+    patientService.activate(id);
+    return ResponseEntity.noContent().build();
   }
 }

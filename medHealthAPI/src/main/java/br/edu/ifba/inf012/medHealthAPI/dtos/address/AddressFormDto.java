@@ -2,29 +2,36 @@ package br.edu.ifba.inf012.medHealthAPI.dtos.address;
 
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Address;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public record AddressFormDto (
-  @NotNull(message = "State must not be null")
-  @Schema(description = "State of the address", example = "Bahia")
+  @NotBlank(message = "Estado é obrigatório")
+  @Schema(description = "Estado", example = "Bahia")
   String state,
-  @NotNull(message = "City must not be null")
-  @Schema(description = "City of the address", example = "Salvador")
+
+  @NotBlank(message = "Cidade é obrigatória")
+  @Schema(description = "Cidade", example = "Salvador")
   String city,
-  @NotNull(message = "Neighborhood must not be null")
-  @Schema(description = "Neighborhood of the address", example = "Centro")
+
+  @NotBlank(message = "Bairro é obrigatório")
+  @Schema(description = "Bairro", example = "Centro")
   String neighborhood,
-  @NotNull(message = "Street must not be null")
-  @Schema(description = "Street of the address", example = "Avenida Sete de Setembro")
+
+  @NotBlank(message = "Rua é obrigatória")
+  @Schema(description = "Rua", example = "Avenida Sete de Setembro")
   String street,
-  @Schema(description = "Number of the address", example = "123")
+
+  @Schema(description = "Número", example = "123")
   String number,
-  @Schema(description = "Complement of the address", example = "Apto 101")
+
+  @Schema(description = "Complemento", example = "Apto 101")
   String complement,
-  @NotNull(message = "ZIP code must not be null")
-  @Pattern(regexp = "^[0-9]{5}-?[0-9]{3}$", message = "Invalid CEP format")
-  @Schema(description = "ZIP code of the address", example = "40000-000")
+
+  @NotBlank(message = "CEP é obrigatório")
+  @Pattern(regexp = "\\d{5}-\\d{3}", message = "CEP deve estar no formato 99999-999")
+  @Schema(description = "CEP", example = "40000-000")
   String zipCode
 ){
 

@@ -30,9 +30,9 @@ public class AppointmentController {
   }
 
   @GetMapping
-  @Operation(summary = "Get all appointments with filters")
+  @Operation(summary = "Retorna todos os agendamentos")
   @ApiResponse(responseCode = "200")
-  public ResponseEntity<Page<AppointmentDto>> getAll(
+  public ResponseEntity<Page<AppointmentDto>> findAll(
     @ParameterObject @PageableDefault(size = 10, sort = {"date"}, direction = Sort.Direction.ASC) Pageable pageable,
     @RequestParam(required = false) Long doctorId,
     @RequestParam(required = false) Long patientId,
@@ -43,23 +43,34 @@ public class AppointmentController {
     Timestamp startTimestamp = (startDate != null) ? Timestamp.valueOf(startDate) : null;
     Timestamp endTimestamp = (endDate != null) ? Timestamp.valueOf(endDate) : null;
 
-    Page<AppointmentDto> appointments = appointmentService.getAll(pageable, doctorId, patientId, status, startTimestamp, endTimestamp);
+    Page<AppointmentDto> appointments = appointmentService.findAll(pageable, doctorId, patientId, status, startTimestamp, endTimestamp);
     return ResponseEntity.ok(appointments);
   }
 
+  @GetMapping("/{id}")
+  public ResponseEntity<AppointmentDto> findById(@PathVariable Long id) {
+    return ResponseEntity.ok(appointmentService.findById(id));
+  }
+
   @PostMapping
-  @Operation(summary = "Schedule a new appointment")
+  @Operation(summary = "Agenda um novo agendamento")
   @ApiResponse(responseCode = "201")
-  public ResponseEntity<AppointmentDto> create(@Valid @RequestBody AppointmentFormDto appointmentFormDto) {
-    AppointmentDto appointment = appointmentService.schedule(appointmentFormDto);
+  public ResponseEntity<AppointmentDto> create(@Valid @RequestBody AppointmentFormDto dto) {
+    AppointmentDto appointment = appointmentService.schedule(dto);
     return ResponseEntity.status(HttpStatus.CREATED).body(appointment);
   }
 
-  @PostMapping("/{appointmentId}/cancel")
-  @Operation(summary = "Cancel an appointment")
-  @ApiResponse(responseCode = "204")
-  public ResponseEntity<Void> cancel(@PathVariable Long appointmentId, @Valid @RequestBody CancellationFormDto cancellationFormDto){
-    appointmentService.cancel(appointmentId, cancellationFormDto);
-    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+  @PostMapping("/{id}/cancel")
+  @Operation(summary = "Cancela um agendamento")
+  @ApiResponse(responseCode = "200")
+  public ResponseEntity<AppointmentDto> cancel(@PathVariable Long id, @Valid @RequestBody CancellationFormDto dto){
+    return ResponseEntity.ok(appointmentService.cancel(id, dto));
+  }
+
+  @PatchMapping("/{id}/attend")
+  @Operation(summary = "Marca um agendamento como realizado")
+  @ApiResponse(responseCode = "200")
+  public ResponseEntity<AppointmentDto> attend(@PathVariable Long id){
+    return ResponseEntity.ok(appointmentService.attend(id));
   }
 }

@@ -1,17 +1,26 @@
 package br.edu.ifba.inf012.medHealthAPI.repositories;
 
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Patient;
+import br.edu.ifba.inf012.medHealthAPI.models.enums.PatientStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface PatientRepository extends JpaRepository<Patient, Long> {
-    Page<Patient> findByStatus(Pageable pageable, String status);
-    Page<Patient> findByNameContainingAndStatus(Pageable pageable, String name, String status);
-    Patient findByIdAndStatus(Long id, String status);
-    Patient findByCpfAndStatus(String cpf, String status);
-    Patient findByEmailAndStatus(String email, String status);
+  @Query("SELECT p FROM Patient p WHERE p.person.email = :email")
+  Optional<Patient> findByPersonEmail(String email);
 
-    boolean existsByCpf(String cpf);
-    boolean existsByCpfAndStatus(String cpf, String status);
+  @Query("SELECT p FROM Patient p WHERE p.person.cpf = :cpf")
+  Optional<Patient> findByPersonCpf(String cpf);
+
+  boolean existsByPersonId(Long personId);
+
+  Page<Patient> findByStatus(PatientStatus status, Pageable pageable);
+
+  @Query("SELECT p FROM Patient p WHERE p.id = :id AND p.status = 'ACTIVE'")
+  Optional<Patient> findActiveById(Long id);
 }

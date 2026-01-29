@@ -21,7 +21,7 @@ public class DoctorScheduleValidator implements AppointmentValidator{
     }
     boolean doctorIsBusy = appointmentRepository.existsByDoctorIdAndDate(appointmentFormDto.doctorId(), appointmentFormDto.date());
     if (doctorIsBusy){
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Doctor already has an appointment at this time.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Médico já possui outra consulta agendada nesse horário.");
     }
   }
 }

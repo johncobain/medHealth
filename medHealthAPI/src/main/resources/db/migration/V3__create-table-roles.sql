@@ -1,6 +1,6 @@
 CREATE TABLE roles (
     id SERIAL PRIMARY KEY,
-    role VARCHAR(255) NOT NULL
+    role VARCHAR(255) NOT NULL UNIQUE
 );
 
 INSERT INTO roles (role) VALUES ('ROLE_USER');

@@ -12,7 +12,7 @@ public class CompletedAppointmentCancellationValidator implements CancellationVa
     @Override
     public void validate(Appointment appointment) {
         if (appointment.getStatus().equals(AppointmentStatus.ATTENDED)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot cancel an attended appointment.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível cancelar uma consulta concluída.");
         }
     }
 }

@@ -22,7 +22,7 @@ public class JWTTokenService {
             var algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer("medHealth")
-                    .withSubject(user.getEmail())
+                    .withSubject(user.getPerson().getEmail())
                     .withExpiresAt(expirationDate())
                     .sign(algorithm);
         }catch (JWTCreationException exception){

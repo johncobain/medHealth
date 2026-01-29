@@ -3,6 +3,9 @@ package br.edu.ifba.inf012.medHealthAPI.services;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import br.edu.ifba.inf012.medHealthAPI.models.entities.Person;
+import br.edu.ifba.inf012.medHealthAPI.models.entities.User;
+import br.edu.ifba.inf012.medHealthAPI.models.enums.CancellationReason;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifba.inf012.medHealthAPI.dtos.appointment.AppointmentDto;
@@ -20,14 +23,51 @@ public class EmailService {
     this.emailProducer = emailProducer;
   }
 
-  public void sendUserRegistrationEmail(String emailTo, String userName) {
-    String subject = "Cadastro realizado com sucesso - Bem Vindo ao MedHealth!";
-    String text = "Olá, " + userName + ",\n\n" +
-                  "Seu cadastro no MedHealth foi realizado com sucesso!\n" +
-                  "Agora você pode utilizar o nosso sistema de agendamento de consultas.\n\n" +
-                  "Atenciosamente,\n" +
-                  "Equipe MedHealth";
-    EmailDto emailDto = new EmailDto(emailTo, subject, text);
+  public void sendCredentialsEmail(Person person, String tempPassword, boolean isDoctor) {
+    String role = isDoctor ? "médico(a)" : "paciente";
+
+    String subject = "Bem Vindo ao MedHealth - Credenciais de Acesso";
+    String text = String.format("""
+            Olá %s,
+            
+            Seu cadastro como %s foi realizado com sucesso no sistema MedHealth!
+            
+            📧 Login: %s
+            🔑 Senha provisória: %s
+  
+            ⚠️ Por segurança, recomendamos alterar sua senha no primeiro acesso.
+            
+            Acesse a plaforma e realize o seu login.
+            Após o login, vá em "Perfil" > "Alterar Senha"
+            
+            Atenciosamente,
+            Equipe MedHealth
+            """, person.getFullName(), role, person.getEmail(), tempPassword);
+
+    EmailDto emailDto = new EmailDto(person.getEmail(), subject, text);
+    emailProducer.publishEmailMessage(emailDto);
+  }
+
+  public void sendPasswordResetEmail(User user, String token) {
+    String resetLink = "http://localhost:5173/reset-password?token=" + token;
+
+    String subject = "MedHealth - Recuperação de Senha";
+    String text = String.format("""
+            Olá %s,
+            
+            Recebemos uma solicitação de recuperação de senha para sua conta.
+            
+            Clique no link abaixo para redefinir sua senha (válido por 1 hora):
+            %s
+            
+            Se você não solicitou esta alteração, ignore este email.
+            Sua senha permanecerá inalterada.
+            
+            Atenciosamente,
+            Equipe MedHealth
+            """, user.getPerson().getFullName(), resetLink);
+
+    EmailDto emailDto = new EmailDto(user.getUsername(), subject, text);
     emailProducer.publishEmailMessage(emailDto);
   }
 
@@ -37,12 +77,18 @@ public class EmailService {
     String hour = dateTime.format(dateTimeFormatterHour);
 
     String subject = "Consulta marcada com sucesso!";
-    String text = "Olá, " + appointment.patient().name() + ",\n\n" +
-                  "Sua consulta no MedHealth com o doutor " + appointment.doctor().name() + " foi marcada para a data "+ date + "às "+ hour +"\n" +
-                  "Caso não possa comparecer, pedimos a gentileza de avisar com antecedência.\n" +
-                  "Ficamos à disposição para qualquer dúvida.\n\n" +
-                  "Atenciosamente,\n" +
-                  "Equipe MedHealth";
+    String text = String.format("""
+            Olá %s,
+            
+            Sua consulta no MedHealth com o Dr(a). %s foi marcada para a data %s às %s.
+            
+            Caso não possa comparecer, pedimos a gentileza de avisar com antecedência.
+            Ficamos à disposição para qualquer dúvida.
+            
+            Atenciosamente
+            Equipe MedHealth
+            """, appointment.patient().fullName(), appointment.doctor().fullName(), date, hour);
+
     EmailDto emailDto = new EmailDto(patientEmail, subject, text);
     emailProducer.publishEmailMessage(emailDto);
   }
@@ -53,12 +99,18 @@ public class EmailService {
     String hour = dateTime.format(dateTimeFormatterHour);
 
     String subject = "Consulta marcada com sucesso!";
-    String text = "Olá, Dt. " + appointment.doctor().name() + ",\n\n" +
-                  "Sua consulta no MedHealth com o paciente " + appointment.patient().name() + " foi marcada para a data "+ date + " às "+ hour +"\n" +
-                  "Caso não possa comparecer, pedimos a gentileza de avisar com antecedência.\n" +
-                  "Ficamos à disposição para qualquer dúvida.\n\n" +
-                  "Atenciosamente,\n" +
-                  "Equipe MedHealth";
+    String text = String.format("""
+          Olá, Dr(a). %s
+          
+          Sua consulta no MedHealth com o paciente %s foi marcada para a data %s às %s
+          
+          Caso não possa comparecer, pedimos a gentileza de avisar com antecedência.
+          Ficamos à disposição para qualquer dúvida.
+          
+          Atenciosamente,
+          Equipe MedHealth
+          """, appointment.doctor().fullName(), appointment.patient().fullName(), date, hour);
+
     EmailDto emailDto = new EmailDto(doctorEmail, subject, text);
     emailProducer.publishEmailMessage(emailDto);
   }
@@ -69,13 +121,26 @@ public class EmailService {
     String hour = dateTime.format(dateTimeFormatterHour);
 
     String subject = "Consulta cancelada!";
-    String text = "Olá, " + appointment.patient().name() + ",\n\n" +
-                  "Sua consulta no MedHealth com o Dr. " + appointment.doctor().name() + ", marcada para a data "+ date + " às "+ hour + " foi cancelada.\n" +
-                  "Motivo: " + cancellation.getReason().toString() + "\n" +
-                  (cancellation.getMessage().isEmpty() ? "" : "Mensagem: "+cancellation.getMessage() + "\n") +
-                  "Ficamos à disposição para qualquer dúvida.\n\n" +
-                  "Atenciosamente,\n" +
-                  "Equipe MedHealth";
+    String text = String.format("""
+          Olá, %s
+          
+          Sua consulta no MedHealth com o Dr(a). %s para a data %s às %s foi cancelada.
+          
+          Motivo: %s
+          %s
+          
+          Ficamos à disposição para qualquer dúvida.
+          Atenciosamente,
+          Equipe MedHealth
+          """,
+        appointment.patient().fullName(),
+        appointment.doctor().fullName(),
+        date, hour,
+        translateCancellationReason(cancellation.getReason()),
+        cancellation.getMessage() != null && !cancellation.getMessage().isEmpty()
+            ? "\n Mensagem: " + cancellation.getMessage()
+            : "");
+
     EmailDto emailDto = new EmailDto(patientEmail, subject, text);
     emailProducer.publishEmailMessage(emailDto);
   }
@@ -86,13 +151,26 @@ public class EmailService {
     String hour = dateTime.format(dateTimeFormatterHour);
     
     String subject = "Consulta cancelada!";
-    String text = "Olá, Dr. " + appointment.doctor().name() + ",\n\n" +
-                  "Sua consulta no MedHealth com o paciente " + appointment.patient().name() + ", marcada para a data "+ date + " às "+ hour + " foi cancelada.\n" +
-                  "Motivo: " + cancellation.getReason().toString() + "\n" +
-                  (cancellation.getMessage().isEmpty() ? "" : "Mensagem: "+cancellation.getMessage() + "\n") +
-                  "Ficamos à disposição para qualquer dúvida.\n\n" +
-                  "Atenciosamente,\n" +
-                  "Equipe MedHealth";
+    String text = String.format("""
+          Olá, Dr(a). %s
+          
+          Sua consulta no MedHealth com o paciente %s para a data %s às %s foi cancelada.
+          
+          Motivo: %s
+          %s
+          
+          Ficamos à disposição para qualquer dúvida.
+          Atenciosamente,
+          Equipe MedHealth
+          """,
+          appointment.doctor().fullName(),
+          appointment.patient().fullName(),
+          date, hour,
+          translateCancellationReason(cancellation.getReason()),
+          cancellation.getMessage() != null && !cancellation.getMessage().isEmpty()
+            ? "\n Mensagem: " + cancellation.getMessage()
+            : "");
+
     EmailDto emailDto = new EmailDto(doctorEmail, subject, text);
     emailProducer.publishEmailMessage(emailDto);
   }
@@ -103,11 +181,16 @@ public class EmailService {
     String hour = dateTime.format(dateTimeFormatterHour);
 
     String subject = "Consulta realizada com sucesso!";
-    String text = "Olá, " + appointment.patient().name() + ",\n\n" +
-                  "Sua consulta no MedHealth com o Dr. " + appointment.doctor().name() + " para a data "+ date + "às "+ hour +" foi concluída!\n" +
-                  "Agradecemos a preferência.\n\n" +
-                  "Atenciosamente,\n" +
-                  "Equipe MedHealth";
+    String text = String.format("""
+          Olá, %s
+          
+          Sua consulta no MedHealth com o Dr(a). %s para a data %s às %s foi concluída!
+          
+          Agradecemos a preferência.
+          Atenciosamente,
+          Equipe MedHealth
+          """, appointment.patient().fullName(), appointment.doctor().fullName(), date, hour);
+
     EmailDto emailDto = new EmailDto(patientEmail, subject, text);
     emailProducer.publishEmailMessage(emailDto);
   }
@@ -118,13 +201,26 @@ public class EmailService {
     String hour = dateTime.format(dateTimeFormatterHour);
 
     String subject = "Consulta realizada com sucesso!";
-    String text = "Olá, Dr. " + appointment.doctor().name() + ",\n\n" +
-                  "Sua consulta no MedHealth com o paciente " + appointment.patient().name() + " para a data "+ date + "às "+ hour +" foi concluída!\n" +
-                  "Ficamos à disposição para qualquer dúvida.\n\n" +
-                  "Atenciosamente,\n" +
-                  "Equipe MedHealth";
+    String text = String.format("""
+          Olá, Dr(a). %s
+          
+          Sua consulta no MedHealth com o paciente %s para a data %s às %s foi concluída!
+          
+          Ficamos à disposição para qualquer dúvida.
+          Atenciosamente,
+          Equipe MedHealth
+          """, appointment.doctor().fullName(), appointment.patient().fullName(), date, hour);
     EmailDto emailDto = new EmailDto(doctorEmail, subject, text);
     emailProducer.publishEmailMessage(emailDto);
   }
 
+  private String translateCancellationReason(CancellationReason reason) {
+    return switch (reason) {
+      case PATIENT_CANCELED -> "Solicitado pelo paciente";
+      case DOCTOR_CANCELED -> "Solicitado pelo médico";
+      case PERSONAL_REASON -> "Paciente não compareceu";
+      case MEDICAL_REASON -> "Médico não compareceu";
+      case OTHER -> "Outros motivos";
+    };
+  }
 }

@@ -3,6 +3,7 @@ package br.edu.ifba.inf012.medHealthAPI.services.validations;
 import br.edu.ifba.inf012.medHealthAPI.dtos.appointment.AppointmentFormDto;
 import br.edu.ifba.inf012.medHealthAPI.exceptions.EntityNotFoundException;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Doctor;
+import br.edu.ifba.inf012.medHealthAPI.models.enums.DoctorStatus;
 import br.edu.ifba.inf012.medHealthAPI.repositories.DoctorRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -24,8 +25,8 @@ public class ActiveDoctorValidator implements AppointmentValidator {
     Doctor doctor = doctorRepository.findById(appointmentFormDto.doctorId())
         .orElseThrow(() -> new EntityNotFoundException(Doctor.class.getSimpleName(), appointmentFormDto.doctorId()));
 
-    if(!"ACTIVE".equalsIgnoreCase(doctor.getStatus())){
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot schedule appointment for an inactive doctor.");
+    if(doctor.getStatus() != DoctorStatus.ACTIVE){
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível agendar consulta para um médico inativo.");
     }
   }
 }

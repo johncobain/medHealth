@@ -5,15 +5,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record UserFormDto (
-        @NotBlank(message = "Username is required")
-        String username,
-        @NotBlank(message = "Email is required")
-        String email,
-        @NotBlank(message = "Password is required")
-        @Size(max = 72, message = "Password must be at most 72 characters long")
+        @NotBlank(message = "ID de Pessoa é obrigatório")
+        Long personId,
+        @NotBlank(message = "Senha é obrigatória")
+        @Size(min = 6, message = "Senha deve ter no mínimo 6 caracteres")
+        @Size(max = 72, message = "Senha deve ter no máximo 72 caracteres")
         String password
 ){
    public UserFormDto(User user) {
-       this(user.getUsername(), user.getEmail(), user.getPassword());
+       this(user.getPerson().getId(), user.getPassword());
    }
 }

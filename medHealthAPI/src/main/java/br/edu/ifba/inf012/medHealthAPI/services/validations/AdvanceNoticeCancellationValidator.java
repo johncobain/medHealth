@@ -15,7 +15,7 @@ public class AdvanceNoticeCancellationValidator implements CancellationValidator
     long hours = Duration.between(now, appointmentDate).toHours();
 
     if(hours < 24){
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cancellation must be made at least 24 hours in advance.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cancelamento deve ser feito com pelo menos 24 horas de antecedência.");
     }
   }
 }

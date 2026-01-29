@@ -9,12 +9,15 @@ public class EntityNotFoundException extends ResponseStatusException {
     }
 
     public EntityNotFoundException(Long id) {
-        super(HttpStatus.NOT_FOUND, "Entity not found with id: " + id);
+        super(HttpStatus.NOT_FOUND, "Entidade não encontrada com id: " + id);
     }
 
     public EntityNotFoundException(String name, Long id) {
-        super(HttpStatus.NOT_FOUND, name + " not found with id: " + id);
+        super(HttpStatus.NOT_FOUND, name + " não encontrada com id: " + id);
     }
 
+    public EntityNotFoundException(String name, String attribute, String attributeName) {
+        super(HttpStatus.NOT_FOUND, name + " não encontrada com " + attribute + " = " + attributeName);
+    }
 
 }

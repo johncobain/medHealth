@@ -9,4 +9,4 @@ CREATE TABLE appointments (
 
     FOREIGN KEY (doctor_id) REFERENCES doctors(id),
     FOREIGN KEY (patient_id) REFERENCES patients(id)
-)
+);

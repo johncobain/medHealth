@@ -18,7 +18,7 @@ public class PatientScheduleValidator implements AppointmentValidator{
   public void validate(AppointmentFormDto appointmentFormDto) {
    boolean patientHasAppointment = appointmentRepository.existsByPatientIdAndDate(appointmentFormDto.patientId(), appointmentFormDto.date());
    if (patientHasAppointment){
-    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Patient already has an appointment on this day.");
+    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paciente já possui outra consulta agendada nesse horário.");
    }
   }
 }

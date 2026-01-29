@@ -3,6 +3,7 @@ package br.edu.ifba.inf012.medHealthAPI.controllers;
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorFormDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorUpdateDto;
+import br.edu.ifba.inf012.medHealthAPI.models.enums.Specialty;
 import br.edu.ifba.inf012.medHealthAPI.services.DoctorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,41 +27,84 @@ public class DoctorController {
   }
 
   @GetMapping
-  @Operation(summary = "Get All active Doctors")
+  @Operation(summary = "Retorna todos os médicos")
   @ApiResponse(responseCode = "200")
-  public ResponseEntity<Page<DoctorDto>> getAll(
+  public ResponseEntity<Page<DoctorDto>> findAll(
     @ParameterObject
-    @PageableDefault(size = 10, sort = {"name"}, direction = Sort.Direction.ASC)
+    @PageableDefault(size = 10, sort = {"fullName"}, direction = Sort.Direction.ASC)
     Pageable pageable
   ){
-    return ResponseEntity.ok(doctorService.getAll(pageable));
+    return ResponseEntity.ok(doctorService.findAll(pageable));
   }
 
   @GetMapping("/{id}")
-  @Operation(summary = "Get an active Doctor")
+  @Operation(summary = "Retorna um médico")
   @ApiResponse(responseCode = "200")
-  public ResponseEntity<DoctorDto> getOne(@PathVariable Long id){
-    return ResponseEntity.ok(doctorService.getOne(id));
+  public ResponseEntity<DoctorDto> findById(@PathVariable Long id){
+    return ResponseEntity.ok(doctorService.findById(id));
+  }
+
+  @GetMapping("/email/{email}")
+  @Operation(summary = "Retorna um médico por email")
+  @ApiResponse(responseCode = "200")
+  public ResponseEntity<DoctorDto> findByEmail(@PathVariable String email) {
+    return ResponseEntity.ok(doctorService.findByEmail(email));
+  }
+
+  @GetMapping("/cpf/{cpf}")
+  @Operation(summary = "Retorna um médico por cpf")
+  @ApiResponse(responseCode = "200")
+  public ResponseEntity<DoctorDto> findByCpf(@PathVariable String cpf) {
+    return ResponseEntity.ok(doctorService.findByCpf(cpf));
+  }
+
+  @GetMapping("/crm/{crm}")
+  @Operation(summary = "Retorna um médico por crm")
+  @ApiResponse(responseCode = "200")
+  public ResponseEntity<DoctorDto> findByCrm(@PathVariable String crm) {
+    return ResponseEntity.ok(doctorService.findByCrm(crm));
+  }
+
+  @GetMapping("/specialty/{specialty}")
+  @Operation(summary = "Retorna médicos por especialidade")
+  @ApiResponse(responseCode = "200")
+  public ResponseEntity<Page<DoctorDto>> findBySpecialty(
+      @PathVariable Specialty specialty,
+      @ParameterObject
+      @PageableDefault(size = 10, sort = {"fullName"}, direction = Sort.Direction.ASC)
+      Pageable pageable
+  ) {
+    return ResponseEntity.ok(doctorService.findBySpecialty(specialty, pageable));
   }
 
   @PostMapping
-  @Operation(summary = "Create a new Doctor")
+  @Operation(summary = "Cria um novo médico")
   @ApiResponse(responseCode = "201")
-  public ResponseEntity<DoctorDto> create(@Valid @RequestBody DoctorFormDto doctorFormDto) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(doctorService.save(doctorFormDto));
+  public ResponseEntity<DoctorDto> create(@Valid @RequestBody DoctorFormDto dto) {
+    DoctorDto doctor = doctorService.save(dto);
+    return ResponseEntity.status(HttpStatus.CREATED).body(doctor);
   }
 
   @PutMapping("/{id}")
-  @Operation(summary = "Update an active Doctor")
+  @Operation(summary = "Atualiza um médico")
   @ApiResponse(responseCode = "200")
-  public ResponseEntity<DoctorDto> update(@Valid @RequestBody DoctorUpdateDto doctorUpdateDto, @PathVariable Long id){
-    return ResponseEntity.ok(doctorService.update(doctorUpdateDto, id));
+  public ResponseEntity<DoctorDto> update(@PathVariable Long id,@Valid @RequestBody DoctorUpdateDto doctor){
+    return ResponseEntity.ok(doctorService.update(id, doctor));
   }
 
   @DeleteMapping("/{id}")
-  @Operation(summary = "Delete an active Doctor")
-  @ApiResponse(responseCode = "200")
-  public ResponseEntity<DoctorDto> delete(@PathVariable Long id){
-    return ResponseEntity.ok(doctorService.delete(id));
+  @Operation(summary = "Deleta um médico")
+  @ApiResponse(responseCode = "204")
+  public ResponseEntity<Void> delete(@PathVariable Long id){
+    doctorService.delete(id);
+    return ResponseEntity.noContent().build();
+  }
+
+  @PatchMapping("/{id}/activate")
+  @Operation(summary = "Ativa um médico")
+  @ApiResponse(responseCode = "204")
+  public ResponseEntity<Void> activate(@PathVariable Long id) {
+    doctorService.activate(id);
+    return ResponseEntity.noContent().build();
   }
 }

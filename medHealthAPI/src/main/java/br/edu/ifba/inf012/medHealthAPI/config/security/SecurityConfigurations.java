@@ -13,38 +13,52 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @EnableWebSecurity
 @Configuration
 public class SecurityConfigurations {
-    @Autowired
-    private SecurityFilter securityFilter;
+  @Autowired
+  private SecurityFilter securityFilter;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(ses -> ses.disable())
-                .sessionManagement(
-                        sm ->
-                                sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(req ->{
-                    req.requestMatchers(HttpMethod.POST, "/login").permitAll();
-                    req.requestMatchers(HttpMethod.POST, "/users/register").permitAll();
-                    req.requestMatchers(HttpMethod.GET, "/").permitAll();
-                    req.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**").permitAll();
-                    req.anyRequest().authenticated();
-                })
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    return http
+      .csrf(csrf -> csrf.disable())
+      .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+      .authorizeHttpRequests(req -> req
+        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+        .requestMatchers(HttpMethod.POST, "/auth/forgot-password").permitAll()
+        .requestMatchers(HttpMethod.POST, "/auth/reset-password").permitAll()
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
-    }
+        .requestMatchers(HttpMethod.GET, "/").permitAll()
 
-    @Bean
-    public PasswordEncoder passwordEncoder(){
+        .requestMatchers(HttpMethod.POST, "/patients").hasRole("ADMIN")
+        .requestMatchers(HttpMethod.POST, "/doctors").hasRole("ADMIN")
+        .requestMatchers(HttpMethod.DELETE, "/patients/**").hasRole("ADMIN")
+        .requestMatchers(HttpMethod.DELETE, "/doctors/**").hasRole("ADMIN")
+
+        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**").permitAll()
+
+        .anyRequest().authenticated()
+      )
+      .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+      .build();
+  }
+
+  @Bean
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+    return configuration.getAuthenticationManager();
+  }
+
+  @Bean
+  public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
 }

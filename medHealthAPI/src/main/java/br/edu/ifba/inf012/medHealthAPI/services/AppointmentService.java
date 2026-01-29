@@ -10,6 +10,7 @@ import br.edu.ifba.inf012.medHealthAPI.models.entities.Doctor;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Patient;
 import br.edu.ifba.inf012.medHealthAPI.models.enums.AppointmentStatus;
 import br.edu.ifba.inf012.medHealthAPI.models.enums.CancellationReason;
+import br.edu.ifba.inf012.medHealthAPI.models.enums.Specialty;
 import br.edu.ifba.inf012.medHealthAPI.repositories.AppointmentRepository;
 import br.edu.ifba.inf012.medHealthAPI.repositories.CancellationRepository;
 import br.edu.ifba.inf012.medHealthAPI.repositories.DoctorRepository;
@@ -47,59 +48,94 @@ public class AppointmentService {
 	  this.emailService = emailService;
   }
 
-  public Page<AppointmentDto> getAll(Pageable pageable, Long doctorId, Long patientId, String status, Timestamp startDate, Timestamp endDate){
+  public Page<AppointmentDto> findAll(Pageable pageable, Long doctorId, Long patientId, String status, Timestamp startDate, Timestamp endDate){
     Page<Appointment> appointments = appointmentRepository.findAllFiltered(pageable, doctorId, patientId, status, startDate, endDate);
-    return appointments.map(AppointmentDto::new);
+    return appointments.map(AppointmentDto::fromEntity);
+  }
+
+  public AppointmentDto findById(Long id) {
+    Appointment appointment = appointmentRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException(Appointment.class.getSimpleName(), id));
+    return AppointmentDto.fromEntity(appointment);
   }
 
   @Transactional
-  public AppointmentDto schedule(AppointmentFormDto appointmentFormDto){
-    validators.forEach(v -> v.validate(appointmentFormDto));
+  public AppointmentDto schedule(AppointmentFormDto dto){
+    validators.forEach(v -> v.validate(dto));
 
-    Patient patient = patientRepository.findById(appointmentFormDto.patientId())
-        .orElseThrow(() -> new EntityNotFoundException(Patient.class.getSimpleName(), appointmentFormDto.patientId()));
+    Patient patient = patientRepository.findById(dto.patientId())
+        .orElseThrow(() -> new EntityNotFoundException(Patient.class.getSimpleName(), dto.patientId()));
 
-    Doctor doctor = chooseDoctor(appointmentFormDto);
+    Doctor doctor = chooseDoctor(dto);
 
     Appointment appointment = new Appointment();
     appointment.setPatient(patient);
     appointment.setDoctor(doctor);
-    appointment.setDate(appointmentFormDto.date());
+    appointment.setDate(dto.date());
     appointment.setStatus(AppointmentStatus.SCHEDULED);
+    appointment = appointmentRepository.save(appointment);
 
-    AppointmentDto appointmentDtoSaved = AppointmentDto.fromEntity(appointmentRepository.save(appointment));
+    AppointmentDto appointmentDtoSaved = AppointmentDto.fromEntity(appointment);
 
-    emailService.sendAppointmentConfirmationToDoctor(doctor.getEmail(), appointmentDtoSaved);
-    emailService.sendAppointmentConfirmationToPatient(patient.getEmail(), appointmentDtoSaved);
+    emailService.sendAppointmentConfirmationToDoctor(doctor.getPerson().getEmail(), appointmentDtoSaved);
+    emailService.sendAppointmentConfirmationToPatient(patient.getPerson().getEmail(), appointmentDtoSaved);
 
     return appointmentDtoSaved;
   }
 
   @Transactional
-  public void cancel(Long appointmentId, CancellationFormDto cancellationFormDto){
-    Appointment appointment = appointmentRepository.findById(appointmentId)
-        .orElseThrow(() -> new EntityNotFoundException(Appointment.class.getSimpleName(), appointmentId));
+  public AppointmentDto cancel(Long id, CancellationFormDto dto){
+    Appointment appointment = appointmentRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException(Appointment.class.getSimpleName(), id));
 
-    cancellationValidators.forEach(v -> v.validate(appointment));
+    Appointment finalAppointment = appointment;
+    cancellationValidators.forEach(v -> v.validate(finalAppointment));
 
-    if(cancellationFormDto.reason() == CancellationReason.OTHER && (cancellationFormDto.message() == null || cancellationFormDto.message().isBlank())){
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Message is required when reason is 'OUTROS'.");
+    if(dto.reason() == CancellationReason.OTHER && (dto.message() == null || dto.message().isBlank())){
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Motivo de cancelamento é obrigatório quando a razão for 'OUTROS'.");
     }
 
     appointment.setStatus(AppointmentStatus.CANCELED);
-    appointmentRepository.save(appointment);
+    appointment = appointmentRepository.save(appointment);
 
-    Cancellation cancellation = new Cancellation(appointment, cancellationFormDto.reason(), cancellationFormDto.message());
+    Cancellation cancellation = new Cancellation(appointment, dto.reason(), dto.message());
     cancellationRepository.save(cancellation);
 
     AppointmentDto appointmentDto = AppointmentDto.fromEntity(appointment);
 
     emailService.sendAppointmentCancelationToDoctor(appointmentDto.doctor().email(), appointmentDto, cancellation);
     emailService.sendAppointmentCancelationToPatient(appointmentDto.patient().email(), appointmentDto, cancellation);
+
+    return appointmentDto;
   }
 
   @Transactional
-  public void attend(Long appointmentId){}// TODO: implement && email
+  public AppointmentDto attend(Long appointmentId){
+    Appointment appointment = appointmentRepository.findById(appointmentId)
+        .orElseThrow(() -> new EntityNotFoundException(Appointment.class.getSimpleName(), appointmentId));
+
+    if(appointment.getStatus() == AppointmentStatus.CANCELED){
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível completar uma consulta cancelada");
+    }
+
+    if (appointment.getStatus() == AppointmentStatus.ATTENDED) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Consulta já foi concluída");
+    }
+
+    Timestamp now = new Timestamp(System.currentTimeMillis());
+    if (now.before(appointment.getDate())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível concluir uma consulta que ainda não aconteceu");
+    }
+    appointment.setStatus(AppointmentStatus.ATTENDED);
+    appointment = appointmentRepository.save(appointment);
+
+    AppointmentDto appointmentDto = AppointmentDto.fromEntity(appointment);
+
+    emailService.sendAppointmentAttendanceToDoctor(appointmentDto.doctor().email(), appointmentDto);
+    emailService.sendAppointmentAttendanceToPatient(appointmentDto.patient().email(), appointmentDto);
+
+    return appointmentDto;
+  }
 
   private Doctor chooseDoctor(AppointmentFormDto dto){
     if(dto.doctorId() != null){
@@ -108,13 +144,13 @@ public class AppointmentService {
     }
 
     if(dto.specialty() == null){
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Specialty is required if doctorId is not provided.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Especialidade é obrigatória se o id do médico não for fornecido.");
     }
 
-    List<Doctor> allDoctorsInSpecialty = doctorRepository.findAllActiveBySpecialty(dto.specialty().toUpperCase());
+    List<Doctor> allDoctorsInSpecialty = doctorRepository.findAllActiveBySpecialty(Specialty.valueOf(dto.specialty()));
 
     if(allDoctorsInSpecialty.isEmpty()){
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "No doctors available for this specialty.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Nenhum médico disponível para essa especialidade.");
     }
 
     LocalDateTime start = dto.date().toLocalDateTime();
@@ -129,7 +165,7 @@ public class AppointmentService {
         .toList();
 
     if(availableDoctors.isEmpty()){
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "No doctors available at the selected time for this specialty.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Nenhum médico disponível para essa especialidade.");
     }
     return availableDoctors.getFirst();
   }
