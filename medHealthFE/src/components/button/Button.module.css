@@ -2,12 +2,17 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: var(--spacing-sm);
   width: 12rem;
   font-weight: var(--font-weight-medium);
   border-radius: var(--border-radius-md);
   transition: all var(--transition-base);
   cursor: pointer;
   border: none;
+}
+
+.button svg {
+  flex-shrink: 0;
 }
 
 .button:disabled {
