@@ -33,32 +33,38 @@ const LoginPage = () => {
         <h2 className={styles.subtitle}>Login</h2>
         {error && <p className={styles.error}>{error}</p>}
 
-        <div className='mt-md'>
-          <label htmlFor="email" className={styles.inputlabel}>Email</label>
+        <div className="mt-md">
+          <label htmlFor="email" className={styles.inputlabel}>
+            Email
+          </label>
           <input
             type="email"
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className={styles.input}
+            className='input'
           />
         </div>
 
-        <div className='mt-md'>
-          <label htmlFor="password" className={styles.inputlabel}>Senha</label>
+        <div className="mt-md">
+          <label htmlFor="password" className={styles.inputlabel}>
+            Senha
+          </label>
           <input
             type="password"
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className={styles.input}
+            className='input'
           />
         </div>
 
-        <div className='text-right mt-sm mb-md'>
-          <Link to="/forgot-password" className="text-sm text-primary link">Esqueci minha senha</Link>
+        <div className="text-right mt-sm mb-md">
+          <Link to="/forgot-password" className="text-sm text-primary link">
+            Esqueci minha senha
+          </Link>
         </div>
         <Button type="submit">Entrar</Button>
       </form>

@@ -2,6 +2,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--color-primary-light);
 }
 
 .main {
@@ -40,14 +41,15 @@
 }
 
 .userSection span {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-light);
-    font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-light);
+  font-weight: var(--font-weight-medium);
 }
 
 .footer {
   margin-top: auto;
   padding: var(--spacing-lg);
   text-align: center;
+  background-color: var(--color-surface);
   border-top: 1px solid var(--color-border);
 }

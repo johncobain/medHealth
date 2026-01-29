@@ -64,21 +64,6 @@
   font-size: var(--font-size-sm);
 }
 
-.input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-md);
-  font-size: 1rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  outline: none;
-}
-
-.input:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--color-primary-light, rgba(37, 99, 235, 0.1));
-}
-
 .form button {
   width: 100%;
   margin-top: var(--spacing-md);

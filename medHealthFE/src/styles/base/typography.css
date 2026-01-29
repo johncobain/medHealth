@@ -74,10 +74,14 @@ p {
   text-align: left;
 }
 
-.link{
+.link {
   text-decoration: none;
 }
 
 .link:hover {
   text-decoration: underline;
+}
+
+.pre-line{
+  white-space: pre-line;
 }

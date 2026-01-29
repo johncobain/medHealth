@@ -17,14 +17,15 @@ const MainLayout = () => {
           <NavLink to="/" className={({ isActive }) => (isActive ? styles.active : '')}>
             Home
           </NavLink>
-          
-          {(user?.role === "ROLE_ADMIN" || user?.role === "ROLE_DOCTOR") && 
-          <NavLink to="/patients" className={({ isActive }) => (isActive ? styles.active : '')}>
-            {user?.role === "ROLE_ADMIN" ? "Gerenciar " : "Buscar"} Pacientes
-          </NavLink>}
+
+          {(user?.role === 'ROLE_ADMIN' || user?.role === 'ROLE_DOCTOR') && (
+            <NavLink to="/patients" className={({ isActive }) => (isActive ? styles.active : '')}>
+              {user?.role === 'ROLE_ADMIN' ? 'Gerenciar ' : 'Buscar'} Pacientes
+            </NavLink>
+          )}
 
           <NavLink to="/doctors" className={({ isActive }) => (isActive ? styles.active : '')}>
-            {user?.role === "ROLE_ADMIN" ? "Gerenciar " : "Buscar"} Médicos
+            {user?.role === 'ROLE_ADMIN' ? 'Gerenciar ' : 'Buscar'} Médicos
           </NavLink>
 
           <NavLink to="/appointments" className={({ isActive }) => (isActive ? styles.active : '')}>
@@ -35,12 +36,14 @@ const MainLayout = () => {
           </NavLink>
 
           <div className={styles.userSection}>
-            <span>Olá, {user?.fullName}</span>
-            <Button variant="outline" size="fit" onClick={logout}>Sair</Button>
+            <span>Olá, {user?.fullName.split(' ')[0]}</span>
+            <Button variant="outline" size="fit" onClick={logout}>
+              Sair
+            </Button>
           </div>
         </nav>
       </header>
-      <main className={`container mt-md ${styles.main}`}>
+      <main className={`container mt-md mb-md ${styles.main}`}>
         <Outlet />
       </main>
       <footer className={styles.footer}>

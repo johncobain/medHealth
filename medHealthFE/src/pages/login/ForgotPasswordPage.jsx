@@ -1,8 +1,8 @@
-import { useState } from "react";
-import authService from "../../services/authService";
-import styles from "./LoginPage.module.css";
-import { Link } from "react-router-dom";
-import Button from "../../components/button/Button";
+import { useState } from 'react';
+import authService from '../../services/authService';
+import styles from './LoginPage.module.css';
+import { Link } from 'react-router-dom';
+import Button from '../../components/button/Button';
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
@@ -19,8 +19,9 @@ const ForgotPasswordPage = () => {
     try {
       await authService.forgotPassword(email);
       setMessage(`Um link de recuperação foi enviado para ${email}.`);
-    }catch (err) {
-      const errorMessage = err.response?.data?.reason || "Erro ao conectar com o servidor. Tente novamente."
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.reason || 'Erro ao conectar com o servidor. Tente novamente.';
       setError(`Erro: ${errorMessage}`);
     } finally {
       setLoading(false);
@@ -40,15 +41,17 @@ const ForgotPasswordPage = () => {
             <p className="text-center text-sm text-light mb-md">
               Insira seu email para receber um link de recuperação de senha.
             </p>
-            <div className='mt-md'>
-              <label htmlFor="email" className={styles.inputlabel}>Email</label>
+            <div className="mt-md">
+              <label htmlFor="email" className={styles.inputlabel}>
+                Email
+              </label>
               <input
                 type="email"
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className={styles.input}
+                className='input'
                 disabled={loading}
               />
             </div>
@@ -65,7 +68,7 @@ const ForgotPasswordPage = () => {
         </div>
       </form>
     </div>
-  )
+  );
 };
 
 export default ForgotPasswordPage;

@@ -19,17 +19,17 @@ const getCurrentUser = () => {
 const forgotPassword = async (email) => {
   const response = await apiClient.post('/auth/forgot-password', { email });
   return response.data;
-}
+};
 
 const resetPassword = async (token, newPassword) => {
   const response = await apiClient.post('/auth/reset-password', { token, newPassword });
   return response.data;
-}
+};
 
-const changePassword = async (currentPassword, newPassword) => {
-  const response = await apiClient.post('/auth/change-password', { currentPassword, newPassword });
+const changePassword = async (oldPassword, newPassword) => {
+  const response = await apiClient.post('/auth/change-password', { oldPassword, newPassword });
   return response.data;
-}
+};
 
 const authService = {
   login,
