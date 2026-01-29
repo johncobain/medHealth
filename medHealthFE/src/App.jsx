@@ -9,12 +9,17 @@ import MainLayout from './layouts/mainLayout/MainLayout';
 import { AuthProvider } from './context/AuthContext';
 import LoginPage from './pages/login/LoginPage';
 import ProtectedRoute from './components/protectedRoute/ProtectedRoute';
+import ForgotPasswordPage from './pages/login/ForgotPasswordPage';
+import ResetPasswordPage from './pages/login/ResetPasswordPage';
 
 function App() {
   return (
     <AuthProvider>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+
         <Route element={<MainLayout />}>
           <Route path="/home" element={<Navigate to="/" />} />
 
@@ -23,6 +28,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <HomePage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
               </ProtectedRoute>
             }
           />
@@ -50,15 +64,6 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_DOCTOR', 'ROLE_PATIENT']}>
                 <Appointments />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/settings"
-            element={
-              <ProtectedRoute>
-                <Settings />
               </ProtectedRoute>
             }
           />

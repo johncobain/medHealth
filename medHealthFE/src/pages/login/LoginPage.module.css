@@ -42,6 +42,18 @@
   font-size: var(--font-size-sm);
   text-align: center;
   border: 1px solid #fecaca;
+  white-space: pre-line;
+}
+
+.success {
+  background-color: var(--color-success-light);
+  color: var(--color-success);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  text-align: center;
+  border: 1px solid #bbf7d0;
 }
 
 .inputlabel {

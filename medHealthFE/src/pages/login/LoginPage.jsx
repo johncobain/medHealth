@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import styles from './LoginPage.module.css';
 import Button from '../../components/button/Button';
@@ -57,6 +57,9 @@ const LoginPage = () => {
           />
         </div>
 
+        <div className='text-right mt-sm mb-md'>
+          <Link to="/forgot-password" className="text-sm text-primary link">Esqueci minha senha</Link>
+        </div>
         <Button type="submit">Entrar</Button>
       </form>
     </div>
