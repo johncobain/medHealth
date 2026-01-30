@@ -44,6 +44,6 @@ public class JWTTokenService {
     }
 
     private Instant expirationDate() {
-        return LocalDateTime.now().plusDays(10).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now().plusHours(22).toInstant(ZoneOffset.of("-03:00"));
     }
 }
