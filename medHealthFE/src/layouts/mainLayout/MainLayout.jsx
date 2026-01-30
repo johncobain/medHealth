@@ -1,4 +1,4 @@
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet, NavLink, Link } from 'react-router-dom';
 import styles from './MainLayout.module.css';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/button/Button';
@@ -9,10 +9,10 @@ const MainLayout = () => {
   return (
     <div className={styles.layout}>
       <header className="header flex justify-between items-center">
-        <div>
+        <Link to="/">
           <h1>MedHealth</h1>
           <p className="text-light">Sistema de Gestão Hospitalar</p>
-        </div>
+        </Link>
         <nav className={styles.nav}>
           <NavLink to="/" className={({ isActive }) => (isActive ? styles.active : '')}>
             Home

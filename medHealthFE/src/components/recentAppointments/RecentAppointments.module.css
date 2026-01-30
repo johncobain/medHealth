@@ -1,0 +1,124 @@
+.container {
+  margin-top: var(--spacing-2xl);
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--spacing-lg);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.card {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.cardHeader {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+}
+
+.appointmentId {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  display: block;
+}
+
+.patientName {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-light);
+}
+
+.cardBody {
+  padding: var(--spacing-md) var(--spacing-lg);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md) var(--spacing-xl);
+}
+
+.info {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.label {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.status {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.scheduled {
+  background-color: var(--color-info-light);
+  color: var(--color-info);
+}
+
+.attended {
+  background-color: var(--color-success-light);
+  color: var(--color-success);
+}
+
+.cancelled {
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+}
+
+.cardActions {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+}
+
+.completeBtn,
+.cancelBtn {
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color var(--transition-base);
+}
+
+.completeBtn {
+  color: var(--color-success);
+}
+
+.completeBtn:hover {
+  color: var(--color-secondary-hover);
+  text-decoration: underline;
+}
+
+.cancelBtn {
+  color: var(--color-error);
+}
+
+.cancelBtn:hover {
+  color: var(--color-error-hover);
+  text-decoration: underline;
+}
+
+.emptyState {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  text-align: center;
+  color: var(--color-text-light);
+}
