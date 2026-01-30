@@ -26,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -49,7 +50,14 @@ public class AppointmentService {
   }
 
   public Page<AppointmentDto> findAll(Pageable pageable, Long doctorId, Long patientId, String status, Timestamp startDate, Timestamp endDate){
-    Page<Appointment> appointments = appointmentRepository.findAllFiltered(pageable, doctorId, patientId, status, startDate, endDate);
+    AppointmentStatus statusEnum = null;
+    if(status != null && !status.isEmpty()){
+      try{
+        statusEnum = AppointmentStatus.valueOf(status.toUpperCase());
+      }catch(IllegalArgumentException e){
+      }
+    }
+      Page<Appointment> appointments = appointmentRepository.findAllFiltered(pageable, doctorId, patientId, statusEnum, startDate, endDate);
     return appointments.map(AppointmentDto::fromEntity);
   }
 
@@ -168,6 +176,33 @@ public class AppointmentService {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Nenhum médico disponível para essa especialidade.");
     }
     return availableDoctors.getFirst();
+  }
+
+  public long countTotal() {
+      return appointmentRepository.count();
+  }
+
+  public long countScheduled() {
+      return appointmentRepository.countByStatus(AppointmentStatus.SCHEDULED);
+  }
+
+  public long countToday() {
+      LocalDateTime now = LocalDateTime.now();
+      Timestamp start = Timestamp.valueOf(now.with(LocalTime.MIN));
+      Timestamp end = Timestamp.valueOf(now.with(LocalTime.MAX));
+      return appointmentRepository.countByDateBetween(start, end);
+  }
+
+  public Long getDoctorIdByEmail(String email) {
+    return doctorRepository.findByPersonEmail(email)
+            .map(Doctor::getId)
+            .orElse(null);
+  }
+
+  public Long getPatientIdByEmail(String email) {
+    return patientRepository.findByPersonEmail(email)
+            .map(Patient::getId)
+            .orElse(null);
   }
 }
 

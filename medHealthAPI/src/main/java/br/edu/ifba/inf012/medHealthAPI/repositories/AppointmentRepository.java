@@ -1,6 +1,8 @@
 package br.edu.ifba.inf012.medHealthAPI.repositories;
 
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Appointment;
+import br.edu.ifba.inf012.medHealthAPI.models.enums.AppointmentStatus;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +13,11 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
+
+  long countByStatus(AppointmentStatus status);
+
+  long countByDateBetween(Timestamp startOfDay, Timestamp endOfDay);
+
   boolean existsByDoctorIdAndDate(Long doctorId, Timestamp date);
 
   @Query("SELECT CASE WHEN COUNT(a) > 0 THEN TRUE ELSE FALSE END FROM Appointment a WHERE a.patient.id = :patientId AND FUNCTION('DATE', a.date) = FUNCTION('DATE', :date)")
@@ -29,7 +36,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     Pageable pageable,
     @Param("doctorId") Long doctorId,
     @Param("patientId") Long patientId,
-    @Param("status") String status,
+    @Param("status") AppointmentStatus status,
     @Param("startDate") Timestamp startDate,
     @Param("endDate") Timestamp endDate
   );

@@ -9,12 +9,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
@@ -38,13 +40,62 @@ public class AppointmentController {
     @RequestParam(required = false) Long patientId,
     @RequestParam(required = false) String status,
     @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate
+    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+    Authentication authentication
   ){
+    if (authentication != null) {
+      boolean isAdmin = authentication.getAuthorities().stream()
+              .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+      boolean isDoctor = authentication.getAuthorities().stream()
+              .anyMatch(a -> a.getAuthority().equals("ROLE_DOCTOR"));
+      boolean isPatient = authentication.getAuthorities().stream()
+              .anyMatch(a -> a.getAuthority().equals("ROLE_PATIENT"));
+      
+      String email = authentication.getName();
+
+      if (!isAdmin) {
+        if (isDoctor) {
+          doctorId = appointmentService.getDoctorIdByEmail(email);
+        } else if (isPatient) {
+          patientId = appointmentService.getPatientIdByEmail(email);
+        }
+      }
+    }
     Timestamp startTimestamp = (startDate != null) ? Timestamp.valueOf(startDate) : null;
     Timestamp endTimestamp = (endDate != null) ? Timestamp.valueOf(endDate) : null;
 
     Page<AppointmentDto> appointments = appointmentService.findAll(pageable, doctorId, patientId, status, startTimestamp, endTimestamp);
     return ResponseEntity.ok(appointments);
+  }
+
+  @GetMapping("/recent")
+  @Operation(summary = "Retorna os cinco agendamentos mais recentes")
+  @ApiResponse(responseCode = "200")
+  public ResponseEntity<Page<AppointmentDto>> getRecent(Authentication authentication) {
+    Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "date");
+    
+    Long doctorId = null;
+    Long patientId = null;
+    if (authentication != null) {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        boolean isDoctor = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_DOCTOR"));
+        boolean isPatient = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_PATIENT"));
+        
+        String email = authentication.getName();
+
+        if (!isAdmin) {
+            if (isDoctor) {
+                doctorId = appointmentService.getDoctorIdByEmail(email);
+            } else if (isPatient) {
+                patientId = appointmentService.getPatientIdByEmail(email);
+            }
+        }
+    }
+    
+    return ResponseEntity.ok(appointmentService.findAll(pageable, doctorId, patientId, null, null, null));
   }
 
   @GetMapping("/{id}")
@@ -60,14 +111,14 @@ public class AppointmentController {
     return ResponseEntity.status(HttpStatus.CREATED).body(appointment);
   }
 
-  @PostMapping("/{id}/cancel")
+  @PatchMapping("/{id}/cancel")
   @Operation(summary = "Cancela um agendamento")
   @ApiResponse(responseCode = "200")
   public ResponseEntity<AppointmentDto> cancel(@PathVariable Long id, @Valid @RequestBody CancellationFormDto dto){
     return ResponseEntity.ok(appointmentService.cancel(id, dto));
   }
 
-  @PatchMapping("/{id}/attend")
+  @PatchMapping("/{id}/complete")
   @Operation(summary = "Marca um agendamento como realizado")
   @ApiResponse(responseCode = "200")
   public ResponseEntity<AppointmentDto> attend(@PathVariable Long id){

@@ -166,4 +166,8 @@ public class DoctorService {
     }
     doctorRepository.deleteById(id);
   }
+
+  public long count() {
+    return doctorRepository.count();
+  }
 }
