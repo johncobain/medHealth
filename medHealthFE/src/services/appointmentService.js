@@ -1,17 +1,39 @@
 import apiClient from './apiClient';
 
 const appointmentService = {
+  getAll: async (params = {}) => {
+    try {
+      // params: page, size, sort, doctorId, patientId, status, startDate, endDate
+      const response = await apiClient.get('/appointments', { params });
+      return {
+        content: response.data.content || [],
+        total: response.data.totalElements || 0,
+        totalPages: response.data.totalPages || 0
+      };
+    } catch (error) {
+      console.error("Erro ao buscar consultas", error);
+      throw error;
+    }
+  },
+  
   getRecent: async () => {
     try {
       const response = await apiClient.get('/appointments/recent');
-      if (response.data && response.data.content) {
-        return response.data.content;
-      }
-      return [];
+      return response.data.content || [];
     } catch (error) {
       console.error("Erro ao buscar consultas recentes", error);
       throw error;
     }
+  },
+
+  getById: async (id) => {
+    const response = await apiClient.get(`/appointments/${id}`);
+    return response.data;
+  },
+
+  create: async (appointmentData) => {
+    const response = await apiClient.post('/appointments', appointmentData);
+    return response.data;
   },
 
   complete: async (id) => {

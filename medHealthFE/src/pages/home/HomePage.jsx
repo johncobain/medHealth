@@ -20,6 +20,7 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
   const [recentAppointments, setRecentAppointments] = useState([]);
+  const [totalAppointments, setTotalAppointments] = useState(0);
 
   const isAdmin = user?.role === 'ROLE_ADMIN';
   const isDoctor = user?.role === 'ROLE_DOCTOR';
@@ -31,8 +32,13 @@ const HomePage = () => {
       const statusData = await statusService.getStatus().catch(() => null);
       setStatus(statusData);
 
-      const appointmentsData = await appointmentService.getRecent().catch(() => []);
-      setRecentAppointments(appointmentsData);
+      const recentData = await appointmentService.getRecent().catch(() => []);
+      setRecentAppointments(recentData);
+
+      if (isDoctor || isPatient) {
+         const allAppointmentsData = await appointmentService.getAll({ size: 1 }).catch(() => ({ total: 0 }));
+         setTotalAppointments(allAppointmentsData.total);
+      }
 
       if (isAdmin) {
         const statsData = await dashboardService.getStats().catch(() => null);
@@ -51,7 +57,6 @@ const HomePage = () => {
     const interval = setInterval(() => {
         statusService.getStatus().then(setStatus).catch(()=>{});
     }, 20000);
-    
     return () => clearInterval(interval);
   }, [loadDashboardData]);
 
@@ -100,7 +105,7 @@ const HomePage = () => {
               primaryAction={() => navigate('/doctors')}
               primaryActionLabel="Ver Todos"
               secondaryAction={() => navigate('/doctors?action=new')}
-              secondaryActionLabel="Novo"
+              secondaryActionLabel="Cadastrar"
             />
             <StatsCard
               icon={<PatientIcon />}
@@ -110,7 +115,7 @@ const HomePage = () => {
               primaryAction={() => navigate('/patients')}
               primaryActionLabel="Ver Todos"
               secondaryAction={() => navigate('/patients?action=new')}
-              secondaryActionLabel="Novo"
+              secondaryActionLabel="Cadastrar"
             />
             <StatsCard
               icon={<AppointmentIcon />}
@@ -121,7 +126,7 @@ const HomePage = () => {
               primaryAction={() => navigate('/appointments')}
               primaryActionLabel="Ver Consultas"
               secondaryAction={() => navigate('/appointments?action=new')}
-              secondaryActionLabel="Nova"
+              secondaryActionLabel="Agendar"
             />
           </div>
         </section>
@@ -134,11 +139,13 @@ const HomePage = () => {
             <StatsCard
               icon={<AppointmentIcon />}
               title="Visão Geral"
-              mainValue={recentAppointments.length}
-              mainLabel={isDoctor ? 'Consultas recentes' : 'Histórico recente'}
-              subLabel="Consulte a lista abaixo"
+              mainValue={totalAppointments}
+              mainLabel={isDoctor ? 'Consultas totais' : 'Histórico de Consultas'}
+              subLabel="Consulte os últimos registros abaixo"
               primaryAction={() => navigate('/appointments')}
               primaryActionLabel="Ver Todas"
+              secondaryAction={() => navigate('/appointments?action=new')}
+              secondaryActionLabel="Agendar"
             />
           </div>
         </section>

@@ -33,7 +33,6 @@ const RecentAppointments = ({ appointments, onCancel, onComplete }) => {
       </section>
     );
   }
-
   return (
     <section className={styles.container}>
       <h2 className={styles.title}>Consultas Recentes</h2>
@@ -42,16 +41,16 @@ const RecentAppointments = ({ appointments, onCancel, onComplete }) => {
           <div key={appointment.id} className={styles.card}>
             <div className={styles.cardHeader}>
               <span className={styles.appointmentId}>Consulta #{appointment.id}</span>
-              <span className={styles.patientName}>{appointment.patientName}</span>
+              <span className={styles.patientName}>Paciente {appointment.patient.fullName}</span>
             </div>
             <div className={styles.cardBody}>
               <div className={styles.info}>
                 <span className={styles.label}>Médico:</span>
-                <span>{appointment.doctorName}</span>
+                <span>{appointment.doctor.fullName}</span>
               </div>
               <div className={styles.info}>
                 <span className={styles.label}>Especialidade:</span>
-                <span>{appointment.specialty}</span>
+                <span>{appointment.doctor.specialityDescription}</span>
               </div>
               <div className={styles.info}>
                 <span className={styles.label}>Status:</span>

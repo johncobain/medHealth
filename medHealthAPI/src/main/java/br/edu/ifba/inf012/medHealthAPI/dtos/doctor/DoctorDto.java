@@ -8,7 +8,8 @@ public record DoctorDto(
         String fullName,
         String email,
         String crm,
-        Specialty specialty
+        Specialty specialty,
+        String specialityDescription
 ) {
     public DoctorDto(Doctor doctor){
         this(
@@ -16,7 +17,8 @@ public record DoctorDto(
                 doctor.getPerson().getFullName(),
                 doctor.getPerson().getEmail(),
                 doctor.getCrm(),
-                doctor.getSpecialty()
+                doctor.getSpecialty(),
+                doctor.getSpecialty().getDescription()
         );
     }
 
