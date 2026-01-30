@@ -1,11 +1,24 @@
 package br.edu.ifba.inf012.medHealthAPI.services;
 
+import br.edu.ifba.inf012.medHealthAPI.dtos.address.AddressDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest.DoctorRequestDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest.DoctorRequestFormDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.user.*;
+import br.edu.ifba.inf012.medHealthAPI.exceptions.UniqueAttributeAlreadyRegisteredException;
+import br.edu.ifba.inf012.medHealthAPI.models.entities.Address;
+import br.edu.ifba.inf012.medHealthAPI.models.entities.DoctorRequest;
+import br.edu.ifba.inf012.medHealthAPI.models.entities.Patient;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Person;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Role;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.User;
+import br.edu.ifba.inf012.medHealthAPI.repositories.AddressRepository;
+import br.edu.ifba.inf012.medHealthAPI.repositories.DoctorRepository;
+import br.edu.ifba.inf012.medHealthAPI.repositories.DoctorRequestRepository;
+import br.edu.ifba.inf012.medHealthAPI.repositories.PersonRepository;
 import br.edu.ifba.inf012.medHealthAPI.repositories.RoleRepository;
 import br.edu.ifba.inf012.medHealthAPI.repositories.UserRepository;
+import jakarta.validation.Valid;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,17 +33,21 @@ import java.util.UUID;
 public class UserService {
   private final UserRepository userRepository;
   private final RoleRepository roleRepository;
+  private final DoctorRequestRepository doctorRequestRepository;
+  private final PersonRepository personRepository;
   private final PasswordEncoder passwordEncoder;
   private final EmailService emailService;
 
   private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%";
   private static final int TEMP_PASSWORD_LENGTH = 8;
 
-  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, EmailService emailService) {
+  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, EmailService emailService, DoctorRequestRepository doctorRequestRepository, PersonRepository personRepository) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.roleRepository = roleRepository;
     this.emailService = emailService;
+    this.doctorRequestRepository = doctorRequestRepository;
+    this.personRepository = personRepository;
   }
 
   @Transactional
@@ -98,7 +115,7 @@ public class UserService {
     userRepository.save(user);
   }
 
-  private String generateTempPassword() {
+  public String generateTempPassword() {
     SecureRandom random = new SecureRandom();
     StringBuilder password = new StringBuilder(TEMP_PASSWORD_LENGTH);
 
@@ -107,5 +124,19 @@ public class UserService {
     }
 
     return password.toString();
+  }
+
+  public void requestRegister(DoctorRequestFormDto dto) {
+    if (personRepository.existsByEmail(dto.email())) {
+      throw new UniqueAttributeAlreadyRegisteredException(Patient.class.getSimpleName(), "email");
+    }
+
+    if (personRepository.existsByCpf(dto.cpf())) {
+      throw new UniqueAttributeAlreadyRegisteredException(Patient.class.getSimpleName(), "cpf");
+    }
+
+    doctorRequestRepository.save(new DoctorRequest(dto));
+
+    emailService.sendDoctorRequest(dto);
   }
 }

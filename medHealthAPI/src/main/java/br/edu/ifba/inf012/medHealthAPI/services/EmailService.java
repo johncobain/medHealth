@@ -9,9 +9,14 @@ import br.edu.ifba.inf012.medHealthAPI.models.enums.CancellationReason;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifba.inf012.medHealthAPI.dtos.appointment.AppointmentDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest.DoctorRequestDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest.DoctorRequestFormDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.email.EmailDto;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Cancellation;
+import br.edu.ifba.inf012.medHealthAPI.models.entities.DoctorRequest;
 import br.edu.ifba.inf012.medHealthAPI.producers.EmailProducer;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 @Service
 public class EmailService {
@@ -222,5 +227,24 @@ public class EmailService {
       case MEDICAL_REASON -> "Médico não compareceu";
       case OTHER -> "Outros motivos";
     };
+  }
+
+  public void sendDoctorRequest(DoctorRequestFormDto dto) {
+    String subject = "Acesso solicitado!";
+    String text = String.format("""
+          Olá, Dr(a). %s
+          
+          Sua solicitação de registro no sistema foi recebida pela nossa equipe. Aguarde o processamento das informações fornecidas.
+          
+          Você receberá um retorno em breve através deste E-mail.
+          
+          Ficamos à disposição para qualquer dúvida.
+          Atenciosamente,
+          Equipe MedHealth
+          """,
+          dto.fullName());
+
+    EmailDto emailDto = new EmailDto(dto.email(), subject, text);
+    emailProducer.publishEmailMessage(emailDto);
   }
 }
