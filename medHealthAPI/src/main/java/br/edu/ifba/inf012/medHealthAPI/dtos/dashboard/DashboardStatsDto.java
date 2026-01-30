@@ -1,4 +1,4 @@
-package br.edu.ifba.inf012.medHealthAPI.dtos;
+package br.edu.ifba.inf012.medHealthAPI.dtos.dashboard;
 
 public record DashboardStatsDto(
     long totalDoctors,

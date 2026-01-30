@@ -1,6 +1,6 @@
 package br.edu.ifba.inf012.medHealthAPI.controllers;
 
-import br.edu.ifba.inf012.medHealthAPI.dtos.DashboardStatsDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.dashboard.DashboardStatsDto;
 import br.edu.ifba.inf012.medHealthAPI.services.AppointmentService;
 import br.edu.ifba.inf012.medHealthAPI.services.DoctorService;
 import br.edu.ifba.inf012.medHealthAPI.services.PatientService;
