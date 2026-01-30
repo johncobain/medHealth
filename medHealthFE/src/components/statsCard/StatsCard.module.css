@@ -6,6 +6,7 @@
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: var(--spacing-md);
   transition: box-shadow var(--transition-base);
 }
@@ -40,6 +41,7 @@
 
 .content {
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
   padding: var(--spacing-md) 0;
