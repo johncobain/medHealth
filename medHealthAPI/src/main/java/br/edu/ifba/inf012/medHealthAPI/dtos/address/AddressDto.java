@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest.DoctorRequestDto;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Address;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -28,6 +29,18 @@ public record AddressDto(
          address.getNumber(),
          address.getComplement(),
          address.getZipCode()
+         );
+  }
+  
+  public AddressDto(DoctorRequestDto dto){
+    this(null,
+         dto.state(),
+         dto.city(),
+         dto.neighborhood(),
+         dto.street(),
+         dto.number(),
+         dto.complement(),
+         dto.zipCode()
          );
   }
 
