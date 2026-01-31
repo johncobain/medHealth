@@ -42,6 +42,9 @@ public class SecurityConfigurations {
         .requestMatchers(HttpMethod.DELETE, "/patients/**").hasRole("ADMIN")
         .requestMatchers(HttpMethod.DELETE, "/doctors/**").hasRole("ADMIN")
 
+        .requestMatchers(HttpMethod.POST, "/doctors-request/accept/**").hasRole("ADMIN")
+        .requestMatchers(HttpMethod.POST, "/doctors-request/decline/**").hasRole("ADMIN")
+        .requestMatchers(HttpMethod.GET, "/doctors-request/**").hasRole("ADMIN")
 
         .anyRequest().authenticated()
       )
