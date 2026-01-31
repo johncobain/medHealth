@@ -72,6 +72,7 @@ public class DoctorRequest {
     protected void onCreate() {
         Timestamp now = new Timestamp(System.currentTimeMillis());
         createdAt = now;
+        status = DoctorRequestStatus.PENDING;
     }
 
     public DoctorRequest() {}
@@ -90,7 +91,6 @@ public class DoctorRequest {
         this.number = dto.number();
         this.complement = dto.complement();
         this.zipCode = dto.zipCode();
-        this.status = dto.status();
     }
 
     public Long getId() {
@@ -151,6 +151,10 @@ public class DoctorRequest {
 
     public DoctorRequestStatus getStatus() {
         return status;
+    }
+    
+    public void setStatus(DoctorRequestStatus status) {
+        this.status = status;
     }
 
     public Timestamp getCreatedAt() {

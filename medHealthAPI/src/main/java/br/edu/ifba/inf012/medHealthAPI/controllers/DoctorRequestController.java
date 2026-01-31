@@ -43,5 +43,12 @@ public class DoctorRequestController {
         DoctorDto dto = doctorRequestService.accept(id);
         return ResponseEntity.status(201).body(dto);
     }
+    
+    @PostMapping("/decline/{id}")
+    @Operation(summary = "Reprovar uma solicitação de acesso de médico")
+    public ResponseEntity<DoctorRequestDto> decline(@PathVariable Long id){
+        DoctorRequestDto dto = doctorRequestService.decline(id);
+        return ResponseEntity.status(200).body(dto);
+    }
 
 }

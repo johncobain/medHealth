@@ -2,7 +2,6 @@ package br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest;
 
 import org.hibernate.validator.constraints.br.CPF;
 
-import br.edu.ifba.inf012.medHealthAPI.models.enums.DoctorRequestStatus;
 import br.edu.ifba.inf012.medHealthAPI.models.enums.Specialty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -32,9 +31,6 @@ public record DoctorRequestFormDto(
 
     @NotNull(message = "A especialidade é obrigatória")
     Specialty specialty,
-    
-    @NotNull(message = "O status é obrigatório")
-    DoctorRequestStatus status, //TODO: remover do form
 
     @NotBlank(message = "O estado é obrigatório")
     String state,

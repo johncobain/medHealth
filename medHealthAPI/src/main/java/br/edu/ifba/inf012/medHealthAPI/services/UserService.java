@@ -1,10 +1,25 @@
 package br.edu.ifba.inf012.medHealthAPI.services;
 
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest.DoctorRequestFormDto;
-import br.edu.ifba.inf012.medHealthAPI.dtos.user.*;
+import br.edu.ifba.inf012.medHealthAPI.dtos.user.ChangePasswordDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.user.ResetPasswordDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.user.ResetPasswordRequestDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.user.UserDto;
 import br.edu.ifba.inf012.medHealthAPI.exceptions.UniqueAttributeAlreadyRegisteredException;
+import br.edu.ifba.inf012.medHealthAPI.models.entities.Doctor;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.DoctorRequest;
-import br.edu.ifba.inf012.medHealthAPI.models.entities.Patient;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Person;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Role;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.User;
@@ -12,16 +27,6 @@ import br.edu.ifba.inf012.medHealthAPI.repositories.DoctorRequestRepository;
 import br.edu.ifba.inf012.medHealthAPI.repositories.PersonRepository;
 import br.edu.ifba.inf012.medHealthAPI.repositories.RoleRepository;
 import br.edu.ifba.inf012.medHealthAPI.repositories.UserRepository;
-
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.security.SecureRandom;
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 
 @Service
 public class UserService {
@@ -122,11 +127,15 @@ public class UserService {
 
   public void requestRegister(DoctorRequestFormDto dto) {
     if (personRepository.existsByEmail(dto.email())) {
-      throw new UniqueAttributeAlreadyRegisteredException(Patient.class.getSimpleName(), "email");
+      throw new UniqueAttributeAlreadyRegisteredException(Doctor.class.getSimpleName(), "email");
     }
 
     if (personRepository.existsByCpf(dto.cpf())) {
-      throw new UniqueAttributeAlreadyRegisteredException(Patient.class.getSimpleName(), "cpf");
+      throw new UniqueAttributeAlreadyRegisteredException(Doctor.class.getSimpleName(), "cpf");
+    }
+
+    if (doctorRequestRepository.existsByCpf(dto.cpf())){
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe uma solicitação processada com essas informações.");
     }
 
     doctorRequestRepository.save(new DoctorRequest(dto));
