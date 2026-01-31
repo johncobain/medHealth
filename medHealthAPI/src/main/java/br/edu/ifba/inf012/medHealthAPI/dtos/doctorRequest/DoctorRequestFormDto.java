@@ -1,5 +1,7 @@
 package br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest;
 
+import org.hibernate.validator.constraints.br.CPF;
+
 import br.edu.ifba.inf012.medHealthAPI.models.enums.DoctorRequestStatus;
 import br.edu.ifba.inf012.medHealthAPI.models.enums.Specialty;
 import jakarta.validation.constraints.Email;
@@ -21,17 +23,18 @@ public record DoctorRequestFormDto(
     String phone,
 
     @NotBlank(message = "O CPF é obrigatório")
-    @Pattern(regexp = "\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}", message = "Formato de CPF inválido") // Exemplo de regex
+    @CPF
     String cpf,
 
     @NotBlank(message = "O CRM é obrigatório")
+    @Pattern(regexp = "CRM-[A-Z]{2}-\\d{4,6}", message = "CRM deve estar no formato CRM-UF-NUMERO (ex: CRM-SP-12345)")
     String crm,
 
     @NotNull(message = "A especialidade é obrigatória")
     Specialty specialty,
     
     @NotNull(message = "O status é obrigatório")
-    DoctorRequestStatus status,
+    DoctorRequestStatus status, //TODO: remover do form
 
     @NotBlank(message = "O estado é obrigatório")
     String state,

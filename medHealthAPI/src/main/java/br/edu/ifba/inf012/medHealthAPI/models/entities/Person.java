@@ -4,8 +4,6 @@ import br.edu.ifba.inf012.medHealthAPI.models.enums.PersonStatus;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Entity
 @Table(name = "persons")

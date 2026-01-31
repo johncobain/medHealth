@@ -96,7 +96,7 @@ public class DoctorController {
   @Operation(summary = "Deleta um médico")
   @ApiResponse(responseCode = "204")
   public ResponseEntity<Void> delete(@PathVariable Long id){
-    doctorService.delete(id);
+    doctorService.deactivate(id);
     return ResponseEntity.noContent().build();
   }
 

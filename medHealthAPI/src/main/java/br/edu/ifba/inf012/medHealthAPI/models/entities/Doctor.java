@@ -1,12 +1,10 @@
 package br.edu.ifba.inf012.medHealthAPI.models.entities;
 
-import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorFormDto;
 import br.edu.ifba.inf012.medHealthAPI.models.enums.DoctorStatus;
 import br.edu.ifba.inf012.medHealthAPI.models.enums.Specialty;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity

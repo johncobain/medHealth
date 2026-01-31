@@ -2,7 +2,6 @@ package br.edu.ifba.inf012.medHealthAPI.models.entities;
 
 import java.sql.Timestamp;
 
-import br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest.DoctorRequestDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest.DoctorRequestFormDto;
 import br.edu.ifba.inf012.medHealthAPI.models.enums.DoctorRequestStatus;
 import br.edu.ifba.inf012.medHealthAPI.models.enums.Specialty;

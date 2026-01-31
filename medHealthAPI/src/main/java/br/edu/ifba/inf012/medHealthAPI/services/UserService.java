@@ -1,23 +1,17 @@
 package br.edu.ifba.inf012.medHealthAPI.services;
 
-import br.edu.ifba.inf012.medHealthAPI.dtos.address.AddressDto;
-import br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest.DoctorRequestDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest.DoctorRequestFormDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.user.*;
 import br.edu.ifba.inf012.medHealthAPI.exceptions.UniqueAttributeAlreadyRegisteredException;
-import br.edu.ifba.inf012.medHealthAPI.models.entities.Address;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.DoctorRequest;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Patient;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Person;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Role;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.User;
-import br.edu.ifba.inf012.medHealthAPI.repositories.AddressRepository;
-import br.edu.ifba.inf012.medHealthAPI.repositories.DoctorRepository;
 import br.edu.ifba.inf012.medHealthAPI.repositories.DoctorRequestRepository;
 import br.edu.ifba.inf012.medHealthAPI.repositories.PersonRepository;
 import br.edu.ifba.inf012.medHealthAPI.repositories.RoleRepository;
 import br.edu.ifba.inf012.medHealthAPI.repositories.UserRepository;
-import jakarta.validation.Valid;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

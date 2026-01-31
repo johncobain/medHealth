@@ -1,7 +1,6 @@
 package br.edu.ifba.inf012.medHealthAPI.dtos.patient;
 
 import br.edu.ifba.inf012.medHealthAPI.dtos.address.AddressFormDto;
-import br.edu.ifba.inf012.medHealthAPI.models.entities.Patient;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record PatientUpdateDto(

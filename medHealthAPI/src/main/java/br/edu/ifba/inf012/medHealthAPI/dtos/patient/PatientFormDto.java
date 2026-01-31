@@ -1,6 +1,6 @@
 package br.edu.ifba.inf012.medHealthAPI.dtos.patient;
 
-import br.edu.ifba.inf012.medHealthAPI.dtos.address.AddressDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.address.AddressFormDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Email;
@@ -30,5 +30,5 @@ public record PatientFormDto(
 
       @NotNull(message = "Endereço é obrigatório")
       @Schema(description = "Endereço")
-      AddressDto address
+      AddressFormDto address
 ) {}

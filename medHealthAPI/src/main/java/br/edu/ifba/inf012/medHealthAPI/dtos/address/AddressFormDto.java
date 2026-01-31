@@ -3,7 +3,6 @@ package br.edu.ifba.inf012.medHealthAPI.dtos.address;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Address;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public record AddressFormDto (

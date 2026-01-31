@@ -1,6 +1,5 @@
 package br.edu.ifba.inf012.medHealthAPI.dtos.doctor;
 
-import br.edu.ifba.inf012.medHealthAPI.dtos.address.AddressDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.address.AddressFormDto;
 import br.edu.ifba.inf012.medHealthAPI.models.enums.Specialty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -37,7 +36,7 @@ public record DoctorFormDto(
 
   @NotNull(message = "Endereço é obrigatório")
   @Schema(description = "Endereço")
-  AddressDto address,
+  AddressFormDto address,
 
   @NotNull(message = "Especialidade é obrigatória")
   @Schema(description = "Especialidade", example = "CARDIOLOGY")

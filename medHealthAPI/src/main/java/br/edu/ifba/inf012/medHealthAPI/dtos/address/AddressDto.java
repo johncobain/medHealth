@@ -1,8 +1,5 @@
 package br.edu.ifba.inf012.medHealthAPI.dtos.address;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest.DoctorRequestDto;

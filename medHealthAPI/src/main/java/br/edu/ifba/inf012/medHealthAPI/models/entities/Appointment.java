@@ -3,7 +3,6 @@ package br.edu.ifba.inf012.medHealthAPI.models.entities;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 import br.edu.ifba.inf012.medHealthAPI.models.enums.AppointmentStatus;
 

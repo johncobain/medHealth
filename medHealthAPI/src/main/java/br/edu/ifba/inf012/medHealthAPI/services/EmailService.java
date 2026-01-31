@@ -9,14 +9,10 @@ import br.edu.ifba.inf012.medHealthAPI.models.enums.CancellationReason;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifba.inf012.medHealthAPI.dtos.appointment.AppointmentDto;
-import br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest.DoctorRequestDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest.DoctorRequestFormDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.email.EmailDto;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Cancellation;
-import br.edu.ifba.inf012.medHealthAPI.models.entities.DoctorRequest;
 import br.edu.ifba.inf012.medHealthAPI.producers.EmailProducer;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 
 @Service
 public class EmailService {

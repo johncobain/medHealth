@@ -1,6 +1,5 @@
 package br.edu.ifba.inf012.medHealthAPI.controllers;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest.DoctorRequestDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest.DoctorRequestFormDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.patient.PatientDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.patient.PatientFormDto;
@@ -22,6 +20,8 @@ import br.edu.ifba.inf012.medHealthAPI.dtos.user.ChangePasswordDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.user.LoginResponseDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.user.ResetPasswordDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.user.ResetPasswordRequestDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.user.ProfileInfoDto;
+
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Role;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.User;
 import br.edu.ifba.inf012.medHealthAPI.services.AuthenticationService;
@@ -63,16 +63,16 @@ public class AuthenticationContoller {
   }
 
   @GetMapping("/profile")
-  public ResponseEntity<Map<String, Object>> getProfile(@AuthenticationPrincipal User user) {
-    Map<String, Object> profile = new HashMap<>();
-    profile.put("id", user.getId());
-    profile.put("personId", user.getPerson().getId());
-    profile.put("email", user.getUsername());
-    profile.put("fullName", user.getPerson().getFullName());
-    profile.put("phone", user.getPerson().getPhone());
-    profile.put("cpf", user.getPerson().getCpf());
-    profile.put("roles", user.getRoles().stream().map(Role::getAuthority).toList());
-
+  public ResponseEntity<ProfileInfoDto> getProfile(@AuthenticationPrincipal User user) {
+    ProfileInfoDto profile = new ProfileInfoDto(
+      user.getId(),
+      user.getPerson().getId(),
+      user.getUsername(),
+      user.getPerson().getFullName(),
+      user.getPerson().getPhone(),
+      user.getPerson().getCpf(),
+      user.getRoles().stream().map(Role::getAuthority).findFirst().orElse("")
+    );
     return ResponseEntity.ok(profile);
   }
 

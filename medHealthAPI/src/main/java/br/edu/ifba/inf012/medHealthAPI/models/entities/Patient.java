@@ -4,7 +4,6 @@ import br.edu.ifba.inf012.medHealthAPI.models.enums.PatientStatus;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity

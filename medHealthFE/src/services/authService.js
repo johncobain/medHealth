@@ -12,8 +12,25 @@ const logout = () => {
   localStorage.removeItem('user');
 };
 
+// PatientFormDto (fullName, email, phone, cpf, address: { ... })
+const register = async (patientData) => {
+  const response = await apiClient.post('/auth/register', patientData);
+  return response.data;
+};
+
+// DoctorRequestFormDto (fullName, email, phone, cpf, crm, specialty, state, city, neighborhood, street, number, complement, zipCode.)
+const requestRegister = async (doctorData) => {
+  const response = await apiClient.post('/auth/request-register', doctorData);
+  return response.data;
+};
+
 const getCurrentUser = () => {
   return JSON.parse(localStorage.getItem('user'));
+};
+
+const getProfile = async () => {
+  const response = await apiClient.get('/auth/profile');
+  return response.data;
 };
 
 const forgotPassword = async (email) => {
@@ -34,7 +51,10 @@ const changePassword = async (oldPassword, newPassword) => {
 const authService = {
   login,
   logout,
+  register,
+  requestRegister,
   getCurrentUser,
+  getProfile,
   forgotPassword,
   resetPassword,
   changePassword,

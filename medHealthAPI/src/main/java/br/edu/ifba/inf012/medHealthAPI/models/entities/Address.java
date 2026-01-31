@@ -5,7 +5,6 @@ import br.edu.ifba.inf012.medHealthAPI.dtos.address.AddressFormDto;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "addresses")

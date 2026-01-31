@@ -1,6 +1,5 @@
 package br.edu.ifba.inf012.medHealthAPI.models.entities;
 
-import br.edu.ifba.inf012.medHealthAPI.dtos.user.UserFormDto;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
