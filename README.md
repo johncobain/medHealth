@@ -1,119 +1,151 @@
-# MedHealth - Sistema de Gerenciamento de Clínica Médica
+# MedHealth
 
-Este é o repositório para o sistema MedHealth, uma aplicação para gerenciamento de consultas em uma clínica médica. O projeto é dividido em uma arquitetura de microsserviços para garantir escalabilidade e manutenibilidade.
+Sistema de gestão de clínica médica: cadastro de médicos e pacientes, agendamento de consultas, autenticação e notificações por e-mail. Arquitetura em microsserviços com Spring Boot e React.
 
-## Visão Geral da Arquitetura
+## Colaboradores
 
-O sistema é composto por três componentes principais:
+- [Andrey Gomes](https://github.com/johncobain)
+- [Gabriel Nascimento](https://github.com/uKuroo)
+- [Lara Carolina](https://github.com/laraeucarolina)
 
-1. **API Principal (`medHealthAPI`)**: O backend principal construído com Spring Boot, responsável por gerenciar a lógica de negócio principal, como cadastro de médicos, pacientes e agendamento de consultas.
-2. **Microsserviço de Notificação (`medHealthMS`)**: Um serviço Spring Boot dedicado a enviar notificações sobre agendamentos, cancelamentos, etc.
-3. **Frontend (`medHealthFE`)**: A interface do usuário construída com React e Vite, que consome os serviços do backend.
+## Estrutura do projeto
 
-## Tecnologias Utilizadas
+```plaintext
+medHealth/
+├── medHealthAPI/             # API principal (médicos, pacientes, consultas, auth)
+├── medHealthEureka/          # Servidor de descoberta (Eureka)
+├── medHealthGateway/         # API Gateway (roteamento, porta 8080)
+├── medHealthNotifications/   # Serviço de e-mail (consumidor RabbitMQ)
+├── medHealthFE/              # Frontend React (Vite)
+├── docker-compose.yml        # Orquestração dos serviços
+└── app.sh                    # Script para rodar/gerenciar o projeto
+```
 
-- **Backend (API & Microsserviço)**:
-  - Java 21
-  - Spring Boot
-  - Spring Data JPA / Hibernate
-  - Spring Security (com JWT)
-  - PostgreSQL
-  - Maven
-  - Flyway (para migrações de banco de dados)
-- **Frontend**:
-  - React
-  - Vite
-  - Node.js / npm
-- **Containerização**:
-  - Docker & Docker Compose
+| Subprojeto                                                 | Descrição                                                                                                                    |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| [medHealthAPI](medHealthAPI/README.md)                     | Backend principal: usuários, médicos, pacientes, agendamentos, autenticação JWT. Expõe REST e publica mensagens no RabbitMQ. |
+| [medHealthEureka](medHealthEureka/README.md)               | Servidor Eureka para registro e descoberta dos microsserviços.                                                               |
+| [medHealthGateway](medHealthGateway/README.md)             | Gateway que roteia as requisições do frontend para a API via Eureka.                                                         |
+| [medHealthNotifications](medHealthNotifications/README.md) | Microsserviço que consome filas RabbitMQ e envia e-mails.                                                                    |
+| [medHealthFE](medHealthFE/README.md)                       | Interface em React: login, dashboard, CRUD de médicos/pacientes, consultas e configurações.                                  |
 
 ## Pré-requisitos
 
-Para executar o projeto localmente, você precisará ter instalado:
+- **Para rodar local (só infra no Docker):** Java 21, Maven, Node.js, Docker
+- **Para rodar tudo no Docker:** Docker e Docker Compose
 
-- Java (JDK 21 ou superior)
-- Maven
-- Node.js e npm
-- Docker e Docker Compose
+## Formas de executar
 
-## Como Executar o Projeto
+### 1. Desenvolvimento local (infra no Docker, apps locais)
 
-O projeto inclui um script de gerenciamento (`app.sh`) para facilitar a execução e o gerenciamento dos serviços.
-
-### 1. Usando Docker (Recomendado)
-
-Este método irá construir as imagens e iniciar todos os contêineres (Banco de Dados, API, Microsserviço e Frontend).
-
-// TODO: Adicionar instruções de Docker quando o Dockerfile e docker-compose.yml forem criados.
-
-### 2. Executando Localmente (Para Desenvolvimento)
-
-Você pode executar cada serviço individualmente pela IDE ou diretamente pelo terminal.
-
-#### 2.1. Configurando o Banco de Dados
+Sobe apenas banco principal, banco de e-mail e RabbitMQ no Docker; API, Eureka, Gateway, Notifications e frontend rodam na sua máquina.
 
 ```bash
-docker compose up -d db
+./app.sh db        # sobe db + db-mail
+./app.sh rabbit    # sobe RabbitMQ
+./app.sh run eureka     # terminal 1
+./app.sh run gateway    # terminal 2
+./app.sh run api        # terminal 3
+./app.sh run ms         # terminal 4 (notifications)
+./app.sh run frontend   # terminal 5
 ```
 
-#### 2.2. Executando a API e o Microsserviço
+- Frontend: <http://localhost:5173>
+- API (direto): <http://localhost:8081>
+- Gateway: <http://localhost:8080>
+- Eureka: <http://localhost:8761>
+- RabbitMQ: <http://localhost:15672> (rabbituser / rabbitpass)
+
+O frontend pode apontar o Gateway (`VITE_API_BASE_URL=http://localhost:8080`) conforme configuração no `.env` do frontend.
+
+### 2. Tudo no Docker
+
+Sobe todos os serviços definidos no `docker-compose` (bancos, RabbitMQ, Eureka, Gateway, API, Notifications, frontend).
 
 ```bash
-cd medHealthAPI
-mvn clean install
-mvn spring-boot:run
+./app.sh up
 ```
 
-Em outro terminal, para o microsserviço:
+- Frontend: <http://localhost:5173>
+- Gateway (base da API): <http://localhost:8080/medHealth>
+- Eureka: <http://localhost:8761>
+- RabbitMQ: <http://localhost:15672>
+
+Para parar:
 
 ```bash
-cd medHealthMS
-mvn clean install
-mvn spring-boot:run
+./app.sh down
 ```
 
-#### 2.3. Executando o Frontend
+### 3. Apenas backend no Docker
+
+Útil para desenvolver o frontend local apontando para o backend em containers.
 
 ```bash
-cd medHealthFE
-npm install
-npm run dev
+./app.sh backend   # db, db-mail, rabbitmq, eureka, api, notifications, gateway
+./app.sh run frontend
 ```
 
-### 3. Usando o Script `app.sh`
+### 4. Outros comandos úteis do `app.sh`
 
-O script `app.sh` oferece uma maneira simples e eficiente de executar o projeto localmente.
+- `./app.sh` — lista todos os comandos e fluxo recomendado
+- `./app.sh db-stop` / `./app.sh rabbit-stop` — para bancos e RabbitMQ
+- `./app.sh backend-stop` — para API, Notifications, Eureka e Gateway
+- `./app.sh frontend` — sobe só o frontend no Docker
+- `./app.sh status` ou `./app.sh ps` — status dos containers
+- `./app.sh logs [serviço]` — logs (ex.: `./app.sh logs api`)
 
-**Passo 1: Iniciar o Banco de Dados**
-O banco de dados precisa estar em execução antes de iniciar a API ou o microsserviço.
+### 5. Sem o script `app.sh`
+
+Caso não seja possível usar o script `app.sh` (Windows sem WSL/Git Bash), use os comandos abaixo. No PowerShell ou CMD, utilizando `docker compose` ou `docker-compose`, dependendo da versão do Docker.
+
+**Desenvolvimento local (infra no Docker, apps na máquina):**
 
 ```bash
-./app.sh start-db
+# 1. Subir bancos e RabbitMQ
+docker compose up -d db db-mail rabbitmq
+
+# 2. Em terminais separados, na raiz do projeto:
+cd medHealthEureka    && mvn spring-boot:run
+cd medHealthGateway   && mvn spring-boot:run
+cd medHealthAPI       && mvn spring-boot:run
+cd medHealthNotifications && mvn spring-boot:run
+cd medHealthFE        && npm install && npm run dev
 ```
 
-**Passo 2: Iniciar os Serviços**
-Abra um terminal para cada serviço que deseja executar.
+**Tudo no Docker:**
 
 ```bash
-# Para executar a API principal
-./app.sh run api
-
-# Para executar o microsserviço de notificação
-./app.sh run ms
-
-# Para executar o frontend em modo de desenvolvimento
-./app.sh run front
+docker compose up -d
+# Para parar:
+docker compose down
 ```
 
-**Passo 3: Parar o Banco de Dados**
-Quando terminar, você pode parar o contêiner do banco de dados.
+**Apenas backend no Docker, frontend local:**
 
 ```bash
-./app.sh stop-db
+docker compose up -d db db-mail rabbitmq eureka
+# Aguardar Eureka ficar saudável, depois:
+docker compose up -d api notifications gateway
+# Em outro terminal:
+cd medHealthFE && npm run dev
 ```
 
-## Comandos Úteis do `app.sh`
+**Comandos úteis sem o script:**
 
-O script `app.sh` oferece vários comandos para ajudar no desenvolvimento:
+| Ação               | Comando                          |
+| ------------------ | -------------------------------- |
+| Parar bancos       | `docker compose stop db db-mail` |
+| Parar RabbitMQ     | `docker compose stop rabbitmq`   |
+| Status             | `docker compose ps`              |
+| Logs de um serviço | `docker compose logs -f api`     |
 
-Para ver todos os comandos, execute `./app.sh`.
+## Tecnologias
+
+- **Backend:** Java 21, Spring Boot, Spring Security (JWT), Spring Data JPA, Flyway, RabbitMQ
+- **Frontend:** React, Vite
+- **Infra:** PostgreSQL (2 instâncias: app + mail), RabbitMQ, Docker
+
+---
+
+Documentação de cada módulo: ver links na tabela da [Estrutura do projeto](#estrutura-do-projeto).
