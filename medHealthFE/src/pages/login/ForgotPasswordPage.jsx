@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import authService from '../../services/authService';
 import styles from './LoginPage.module.css';
 import { Link } from 'react-router-dom';
@@ -6,23 +7,21 @@ import Button from '../../components/button/Button';
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setMessage('');
     setLoading(true);
 
     try {
       await authService.forgotPassword(email);
-      setMessage(`Um link de recuperação foi enviado para ${email}.`);
+      toast.success(`Um link de recuperação foi enviado para ${email}.`);
+      setSent(true);
     } catch (err) {
       const errorMessage =
         err.response?.data?.reason || 'Erro ao conectar com o servidor. Tente novamente.';
-      setError(`Erro: ${errorMessage}`);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -33,10 +32,7 @@ const ForgotPasswordPage = () => {
       <form onSubmit={handleSubmit} className={styles.form}>
         <h2 className={styles.subtitle}>Recuperar Senha</h2>
 
-        {message && <p className={styles.success}>{message}</p>}
-        {error && <p className={styles.error}>{error}</p>}
-
-        {!message && (
+        {!sent && (
           <>
             <p className="text-center text-sm text-light mb-md">
               Insira seu email para receber um link de recuperação de senha.
@@ -59,6 +55,11 @@ const ForgotPasswordPage = () => {
               {loading ? 'Enviando...' : 'Enviar Link de Recuperação'}
             </Button>
           </>
+        )}
+        {sent && (
+          <p className="text-center text-sm text-light mt-md">
+            Verifique sua caixa de entrada. Se não receber em alguns minutos, confira o spam.
+          </p>
         )}
 
         <div className="text-center mt-md">

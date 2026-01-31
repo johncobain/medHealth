@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import styles from './LoginPage.module.css';
 import Button from '../../components/button/Button';
 import authService from '../../services/authService';
@@ -11,29 +12,35 @@ const ResetPasswordPage = () => {
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
 
     if (password !== confirmPassword) {
-      setError('As senhas não coincidem');
+      toast.error('As senhas não coincidem.');
       return;
     }
 
     try {
       await authService.resetPassword(token, password);
+      toast.success('Senha redefinida com sucesso! Redirecionando para o login...');
       setSuccess(true);
       setTimeout(() => navigate('/login'), 3000);
     } catch (err) {
       const errorMessage =
         err.response?.data?.reason || 'Erro ao redefinir a senha. O link pode ter expirado.';
-      const validationError = err.response?.data?.errors || {};
-      setError(errorMessage + '\n' + Object.values(validationError).join('\n'));
+      const validationErrors = err.response?.data?.errors || {};
+      const fullMessage = Object.keys(validationErrors).length
+        ? `${errorMessage}\n${Object.values(validationErrors).join('\n')}`
+        : errorMessage;
+      toast.error(fullMessage);
     }
   };
+
+  useEffect(() => {
+    if (!token) toast.error('Token inválido ou ausente.');
+  }, [token]);
 
   if (!token) {
     return (
@@ -58,7 +65,6 @@ const ResetPasswordPage = () => {
           </div>
         ) : (
           <>
-            {error && <p className={styles.error}>{error}</p>}
             <div className="mt-md">
               <label htmlFor="pass" className={styles.inputlabel}>
                 Nova Senha

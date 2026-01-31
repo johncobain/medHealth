@@ -1,5 +1,6 @@
 import authService from "../../services/authService";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import Button from "../../components/button/Button";
 
 const Settings = () => {
@@ -8,7 +9,6 @@ const Settings = () => {
     newPassword: '',
     confirmPassword: '',
   });
-  const [message, setMessage] = useState({ type: '', text: '' });
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -20,24 +20,24 @@ const Settings = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage({ type: '', text: '' });
 
     if (formData.newPassword !== formData.confirmPassword) {
-      setMessage({ type: 'error', text: 'A nova senha e a confirmação não coincidem.' });
+      toast.error('A nova senha e a confirmação não coincidem.');
       return;
     }
 
     setLoading(true);
     try {
       await authService.changePassword(formData.oldPassword, formData.newPassword);
-      setMessage({ type: 'success', text: 'Senha alterada com sucesso.' });
+      toast.success('Senha alterada com sucesso.');
       setFormData({ oldPassword: '', newPassword: '', confirmPassword: '' });
     } catch (error) {
-      console.error(error);
       const errorMessage = error.response?.data?.reason || 'Erro ao alterar a senha. Tente novamente.';
-      const validationError = error.response?.data?.errors || {1:"teste"};
-      setMessage({ type: 'error', text:  errorMessage +
-        '\n' + Object.values(validationError).join('\n') });
+      const validationErrors = error.response?.data?.errors;
+      const fullMessage = validationErrors
+        ? `${errorMessage}\n${Object.values(validationErrors).filter(Boolean).join('\n')}`
+        : errorMessage;
+      toast.error(fullMessage);
     } finally {
       setLoading(false);
     }
@@ -49,14 +49,6 @@ const Settings = () => {
       
       <div className="mb-xl flex flex-col gap-md bt-sm pt-md">
         <h3 className="text-lg mb-md p-sm">Alterar Senha</h3>
-        
-        {message.text && (
-          <div className={`p-sm mb-md text-sm ${
-            message.type === 'error' ? 'text-error bg-error pre-line' : 'text-success bg-success pre-line'
-          }`}>
-            {message.text}
-          </div>
-        )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-md">
           <div>

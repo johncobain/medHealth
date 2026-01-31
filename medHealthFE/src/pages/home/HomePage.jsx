@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import statusService from '../../services/statusService';
 import dashboardService from '../../services/dashboardService';
 import appointmentService from '../../services/appointmentService';
@@ -45,7 +46,7 @@ const HomePage = () => {
         if (statsData) setStats(statsData);
       }
     } catch (error) {
-      console.error("Erro ao carregar dashboard:", error);
+      toast.error('Erro ao carregar o dashboard. Tente novamente.');
     } finally {
       setLoading(false);
     }
