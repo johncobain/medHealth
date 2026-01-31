@@ -3,15 +3,16 @@ package br.edu.ifba.inf012.medHealthAPI.services;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import br.edu.ifba.inf012.medHealthAPI.models.entities.Person;
-import br.edu.ifba.inf012.medHealthAPI.models.entities.User;
-import br.edu.ifba.inf012.medHealthAPI.models.enums.CancellationReason;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifba.inf012.medHealthAPI.dtos.appointment.AppointmentDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest.DoctorRequestDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest.DoctorRequestFormDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.email.EmailDto;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Cancellation;
+import br.edu.ifba.inf012.medHealthAPI.models.entities.Person;
+import br.edu.ifba.inf012.medHealthAPI.models.entities.User;
+import br.edu.ifba.inf012.medHealthAPI.models.enums.CancellationReason;
 import br.edu.ifba.inf012.medHealthAPI.producers.EmailProducer;
 
 @Service
@@ -243,4 +244,23 @@ public class EmailService {
     EmailDto emailDto = new EmailDto(dto.email(), subject, text);
     emailProducer.publishEmailMessage(emailDto);
   }
+
+  public void sendDoctorRequestDeclined(DoctorRequestDto dto) {
+    String subject = "Acesso Negado!";
+    String text = String.format("""
+          Olá, Dr(a). %s
+          
+          Sua solicitação de registro no sistema foi negada.
+          Parece que os dados fornecidos não condizem um médico da nossa clínica.
+          
+          Ficamos à disposição para qualquer dúvida.
+          Atenciosamente,
+          Equipe MedHealth
+          """,
+          dto.fullName());
+
+    EmailDto emailDto = new EmailDto(dto.email(), subject, text);
+    emailProducer.publishEmailMessage(emailDto);
+  }
+  
 }

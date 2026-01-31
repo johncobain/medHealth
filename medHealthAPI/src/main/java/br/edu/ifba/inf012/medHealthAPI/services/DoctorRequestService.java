@@ -2,7 +2,9 @@ package br.edu.ifba.inf012.medHealthAPI.services;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import br.edu.ifba.inf012.medHealthAPI.dtos.address.AddressDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorDto;
@@ -10,7 +12,9 @@ import br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest.DoctorRequestDto;
 import br.edu.ifba.inf012.medHealthAPI.exceptions.EntityNotFoundException;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Address;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Doctor;
+import br.edu.ifba.inf012.medHealthAPI.models.entities.DoctorRequest;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Person;
+import br.edu.ifba.inf012.medHealthAPI.models.enums.DoctorRequestStatus;
 import br.edu.ifba.inf012.medHealthAPI.repositories.AddressRepository;
 import br.edu.ifba.inf012.medHealthAPI.repositories.DoctorRepository;
 import br.edu.ifba.inf012.medHealthAPI.repositories.DoctorRequestRepository;
@@ -24,13 +28,15 @@ public class DoctorRequestService {
     private final PersonRepository personRepository;
     private final DoctorRepository doctorRepository;
     private final UserService userService;
+    private final EmailService emailService;
 
-    public DoctorRequestService(DoctorRequestRepository doctorRequestRepository, AddressRepository addressRepository, PersonRepository personRepository, DoctorRepository doctorRepository, UserService userService){
+    public DoctorRequestService(DoctorRequestRepository doctorRequestRepository, AddressRepository addressRepository, PersonRepository personRepository, DoctorRepository doctorRepository, UserService userService, EmailService emailService){
         this.doctorRequestRepository = doctorRequestRepository;
         this.addressRepository = addressRepository;
         this.personRepository = personRepository;
         this.doctorRepository = doctorRepository;
         this.userService = userService;
+        this.emailService = emailService;
     }
 
     public Page<DoctorRequestDto> findAll(Pageable pageable){
@@ -40,7 +46,12 @@ public class DoctorRequestService {
 
     @Transactional
     public DoctorDto accept(Long id) {
-        DoctorRequestDto dto = findById(id);
+        DoctorRequest doctorRequest = findById(id);
+
+        if(doctorRequest.getStatus() != DoctorRequestStatus.PENDING)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Esta solicitação já foi processada (Status = "+doctorRequest.getStatus()+")");
+
+        DoctorRequestDto dto = new DoctorRequestDto(doctorRequest);
 
         Address address = new Address(new AddressDto(dto));
         address = addressRepository.save(address);
@@ -57,17 +68,38 @@ public class DoctorRequestService {
         Doctor doctor = new Doctor(person, dto.crm(), dto.specialty());
         doctor = doctorRepository.save(doctor);
 
+        doctorRequest.setStatus(DoctorRequestStatus.APROVED);
+        doctorRequestRepository.save(doctorRequest);
+
         userService.createUserForPerson(person, true);
 
         return DoctorDto.fromEntity(doctor);
     }
 
-    private DoctorRequestDto findById(Long id) {
+    public DoctorRequestDto decline(Long id) {
+        DoctorRequest doctorRequest = findById(id);
+        
+        if(doctorRequest.getStatus() != DoctorRequestStatus.PENDING)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Esta solicitação já foi processada (Status = "+doctorRequest.getStatus()+")");
+
+        doctorRequest.setStatus(DoctorRequestStatus.DECLINED);
+
+        doctorRequestRepository.save(doctorRequest);
+
+        DoctorRequestDto dto = new DoctorRequestDto(doctorRequest);
+        
+        emailService.sendDoctorRequestDeclined(dto);
+
+        return dto;
+    }
+
+    private DoctorRequest findById(Long id) {
         var doctorRequest = doctorRequestRepository.findById(id);
 
         if (!doctorRequest.isPresent())
             throw new EntityNotFoundException("Solicitação de acesso de médico não encontrada.");
 
-        return DoctorRequestDto.fromEntity(doctorRequest.get());
+        return doctorRequest.get();
     }
+
 }
