@@ -93,7 +93,6 @@ const AddressForm = ({ address, onChange, required = false }) => {
           placeholder="Complemento"
           value={address.complement}
           onChange={handleChange}
-          style={{ gridColumn: '1 / -1' }}
         />
       </div>
     </div>
