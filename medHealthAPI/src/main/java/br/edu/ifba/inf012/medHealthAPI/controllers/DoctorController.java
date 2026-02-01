@@ -1,5 +1,6 @@
 package br.edu.ifba.inf012.medHealthAPI.controllers;
 
+import br.edu.ifba.inf012.medHealthAPI.models.entities.User;
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorFormDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorUpdateDto;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -93,18 +95,28 @@ public class DoctorController {
   }
 
   @DeleteMapping("/{id}")
-  @Operation(summary = "Deleta um médico")
+  @Operation(summary = "Deleta um médico (soft delete)")
   @ApiResponse(responseCode = "204")
   public ResponseEntity<Void> delete(@PathVariable Long id){
     doctorService.deactivate(id);
     return ResponseEntity.noContent().build();
   }
 
-  @PatchMapping("/{id}/activate")
-  @Operation(summary = "Ativa um médico")
-  @ApiResponse(responseCode = "204")
-  public ResponseEntity<Void> activate(@PathVariable Long id) {
-    doctorService.activate(id);
-    return ResponseEntity.noContent().build();
+  @GetMapping("/me")
+  @Operation(summary = "Retorna dados do médico autenticado")
+  @ApiResponse(responseCode = "200")
+  public ResponseEntity<DoctorDto> getMyData(@AuthenticationPrincipal User user) {
+    return ResponseEntity.ok(doctorService.findByEmail(user.getUsername()));
+  }
+
+  @PutMapping("/me")
+  @Operation(summary = "Atualiza dados do médico autenticado")
+  @ApiResponse(responseCode = "200")
+  public ResponseEntity<DoctorDto> updateMyData(
+      @AuthenticationPrincipal User user,
+      @Valid @RequestBody DoctorUpdateDto dto
+  ) {
+    DoctorDto doctor = doctorService.findByEmail(user.getUsername());
+    return ResponseEntity.ok(doctorService.update(doctor.id(), dto));
   }
 }

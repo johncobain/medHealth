@@ -50,8 +50,14 @@ const remove = async (id) => {
   await apiClient.delete(`/patients/${id}`);
 };
 
-const activate = async (id) => {
-  await apiClient.patch(`/patients/${id}/activate`);
+const getMyData = async () => {
+  const response = await apiClient.get('/patients/me');
+  return response.data;
+};
+
+const updateMyData = async (patientData) => {
+  const response = await apiClient.put('/patients/me', patientData);
+  return response.data;
 };
 
 const patientService = {
@@ -62,7 +68,8 @@ const patientService = {
   create,
   update,
   delete: remove,
-  activate,
+  getMyData,
+  updateMyData,
 };
 
 export default patientService;

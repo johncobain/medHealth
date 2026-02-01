@@ -32,6 +32,11 @@ public class SecurityConfigurations {
         
         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**").permitAll()
         .requestMatchers(HttpMethod.GET, "/").permitAll()
+        
+        .requestMatchers(HttpMethod.GET, "/patients/me").hasAnyRole("PATIENT")
+        .requestMatchers(HttpMethod.PUT, "/patients/me").hasAnyRole("PATIENT")
+        .requestMatchers(HttpMethod.GET, "/doctors/me").hasAnyRole("DOCTOR") 
+        .requestMatchers(HttpMethod.PUT, "/doctors/me").hasAnyRole("DOCTOR") 
 
         .requestMatchers(HttpMethod.GET, "/doctors/**").hasAnyRole("ADMIN", "PATIENT", "DOCTOR") 
         .requestMatchers(HttpMethod.GET, "/patients/**").hasAnyRole("ADMIN", "DOCTOR")
@@ -45,7 +50,7 @@ public class SecurityConfigurations {
         .requestMatchers(HttpMethod.POST, "/doctors-request/accept/**").hasRole("ADMIN")
         .requestMatchers(HttpMethod.POST, "/doctors-request/decline/**").hasRole("ADMIN")
         .requestMatchers(HttpMethod.GET, "/doctors-request/**").hasRole("ADMIN")
-
+        
         .anyRequest().authenticated()
       )
       .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

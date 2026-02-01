@@ -23,13 +23,25 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 
   Optional<Doctor> findByCrm(String crm);
 
+  @Query("SELECT d FROM Doctor d WHERE d.status = 'ACTIVE'")
+  Page<Doctor> findAllActive(Pageable pageable);
+  
+  @Query("SELECT d FROM Doctor d WHERE d.person.email = :email AND d.status = 'ACTIVE'")
+  Optional<Doctor> findActiveByEmail(String email);
+  
+  @Query("SELECT d FROM Doctor d WHERE d.crm = :crm AND d.status = 'ACTIVE'")
+  Optional<Doctor> findActiveByCrm(String crm);
+
+  @Query("SELECT d FROM Doctor d WHERE d.person.cpf = :cpf AND d.status = 'ACTIVE'")
+  Optional<Doctor> findActiveByCpf(String cpf);
+
   boolean existsByCrm(String crm);
 
   boolean existsByPersonId(Long personId);
 
-  Page<Doctor> findBySpecialty(Specialty specialty, Pageable pageable);
-
   List<Doctor> findAllActiveBySpecialty(Specialty specialty);
+
+  Page<Doctor> findAllActiveBySpecialty(Specialty specialty, Pageable pageable);
 
   Page<Doctor> findByStatus(DoctorStatus status, Pageable pageable);
 

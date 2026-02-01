@@ -39,7 +39,7 @@ public class DoctorService {
   }
 
   public Page<DoctorDto> findAll(Pageable pageable) {
-    return this.doctorRepository.findAll(pageable)
+    return this.doctorRepository.findAllActive(pageable)
         .map(DoctorDto::fromEntity);
   }
 
@@ -50,25 +50,25 @@ public class DoctorService {
   }
 
   public DoctorDto findByEmail(String email) {
-    Doctor doctor = doctorRepository.findByPersonEmail(email)
+    Doctor doctor = doctorRepository.findActiveByEmail(email)
         .orElseThrow(() -> new EntityNotFoundException(Doctor.class.getSimpleName(), "email", email));
     return DoctorDto.fromEntity(doctor);
   }
 
   public DoctorDto findByCpf(String cpf) {
-    Doctor doctor = doctorRepository.findByPersonCpf(cpf)
+    Doctor doctor = doctorRepository.findActiveByCpf(cpf)
         .orElseThrow(() -> new EntityNotFoundException(Doctor.class.getSimpleName(), "cpf", cpf));
     return DoctorDto.fromEntity(doctor);
   }
 
   public DoctorDto findByCrm(String crm) {
-    Doctor doctor = doctorRepository.findByCrm(crm)
+    Doctor doctor = doctorRepository.findActiveByCrm(crm)
         .orElseThrow(() -> new EntityNotFoundException(Doctor.class.getSimpleName(), "crm", crm));
     return DoctorDto.fromEntity(doctor);
   }
 
   public Page<DoctorDto> findBySpecialty(Specialty specialty, Pageable pageable) {
-    return doctorRepository.findBySpecialty(specialty, pageable)
+    return doctorRepository.findAllActiveBySpecialty(specialty, pageable)
         .map(DoctorDto::fromEntity);
   }
 

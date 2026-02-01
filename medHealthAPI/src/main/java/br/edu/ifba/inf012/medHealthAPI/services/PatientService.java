@@ -38,8 +38,8 @@ public class PatientService {
   }
 
   public Page<PatientDto> findAll(Pageable pageable) {
-      return this.patientRepository.findAll(pageable)
-          .map(PatientDto::fromEntity);
+    return this.patientRepository.findAllActive(pageable)
+        .map(PatientDto::fromEntity);
   }
 
   public PatientDto findById(Long id){
@@ -49,33 +49,33 @@ public class PatientService {
   }
 
   public PatientDto findByEmail(String email) {
-    Patient patient = patientRepository.findByPersonEmail(email)
+    Patient patient = this.patientRepository.findActiveByEmail(email)
         .orElseThrow(() -> new EntityNotFoundException(Patient.class.getSimpleName(), "email", email));
     return PatientDto.fromEntity(patient);
   }
 
   public PatientDto findByCpf(String cpf) {
-    Patient patient = patientRepository.findByPersonCpf(cpf)
+    Patient patient = this.patientRepository.findActiveByCpf(cpf)
         .orElseThrow(() -> new EntityNotFoundException(Patient.class.getSimpleName(), "cpf", cpf));
     return PatientDto.fromEntity(patient);
   }
 
   public Page<PatientDto> findByStatus(PatientStatus status, Pageable pageable) {
-    return patientRepository.findByStatus(status, pageable)
+    return this.patientRepository.findByStatus(status, pageable)
         .map(PatientDto::fromEntity);
   }
 
   @Transactional
   public PatientDto save(PatientFormDto dto){
-    if (personRepository.existsByEmail(dto.email())) {
+    if (this.personRepository.existsByEmail(dto.email())) {
       throw new UniqueAttributeAlreadyRegisteredException(Patient.class.getSimpleName(), "email");
     }
-    if (personRepository.existsByCpf(dto.cpf())) {
+    if (this.personRepository.existsByCpf(dto.cpf())) {
       throw new UniqueAttributeAlreadyRegisteredException(Patient.class.getSimpleName(), "cpf");
     }
 
     Address address = new Address(dto.address());
-    address = addressRepository.save(address);
+    address = this.addressRepository.save(address);
 
     Person person = new Person(
         dto.fullName(),
@@ -84,10 +84,9 @@ public class PatientService {
         dto.cpf(),
         address
     );
-    person = personRepository.save(person);
-
+    person = this.personRepository.save(person);
     Patient patient = new Patient(person);
-    patient = patientRepository.save(patient);
+    patient = this.patientRepository.save(patient);
 
     userService.createUserForPerson(person, false);
 
@@ -96,7 +95,7 @@ public class PatientService {
 
   @Transactional
   public PatientDto update(Long id, PatientUpdateDto patient){
-    Patient storedPatient = patientRepository.findById(id)
+    Patient storedPatient = this.patientRepository.findById(id)
         .orElseThrow(() -> new EntityNotFoundException(Patient.class.getSimpleName(), id));
 
     if(patient.fullName() != null){
@@ -108,7 +107,7 @@ public class PatientService {
     }
 
     if(patient.address() != null){
-      storedPatient.getPerson().setAddress(addressRepository.save(new Address(patient.address())));
+      storedPatient.getPerson().setAddress(this.addressRepository.save(new Address(patient.address())));
     }
     this.personRepository.save(storedPatient.getPerson());
 
@@ -117,37 +116,37 @@ public class PatientService {
 
   @Transactional
   public void deactivate(Long id) {
-    Patient patient = patientRepository.findById(id)
+    Patient patient = this.patientRepository.findById(id)
         .orElseThrow(() -> new EntityNotFoundException(Patient.class.getSimpleName(), id));
 
     patient.setStatus(PatientStatus.INACTIVE);
     patient.getPerson().setStatus(PersonStatus.INACTIVE);
 
-    personRepository.save(patient.getPerson());
-    patientRepository.save(patient);
+    this.personRepository.save(patient.getPerson());
+    this.patientRepository.save(patient);
   }
 
   @Transactional
   public void activate(Long id) {
-    Patient patient = patientRepository.findById(id)
+    Patient patient = this.patientRepository.findById(id)
         .orElseThrow(() -> new EntityNotFoundException(Patient.class.getSimpleName(), id));
 
     patient.setStatus(PatientStatus.ACTIVE);
     patient.getPerson().setStatus(PersonStatus.ACTIVE);
 
-    personRepository.save(patient.getPerson());
-    patientRepository.save(patient);
+    this.personRepository.save(patient.getPerson());
+    this.patientRepository.save(patient);
   }
 
   @Transactional
   public void delete(Long id) {
-    if (!patientRepository.existsById(id)) {
+    if (!this.patientRepository.existsById(id)) {
       throw new EntityNotFoundException(Patient.class.getSimpleName(), id);
     }
-    patientRepository.deleteById(id);
+    this.patientRepository.deleteById(id);
   }
 
   public long count() {
-    return patientRepository.count();
+    return this.patientRepository.count();
   }
 }
