@@ -1,14 +1,7 @@
 package br.edu.ifba.inf012.medHealthAPI.controllers;
 
-import br.edu.ifba.inf012.medHealthAPI.models.entities.User;
-import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorDto;
-import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorFormDto;
-import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorUpdateDto;
-import br.edu.ifba.inf012.medHealthAPI.models.enums.Specialty;
-import br.edu.ifba.inf012.medHealthAPI.services.DoctorService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
+import java.util.List;
+
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +10,25 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorFormDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorUpdateDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.specialty.SpecialtyDto;
+import br.edu.ifba.inf012.medHealthAPI.models.entities.User;
+import br.edu.ifba.inf012.medHealthAPI.models.enums.Specialty;
+import br.edu.ifba.inf012.medHealthAPI.services.DoctorService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/doctors")
@@ -118,5 +129,12 @@ public class DoctorController {
   ) {
     DoctorDto doctor = doctorService.findByEmail(user.getUsername());
     return ResponseEntity.ok(doctorService.update(doctor.id(), dto));
+  }
+
+  @GetMapping("/getSpecialty")
+  @Operation(summary = "Retorna as especialidades dos médicos")
+  @ApiResponse(responseCode = "200")
+  public ResponseEntity<List<SpecialtyDto>> getSpecialty() {
+    return ResponseEntity.ok(doctorService.getSpecialty());
   }
 }

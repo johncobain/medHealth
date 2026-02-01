@@ -1,8 +1,16 @@
 package br.edu.ifba.inf012.medHealthAPI.services;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorFormDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorUpdateDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.specialty.SpecialtyDto;
 import br.edu.ifba.inf012.medHealthAPI.exceptions.EntityNotFoundException;
 import br.edu.ifba.inf012.medHealthAPI.exceptions.UniqueAttributeAlreadyRegisteredException;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Address;
@@ -15,9 +23,6 @@ import br.edu.ifba.inf012.medHealthAPI.repositories.AddressRepository;
 import br.edu.ifba.inf012.medHealthAPI.repositories.DoctorRepository;
 import br.edu.ifba.inf012.medHealthAPI.repositories.PersonRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
 @Service
 public class DoctorService {
@@ -169,5 +174,13 @@ public class DoctorService {
 
   public long count() {
     return doctorRepository.count();
+  }
+
+  public List<SpecialtyDto> getSpecialty() {
+    return Arrays.stream(Specialty.values())
+      .map(s -> new SpecialtyDto(
+        s.name(),
+        s.getDescription()
+      )).toList();
   }
 }

@@ -2,8 +2,8 @@ package br.edu.ifba.inf012.medHealthAPI.models.enums;
 
 public enum Specialty {
     GENERAL("Geral"),
-    ORTHOPEDIC("Ortopedico"),
-    DENTAL("Dental"),
+    ORTHOPEDIC("Ortopedia"),
+    DENTAL("Odontologia"),
     PEDIATRIC("Pediatria"),
     CARDIOLOGY("Cardiologia"),
     GYNECOLOGY("Ginecologia"),

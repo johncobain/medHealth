@@ -1,9 +1,20 @@
 package br.edu.ifba.inf012.medHealthAPI.models.enums;
 
 public enum CancellationReason {
-  DOCTOR_CANCELED,
-  PATIENT_CANCELED,
-  MEDICAL_REASON,
-  PERSONAL_REASON,
-  OTHER
+  DOCTOR_CANCELED("Doutor cancelou"),
+  PATIENT_CANCELED("Paciente cancelou"),
+  MEDICAL_REASON("Razões medicinais"),
+  PERSONAL_REASON("Razões pessoais"),
+  OTHER("Outra");
+  
+  private String description;
+  
+  CancellationReason(String description){
+    this.description = description;
+  }
+
+  public String getDescription(){
+    return this.description;
+  }
+  
 }

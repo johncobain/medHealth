@@ -1,8 +1,21 @@
 package br.edu.ifba.inf012.medHealthAPI.services;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import br.edu.ifba.inf012.medHealthAPI.dtos.appointment.AppointmentDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.appointment.AppointmentFormDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.cancelation.CancellationFormDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.cancelation.CancellationReasonDto;
 import br.edu.ifba.inf012.medHealthAPI.exceptions.EntityNotFoundException;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Appointment;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Cancellation;
@@ -18,16 +31,6 @@ import br.edu.ifba.inf012.medHealthAPI.repositories.PatientRepository;
 import br.edu.ifba.inf012.medHealthAPI.services.validations.AppointmentValidator;
 import br.edu.ifba.inf012.medHealthAPI.services.validations.CancellationValidator;
 import jakarta.transaction.Transactional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
 
 @Service
 public class AppointmentService {
@@ -203,6 +206,14 @@ public class AppointmentService {
     return patientRepository.findByPersonEmail(email)
             .map(Patient::getId)
             .orElse(null);
+  }
+
+  public List<CancellationReasonDto> getCancellationReason() {
+    return Arrays.stream(CancellationReason.values())
+      .map(s -> new CancellationReasonDto(
+        s.name(),
+        s.getDescription()
+      )).toList();
   }
 }
 
