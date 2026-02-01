@@ -27,6 +27,8 @@ public class SecurityConfigurations {
       .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
       .authorizeHttpRequests(req -> req
         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+        .requestMatchers(HttpMethod.POST, "/auth/request-register").permitAll()
         .requestMatchers(HttpMethod.POST, "/auth/forgot-password").permitAll()
         .requestMatchers(HttpMethod.POST, "/auth/reset-password").permitAll()
         
