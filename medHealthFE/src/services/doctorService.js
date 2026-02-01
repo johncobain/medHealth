@@ -74,6 +74,16 @@ const updateMyData = async (doctorData) => {
   return response.data;
 };
 
+const getSpecialties = async () => {
+  try {
+    const response = await apiClient.get('/doctors/getSpecialties');
+    return response.data || [];
+  } catch (error) {
+    console.error("Erro ao buscar especialidades dos médicos", error);
+    throw error;
+  }
+}
+
 const doctorService = {
   getAll,
   getById,
@@ -86,6 +96,7 @@ const doctorService = {
   delete: remove,
   getMyData,
   updateMyData,
+  getSpecialties
 };
 
 export default doctorService;

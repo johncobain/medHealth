@@ -48,6 +48,16 @@ const appointmentService = {
     };
     const response = await apiClient.patch(`/appointments/${id}/cancel`, payload);
     return response.data;
+  },
+
+  getCancellationReasons: async () => {
+    try {
+      const response = await apiClient.get('/appointments/getCancellationReasons');
+      return response.data || [];
+    } catch (error) {
+      console.error("Erro ao buscar motivos de cancelamento", error);
+      throw error;
+    }
   }
 };
 
