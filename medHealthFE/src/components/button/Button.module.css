@@ -51,16 +51,19 @@
 
 /* Sizes */
 .sm {
+  width: 10rem;
   padding: var(--spacing-xs) var(--spacing-md);
   font-size: var(--font-size-sm);
 }
 
 .md {
+  width: 12rem;
   padding: var(--spacing-sm) var(--spacing-lg);
   font-size: var(--font-size-md);
 }
 
 .lg {
+  width: 14rem;
   padding: var(--spacing-md) var(--spacing-xl);
   font-size: var(--font-size-lg);
 }

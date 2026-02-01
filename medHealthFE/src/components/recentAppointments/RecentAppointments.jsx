@@ -50,7 +50,7 @@ const RecentAppointments = ({ appointments, onCancel, onComplete }) => {
               </div>
               <div className={styles.info}>
                 <span className={styles.label}>Especialidade:</span>
-                <span>{appointment.doctor.specialityDescription}</span>
+                <span>{appointment.doctor.specialtyDescription}</span>
               </div>
               <div className={styles.info}>
                 <span className={styles.label}>Status:</span>

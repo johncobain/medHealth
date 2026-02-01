@@ -2,6 +2,7 @@ export const PHONE_MASK = /^\(\d{2}\) \d{4,5}-\d{4}$/;
 export const CPF_MASK = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
 export const ZIP_MASK = /^\d{5}-\d{3}$/;
 export const EMAIL_MASK = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export const CRM_MASK = /^CRM-[A-Z]{2}-\d{4,6}$/;
 
 /**
  * Valida telefone
@@ -41,6 +42,16 @@ export const validateZipCode = (zipCode) => {
 export const validateEmail = (email) => {
   if (!email) return false;
   return EMAIL_MASK.test(email);
+};
+
+/**
+ * Valida CRM
+ * @param {string} crm - CRM a ser validado
+ * @returns {boolean}
+ */
+export const validateCRM = (crm) => {
+  if (!crm) return false;
+  return CRM_MASK.test(crm);
 };
 
 /**

@@ -42,8 +42,23 @@ export const formatCPF = (value) => {
 /**
  * Formata CRM automaticamente
  * @param {string} value - Valor a ser formatado
- * @returns {string} CRM formatado
+ * @returns {string} CRM formatado CRM-UF-NUMERO
  */
 export const formatCRM = (value) => {
-  return value.replace(/[^A-Z0-9]/gi, '').toUpperCase();
+  let cleaned = value.replace(/[^A-Z0-9]/gi, '').toUpperCase();
+  
+  if (!cleaned.startsWith('CRM')) {
+    cleaned = 'CRM' + cleaned;
+  }
+  
+  const withoutCRM = cleaned.substring(3);
+  
+  if (withoutCRM.length === 0) return 'CRM-';
+  if (withoutCRM.length <= 2) return `CRM-${withoutCRM}`;
+  
+  const uf = withoutCRM.slice(0, 2);
+  const numero = withoutCRM.slice(2, 8); 
+  
+  if (numero.length === 0) return `CRM-${uf}`;
+  return `CRM-${uf}-${numero}`;
 };

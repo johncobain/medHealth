@@ -9,7 +9,7 @@ public record DoctorDto(
         String email,
         String crm,
         Specialty specialty,
-        String specialityDescription
+        String specialtyDescription
 ) {
     public DoctorDto(Doctor doctor){
         this(
