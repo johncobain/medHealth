@@ -114,7 +114,7 @@ public class AppointmentController {
   }
 
   @PostMapping
-  @Operation(summary = "Agenda um novo agendamento")
+  @Operation(summary = "Agenda uma nova consulta")
   @ApiResponse(responseCode = "201")
   public ResponseEntity<AppointmentDto> create(@Valid @RequestBody AppointmentFormDto dto) {
     AppointmentDto appointment = appointmentService.schedule(dto);
@@ -122,23 +122,24 @@ public class AppointmentController {
   }
 
   @PatchMapping("/{id}/cancel")
-  @Operation(summary = "Cancela um agendamento")
+  @Operation(summary = "Cancela uma consulta")
   @ApiResponse(responseCode = "200")
   public ResponseEntity<AppointmentDto> cancel(@PathVariable Long id, @Valid @RequestBody CancellationFormDto dto){
     return ResponseEntity.ok(appointmentService.cancel(id, dto));
   }
 
   @PatchMapping("/{id}/complete")
-  @Operation(summary = "Marca um agendamento como realizado")
+  @Operation(summary = "Marca uma consulta como realizada")
   @ApiResponse(responseCode = "200")
   public ResponseEntity<AppointmentDto> attend(@PathVariable Long id){
     return ResponseEntity.ok(appointmentService.attend(id));
   }
 
-  @GetMapping("/getCancellationReason")
+  @GetMapping("/getCancellationReasons")
+  @Operation(summary = "Retorna os motivos de cancelamento")
   @ApiResponse(responseCode = "200")
-  public ResponseEntity<List<CancellationReasonDto>> getCancellationReason(){
-    return ResponseEntity.ok(appointmentService.getCancellationReason());
+  public ResponseEntity<List<CancellationReasonDto>> getCancellationReasons(){
+    return ResponseEntity.ok(appointmentService.getCancellationReasons());
   }
 
 }

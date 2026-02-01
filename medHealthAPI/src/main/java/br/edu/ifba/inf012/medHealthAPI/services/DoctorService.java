@@ -176,7 +176,7 @@ public class DoctorService {
     return doctorRepository.count();
   }
 
-  public List<SpecialtyDto> getSpecialty() {
+  public List<SpecialtyDto> getSpecialties() {
     return Arrays.stream(Specialty.values())
       .map(s -> new SpecialtyDto(
         s.name(),

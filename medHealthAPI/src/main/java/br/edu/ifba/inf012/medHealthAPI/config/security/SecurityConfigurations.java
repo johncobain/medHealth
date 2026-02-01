@@ -31,6 +31,9 @@ public class SecurityConfigurations {
         .requestMatchers(HttpMethod.POST, "/auth/request-register").permitAll()
         .requestMatchers(HttpMethod.POST, "/auth/forgot-password").permitAll()
         .requestMatchers(HttpMethod.POST, "/auth/reset-password").permitAll()
+
+        .requestMatchers(HttpMethod.GET, "/doctors/getSpecialties").permitAll()
+        .requestMatchers(HttpMethod.GET, "/appointments/getCancellationReasons").permitAll()
         
         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**").permitAll()
         .requestMatchers(HttpMethod.GET, "/").permitAll()

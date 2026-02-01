@@ -208,7 +208,7 @@ public class AppointmentService {
             .orElse(null);
   }
 
-  public List<CancellationReasonDto> getCancellationReason() {
+  public List<CancellationReasonDto> getCancellationReasons() {
     return Arrays.stream(CancellationReason.values())
       .map(s -> new CancellationReasonDto(
         s.name(),

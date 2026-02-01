@@ -5,7 +5,7 @@ public enum CancellationReason {
   PATIENT_CANCELED("Paciente cancelou"),
   MEDICAL_REASON("Razões medicinais"),
   PERSONAL_REASON("Razões pessoais"),
-  OTHER("Outra");
+  OTHER("Outro");
   
   private String description;
   

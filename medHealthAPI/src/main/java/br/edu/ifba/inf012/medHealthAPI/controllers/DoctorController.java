@@ -131,10 +131,10 @@ public class DoctorController {
     return ResponseEntity.ok(doctorService.update(doctor.id(), dto));
   }
 
-  @GetMapping("/getSpecialty")
+  @GetMapping("/getSpecialties")
   @Operation(summary = "Retorna as especialidades dos médicos")
   @ApiResponse(responseCode = "200")
-  public ResponseEntity<List<SpecialtyDto>> getSpecialty() {
-    return ResponseEntity.ok(doctorService.getSpecialty());
+  public ResponseEntity<List<SpecialtyDto>> getSpecialties() {
+    return ResponseEntity.ok(doctorService.getSpecialties());
   }
 }
