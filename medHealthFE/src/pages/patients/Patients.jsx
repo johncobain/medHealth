@@ -4,37 +4,12 @@ import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import patientService from '../../services/patientService';
 import Button from '../../components/button/Button';
+import Modal from '../../components/modal/Modal';
+import AddressForm from '../../components/addressForm/AddressForm';
+import { formatPhone, formatCPF } from '../../utils/formatters';
+import { validatePhone, validateCPF, validateAddress } from '../../utils/validators';
+import { extractErrorMessage } from '../../utils/errorHandler';
 import styles from './Patients.module.css';
-
-const PHONE_MASK = /^\(\d{2}\) \d{4,5}-\d{4}$/;
-const CPF_MASK = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
-const ZIP_MASK = /^\d{5}-\d{3}$/;
-
-const formatPhone = (value) => {
-  const numbers = value.replace(/\D/g, '');
-  if (numbers.length <= 2) return numbers;
-  if (numbers.length <= 6) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
-  if (numbers.length <= 10) {
-    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 6)}-${numbers.slice(6)}`;
-  }
-  return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
-};
-
-const formatZipCode = (value) => {
-  const numbers = value.replace(/\D/g, '');
-  if (numbers.length <= 5) return numbers;
-  return `${numbers.slice(0, 5)}-${numbers.slice(5, 8)}`;
-};
-
-const formatCPF = (value) => {
-  const numbers = value.replace(/\D/g, '');
-  if (numbers.length <= 3) return numbers;
-  if (numbers.length <= 6) return `${numbers.slice(0, 3)}.${numbers.slice(3)}`;
-  if (numbers.length <= 9) {
-    return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6)}`;
-  }
-  return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6, 9)}-${numbers.slice(9, 11)}`;
-};
 
 const emptyAddress = () => ({
   state: '',
@@ -75,7 +50,7 @@ const Patients = () => {
       const data = await patientService.getAll({ page, size, sort: 'person.fullName,asc' });
       setList(data);
     } catch (err) {
-      toast.error(err.response?.data?.reason || 'Erro ao carregar pacientes.');
+      toast.error(extractErrorMessage(err, 'Erro ao carregar pacientes.'));
     } finally {
       setLoading(false);
     }
@@ -104,19 +79,25 @@ const Patients = () => {
 
   const openCreate = () => {
     setFormData(emptyForm());
+    setDetailPatient(null);
     setModal('form');
   };
 
-  const openEdit = (row) => {
-    setFormData({
-      fullName: row.fullName || '',
-      email: row.email || '',
-      phone: row.phone || '',
-      cpf: row.cpf || '',
-      address: emptyAddress(),
-    });
-    setDetailPatient(row);
-    setModal('form');
+  const openEdit = async (row) => {
+    try {
+      const fullPatient = await patientService.getById(row.id);
+      setFormData({
+        fullName: fullPatient.fullName || '',
+        email: fullPatient.email || '',
+        phone: fullPatient.phone || '',
+        cpf: fullPatient.cpf || '',
+        address: fullPatient.address || emptyAddress(),
+      });
+      setDetailPatient(fullPatient);
+      setModal('form');
+    } catch (err) {
+      toast.error('Erro ao carregar dados do paciente.');
+    }
   };
 
   const openDetail = (row) => {
@@ -131,25 +112,14 @@ const Patients = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
+
     if (name === 'phone') {
-      const formatted = formatPhone(value);
-      setFormData((prev) => ({ ...prev, phone: formatted }));
+      setFormData((prev) => ({ ...prev, phone: formatPhone(value) }));
       return;
     }
 
     if (name === 'cpf') {
-      const formatted = formatCPF(value);
-      setFormData((prev) => ({ ...prev, cpf: formatted }));
-      return;
-    }
-
-    if (name === 'address.zipCode') {
-      const formatted = formatZipCode(value);
-      setFormData((prev) => ({
-        ...prev,
-        address: { ...prev.address, zipCode: formatted },
-      }));
+      setFormData((prev) => ({ ...prev, cpf: formatCPF(value) }));
       return;
     }
 
@@ -164,169 +134,88 @@ const Patients = () => {
     }
   };
 
-  const handleSubmitCreate = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (
-      !formData.fullName?.trim() ||
-      !formData.email?.trim() ||
-      !formData.phone?.trim() ||
-      !formData.cpf?.trim()
-    ) {
-      toast.error('Preencha nome, e-mail, telefone e CPF.');
-      return;
-    }
-    if (!PHONE_MASK.test(formData.phone)) {
-      toast.error('Telefone no formato (99) 99999-9999.');
-      return;
-    }
-    if (!CPF_MASK.test(formData.cpf)) {
-      toast.error('CPF no formato 999.999.999-99.');
-      return;
-    }
-    const { state, city, neighborhood, street, number, complement, zipCode } = formData.address;
-    if (
-      !state?.trim() ||
-      !city?.trim() ||
-      !neighborhood?.trim() ||
-      !street?.trim() ||
-      !zipCode?.trim()
-    ) {
-      toast.error('Preencha estado, cidade, bairro, rua e CEP.');
-      return;
-    }
-    if (!ZIP_MASK.test(zipCode)) {
-      toast.error('CEP no formato 99999-999.');
-      return;
-    }
-    setSubmitLoading(true);
-    try {
-      await patientService.create({
-        fullName: formData.fullName.trim(),
-        email: formData.email.trim(),
-        phone: formData.phone,
-        cpf: formData.cpf,
-        address: {
-          state: state.trim(),
-          city: city.trim(),
-          neighborhood: neighborhood.trim(),
-          street: street.trim(),
-          number: number?.trim() || '',
-          complement: complement?.trim() || '',
-          zipCode,
-        },
-      });
-      toast.success('Paciente cadastrado.');
-      closeModal();
-      fetchList();
-    } catch (err) {
-      let errorMessage = 'Erro ao cadastrar paciente.';
-      
-      if (err.response?.data) {
-        const { reason, errors, message } = err.response.data;
-        
-        if (reason) {
-          errorMessage = reason;
-        }
-        else if (errors && typeof errors === 'object') {
-          const errorMessages = Object.entries(errors)
-            .map(([field, messages]) => {
-              const msgs = Array.isArray(messages) ? messages : [messages];
-              return msgs.join(', ');
-            })
-            .filter(Boolean)
-            .join('\n');
-          
-          if (errorMessages) {
-            errorMessage = errorMessages;
-          }
-        }
-        else if (message) {
-          errorMessage = message;
-        }
-      }
-      
-      toast.error(errorMessage);
-    } finally {
-      setSubmitLoading(false);
-    }
-  };
+    const isEdit = detailPatient != null;
 
-  const handleSubmitEdit = async (e) => {
-    e.preventDefault();
-    if (!detailPatient?.id) return;
     if (!formData.fullName?.trim()) {
-      toast.error('Nome é obrigatório.');
+      toast.error('Nome completo é obrigatório.');
       return;
     }
-    if (formData.phone && !PHONE_MASK.test(formData.phone)) {
+
+    if (!isEdit) {
+      if (!formData.email?.trim() || !formData.cpf?.trim()) {
+        toast.error('E-mail e CPF são obrigatórios.');
+        return;
+      }
+      if (!validateCPF(formData.cpf)) {
+        toast.error('CPF no formato 999.999.999-99.');
+        return;
+      }
+    }
+
+    if (formData.phone && !validatePhone(formData.phone)) {
       toast.error('Telefone no formato (99) 99999-9999.');
       return;
     }
-    const { state, city, neighborhood, street, number, complement, zipCode } = formData.address;
-    const hasAddress = [state, city, neighborhood, street, zipCode].some((v) => v?.trim());
-    if (hasAddress && !ZIP_MASK.test(zipCode)) {
-      toast.error('CEP no formato 99999-999.');
+
+    const addressValidation = validateAddress(formData.address);
+    if (!addressValidation.valid) {
+      toast.error(addressValidation.message);
       return;
     }
+
     setSubmitLoading(true);
     try {
-      await patientService.update(detailPatient.id, {
+      const payload = {
         fullName: formData.fullName.trim(),
         ...(formData.phone && { phone: formData.phone }),
-        ...(hasAddress && {
-          address: {
-            state: (state || '').trim(),
-            city: (city || '').trim(),
-            neighborhood: (neighborhood || '').trim(),
-            street: (street || '').trim(),
-            number: (number || '').trim(),
-            complement: (complement || '').trim(),
-            zipCode: zipCode || '',
-          },
-        }),
-      });
-      toast.success('Paciente atualizado.');
+      };
+
+      if (!isEdit) {
+        payload.email = formData.email.trim();
+        payload.cpf = formData.cpf;
+      }
+
+      const hasAddress = Object.values(formData.address).some((v) => v?.trim());
+      if (hasAddress) {
+        payload.address = {
+          state: formData.address.state.trim(),
+          city: formData.address.city.trim(),
+          neighborhood: formData.address.neighborhood.trim(),
+          street: formData.address.street.trim(),
+          number: formData.address.number?.trim() || '',
+          complement: formData.address.complement?.trim() || '',
+          zipCode: formData.address.zipCode,
+        };
+      }
+
+      if (isEdit) {
+        await patientService.update(detailPatient.id, payload);
+        toast.success('Paciente atualizado.');
+      } else {
+        await patientService.create(payload);
+        toast.success('Paciente cadastrado.');
+      }
+
       closeModal();
       fetchList();
     } catch (err) {
-      let errorMessage = 'Erro ao atualizar paciente.';
-      
-      if (err.response?.data) {
-        const { reason, errors, message } = err.response.data;
-        
-        if (reason) {
-          errorMessage = reason;
-        } else if (errors && typeof errors === 'object') {
-          const errorMessages = Object.entries(errors)
-            .map(([field, messages]) => {
-              const msgs = Array.isArray(messages) ? messages : [messages];
-              return msgs.join(', ');
-            })
-            .filter(Boolean)
-            .join('\n');
-          
-          if (errorMessages) {
-            errorMessage = errorMessages;
-          }
-        } else if (message) {
-          errorMessage = message;
-        }
-      }
-      
-      toast.error(errorMessage);
+      toast.error(extractErrorMessage(err, `Erro ao ${isEdit ? 'atualizar' : 'cadastrar'} paciente.`));
     } finally {
       setSubmitLoading(false);
     }
   };
 
   const handleDelete = async (row) => {
-    if (!window.confirm(`Desativar o paciente ${row.fullName}? Esta ação não pode ser desfeita.`)) return;
+    if (!window.confirm(`Desativar o paciente ${row.fullName}? Esta ação não pode ser desfeita.`))
+      return;
     try {
       await patientService.delete(row.id);
       toast.success('Paciente desativado.');
       fetchList();
     } catch (err) {
-      toast.error(err.response?.data?.reason || 'Erro ao desativar.');
+      toast.error(extractErrorMessage(err, 'Erro ao desativar.'));
     }
   };
 
@@ -339,8 +228,7 @@ const Patients = () => {
     });
   };
 
-  const isFormModal = modal === 'form';
-  const isEdit = isFormModal && detailPatient != null;
+  const isEdit = modal === 'form' && detailPatient != null;
 
   return (
     <>
@@ -403,12 +291,7 @@ const Patients = () => {
                 Página {page + 1} de {list.totalPages} ({list.total} itens)
               </span>
               <div className={styles.paginationBtns}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={page <= 0}
-                  onClick={() => goToPage(page - 1)}
-                >
+                <Button variant="outline" size="sm" disabled={page <= 0} onClick={() => goToPage(page - 1)}>
                   Anterior
                 </Button>
                 <Button
@@ -425,205 +308,139 @@ const Patients = () => {
         </>
       )}
 
-      {modal === 'detail' && detailPatient && (
-        <div className={styles.modalOverlay} onClick={closeModal}>
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <h3 className={styles.modalTitle}>Paciente</h3>
-              <button
-                type="button"
-                className={styles.modalClose}
-                onClick={closeModal}
-                aria-label="Fechar"
-              >
-                &times;
-              </button>
-            </div>
-            <div className={styles.modalBody}>
+      <Modal
+        isOpen={modal === 'detail'}
+        onClose={closeModal}
+        title="Paciente"
+        size="md"
+        actions={[
+          ...(isAdmin
+            ? [
+                {
+                  label: 'Editar',
+                  variant: 'outline',
+                  onClick: () => openEdit(detailPatient),
+                },
+              ]
+            : []),
+          {
+            label: 'Fechar',
+            variant: 'primary',
+            onClick: closeModal,
+          },
+        ]}
+      >
+        {detailPatient && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <p>
+              <strong>Nome:</strong> {detailPatient.fullName}
+            </p>
+            <p>
+              <strong>E-mail:</strong> {detailPatient.email}
+            </p>
+            <p>
+              <strong>CPF:</strong> {detailPatient.cpf}
+            </p>
+            {detailPatient.phone && (
               <p>
-                <strong>Nome:</strong> {detailPatient.fullName}
+                <strong>Telefone:</strong> {detailPatient.phone}
               </p>
-              <p>
-                <strong>E-mail:</strong> {detailPatient.email}
-              </p>
-              <p>
-                <strong>CPF:</strong> {detailPatient.cpf}
-              </p>
-            </div>
-            <div className={styles.modalFooter}>
-              {isAdmin && (
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setFormData({
-                      fullName: detailPatient.fullName || '',
-                      email: detailPatient.email || '',
-                      phone: '',
-                      cpf: detailPatient.cpf || '',
-                      address: emptyAddress(),
-                    });
-                    setModal('form');
-                  }}
-                >
-                  Editar
-                </Button>
-              )}
-              <Button variant="primary" onClick={closeModal}>
-                Fechar
-              </Button>
-            </div>
+            )}
+            {detailPatient.address && (
+              <div>
+                <p>
+                  <strong>Endereço:</strong>
+                </p>
+                <p style={{ marginLeft: '1rem', fontSize: '0.9rem', color: '#6b7280' }}>
+                  {detailPatient.address.street}
+                  {detailPatient.address.number && `, ${detailPatient.address.number}`}
+                  {detailPatient.address.complement && ` - ${detailPatient.address.complement}`}
+                  <br />
+                  {detailPatient.address.neighborhood} - {detailPatient.address.city}/
+                  {detailPatient.address.state}
+                  <br />
+                  CEP: {detailPatient.address.zipCode}
+                </p>
+              </div>
+            )}
           </div>
-        </div>
-      )}
+        )}
+      </Modal>
 
-      {isFormModal && (
-        <div className={styles.modalOverlay} onClick={closeModal}>
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <h3 className={styles.modalTitle}>{isEdit ? 'Editar Paciente' : 'Novo Paciente'}</h3>
-              <button
-                type="button"
-                className={styles.modalClose}
-                onClick={closeModal}
-                aria-label="Fechar"
-              >
-                &times;
-              </button>
+      <Modal
+        isOpen={modal === 'form'}
+        onClose={closeModal}
+        title={isEdit ? 'Editar Paciente' : 'Novo Paciente'}
+        size="lg"
+      >
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div>
+              <label className="block text-sm mb-xs">Nome completo *</label>
+              <input
+                type="text"
+                name="fullName"
+                className="input"
+                value={formData.fullName}
+                onChange={handleChange}
+                required
+              />
             </div>
-            <form
-              onSubmit={isEdit ? handleSubmitEdit : handleSubmitCreate}
-              className={styles.modalBody}
-            >
-              <div className={styles.formGrid}>
-                <div className={styles.formGroup}>
-                  <label>Nome completo *</label>
-                  <input
-                    type="text"
-                    name="fullName"
-                    className="input"
-                    value={formData.fullName}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className={styles.formGroup}>
-                  <label>E-mail *</label>
-                  <input
-                    type="email"
-                    name="email"
-                    className={`input ${isEdit ? styles.readOnly : ''}`}
-                    value={formData.email}
-                    onChange={handleChange}
-                    readOnly={!!isEdit}
-                    disabled={!!isEdit}
-                    required={!isEdit}
-                  />
-                </div>
-                <div className={styles.formGroup}>
-                  <label>Telefone *</label>
-                  <input
-                    type="text"
-                    name="phone"
-                    className="input"
-                    placeholder="(99) 99999-9999"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    maxLength={15}
-                    required={!isEdit}
-                  />
-                </div>
-                <div className={styles.formGroup}>
-                  <label>CPF *</label>
-                  <input
-                    type="text"
-                    name="cpf"
-                    className={`input ${isEdit ? styles.readOnly : ''}`}
-                    value={formData.cpf}
-                    onChange={handleChange}
-                    placeholder="999.999.999-99"
-                    maxLength={14}
-                    readOnly={!!isEdit}
-                    disabled={!!isEdit}
-                    required={!isEdit}
-                  />
-                </div>
-                <div className={styles.formGroup} style={{ gridColumn: '1 / -1' }}>
-                  <label>Endereço</label>
-                  <div className={styles.formGrid} style={{ gap: '0.75rem' }}>
-                    <input
-                      type="text"
-                      name="address.state"
-                      className="input"
-                      placeholder="Estado*"
-                      value={formData.address.state}
-                      onChange={handleChange}
-                    />
-                    <input
-                      type="text"
-                      name="address.city"
-                      className="input"
-                      placeholder="Cidade*"
-                      value={formData.address.city}
-                      onChange={handleChange}
-                    />
-                    <input
-                      type="text"
-                      name="address.neighborhood"
-                      className="input"
-                      placeholder="Bairro*"
-                      value={formData.address.neighborhood}
-                      onChange={handleChange}
-                    />
-                    <input
-                      type="text"
-                      name="address.street"
-                      className="input"
-                      placeholder="Rua*"
-                      value={formData.address.street}
-                      onChange={handleChange}
-                    />
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-                      <input
-                        type="text"
-                        name="address.number"
-                        className="input"
-                        placeholder="Número"
-                        value={formData.address.number}
-                        onChange={handleChange}
-                      />
-                      <input
-                        type="text"
-                        name="address.zipCode"
-                        className="input"
-                        placeholder="CEP* 99999-999"
-                        value={formData.address.zipCode}
-                        onChange={handleChange}
-                        maxLength={9}
-                      />
-                    </div>
-                    <input
-                      type="text"
-                      name="address.complement"
-                      className="input"
-                      placeholder="Complemento"
-                      value={formData.address.complement}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className={styles.modalFooter}>
-                <Button type="button" variant="outline" onClick={closeModal}>
-                  Cancelar
-                </Button>
-                <Button type="submit" disabled={submitLoading}>
-                  {submitLoading ? 'Salvando...' : 'Salvar'}
-                </Button>
-              </div>
-            </form>
+            <div>
+              <label className="block text-sm mb-xs">E-mail *</label>
+              <input
+                type="email"
+                name="email"
+                className="input"
+                value={formData.email}
+                onChange={handleChange}
+                readOnly={isEdit}
+                disabled={isEdit}
+                required={!isEdit}
+              />
+            </div>
+            <div>
+              <label className="block text-sm mb-xs">Telefone {!isEdit && '*'}</label>
+              <input
+                type="text"
+                name="phone"
+                className="input"
+                placeholder="(99) 99999-9999"
+                value={formData.phone}
+                onChange={handleChange}
+                maxLength={15}
+                required={!isEdit}
+              />
+            </div>
+            <div>
+              <label className="block text-sm mb-xs">CPF *</label>
+              <input
+                type="text"
+                name="cpf"
+                className="input"
+                value={formData.cpf}
+                onChange={handleChange}
+                placeholder="999.999.999-99"
+                maxLength={14}
+                readOnly={isEdit}
+                disabled={isEdit}
+                required={!isEdit}
+              />
+            </div>
           </div>
-        </div>
-      )}
+
+          <AddressForm address={formData.address} onChange={handleChange} required={!isEdit} />
+
+          <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '1rem' }}>
+            <Button type="button" variant="outline" onClick={closeModal}>
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={submitLoading}>
+              {submitLoading ? 'Salvando...' : 'Salvar'}
+            </Button>
+          </div>
+        </form>
+      </Modal>
     </>
   );
 };
