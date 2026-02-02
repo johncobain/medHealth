@@ -43,6 +43,8 @@ const Appointments = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(() => parseInt(searchParams.get('page') || '0', 10));
   const [size] = useState(10);
+  const [statusFilter, setStatusFilter] = useState('');
+  const [sortOrder, setSortOrder] = useState('desc');
 
   const [modal, setModal] = useState(null);
   const [formData, setFormData] = useState(emptyForm());
@@ -59,14 +61,24 @@ const Appointments = () => {
   const fetchList = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await appointmentService.getAll({ page, size, sort: 'date,desc' });
+      const params = { 
+        page, 
+        size, 
+        sort: `date,${sortOrder}` 
+      };
+      
+      if (statusFilter) {
+        params.status = statusFilter;
+      }
+      
+      const data = await appointmentService.getAll(params);
       setList(data);
     } catch (err) {
       toast.error(extractErrorMessage(err, 'Erro ao carregar consultas.'));
     } finally {
       setLoading(false);
     }
-  }, [page, size]);
+  }, [page, size, statusFilter, sortOrder]);
 
   const fetchCancellationReasons = useCallback(async () => {
     try {
@@ -325,6 +337,39 @@ const Appointments = () => {
             Nova Consulta
           </Button>
         )}
+      </div>
+
+      <div className={styles.filters}>
+        <div className={styles.filterGroup}>
+          <label htmlFor="statusFilter">Status:</label>
+          <select
+            id="statusFilter"
+            className={styles.filterSelect}
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setPage(0);
+            }}
+          >
+            <option value="">Todos</option>
+            <option value="SCHEDULED">Apenas Pendentes</option>
+            <option value="ATTENDED">Apenas Concluídas</option>
+            <option value="CANCELLED">Apenas Canceladas</option>
+          </select>
+        </div>
+
+        <div className={styles.filterGroup}>
+          <label htmlFor="sortOrder">Ordenação:</label>
+          <select
+            id="sortOrder"
+            className={styles.filterSelect}
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+          >
+            <option value="desc">Data Decrescente</option>
+            <option value="asc">Data Crescente</option>
+          </select>
+        </div>
       </div>
 
       {loading ? (
