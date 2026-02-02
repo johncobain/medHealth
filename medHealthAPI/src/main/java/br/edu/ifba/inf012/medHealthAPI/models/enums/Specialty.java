@@ -7,7 +7,17 @@ public enum Specialty {
     PEDIATRIC("Pediatria"),
     CARDIOLOGY("Cardiologia"),
     GYNECOLOGY("Ginecologia"),
-    DERMATOLOGY("Dermatologia");
+    DERMATOLOGY("Dermatologia"),
+    PSYCHIATRY("Psiquiatria"),
+    NEUROLOGY("Neurologia"),
+    ENDOCRINOLOGY("Endocrinologia"),
+    GASTROENTEROLOGY("Gastroenterologia"),
+    UROLOGY("Urologia"),
+    OTORHINOLARYNGOLOGY("Otorrinolaringologia"),
+    RHEUMATOLOGY("Reumatologia"),
+    PNEUMOLOGY("Pneumologia"),
+    GERIATRIC("Geriatria"),
+    INFECTOLOGY("Infectologia");
 
     private String description;
 
