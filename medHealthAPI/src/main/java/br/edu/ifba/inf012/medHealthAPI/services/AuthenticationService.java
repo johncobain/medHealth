@@ -64,7 +64,8 @@ public class AuthenticationService implements UserDetailsService {
         role,
         user.getId(),
         specificId,
-        user.getPerson().getFullName()
+        user.getPerson().getFullName(),
+        user.getPerson().getEmail()
       );
   }
 }

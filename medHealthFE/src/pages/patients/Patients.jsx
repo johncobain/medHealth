@@ -341,28 +341,6 @@ const Patients = () => {
             <p>
               <strong>CPF:</strong> {detailPatient.cpf}
             </p>
-            {detailPatient.phone && (
-              <p>
-                <strong>Telefone:</strong> {detailPatient.phone}
-              </p>
-            )}
-            {detailPatient.address && (
-              <div>
-                <p>
-                  <strong>Endereço:</strong>
-                </p>
-                <p style={{ marginLeft: '1rem', fontSize: '0.9rem', color: '#6b7280' }}>
-                  {detailPatient.address.street}
-                  {detailPatient.address.number && `, ${detailPatient.address.number}`}
-                  {detailPatient.address.complement && ` - ${detailPatient.address.complement}`}
-                  <br />
-                  {detailPatient.address.neighborhood} - {detailPatient.address.city}/
-                  {detailPatient.address.state}
-                  <br />
-                  CEP: {detailPatient.address.zipCode}
-                </p>
-              </div>
-            )}
           </div>
         )}
       </Modal>

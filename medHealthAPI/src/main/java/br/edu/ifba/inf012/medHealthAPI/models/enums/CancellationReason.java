@@ -1,8 +1,8 @@
 package br.edu.ifba.inf012.medHealthAPI.models.enums;
 
 public enum CancellationReason {
-  DOCTOR_CANCELED("Doutor cancelou"),
-  PATIENT_CANCELED("Paciente cancelou"),
+  DOCTOR_CANCELLED("Doutor cancelou"),
+  PATIENT_CANCELLED("Paciente cancelou"),
   MEDICAL_REASON("Razões medicinais"),
   PERSONAL_REASON("Razões pessoais"),
   OTHER("Outro");

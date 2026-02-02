@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.ifba.inf012.medHealthAPI.dtos.appointment.AppointmentDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.appointment.AppointmentFormDto;
-import br.edu.ifba.inf012.medHealthAPI.dtos.cancelation.CancellationFormDto;
-import br.edu.ifba.inf012.medHealthAPI.dtos.cancelation.CancellationReasonDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.cancellation.CancellationFormDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.cancellation.CancellationReasonDto;
 import br.edu.ifba.inf012.medHealthAPI.services.AppointmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -82,7 +82,7 @@ public class AppointmentController {
   @Operation(summary = "Retorna os cinco agendamentos mais recentes")
   @ApiResponse(responseCode = "200")
   public ResponseEntity<Page<AppointmentDto>> getRecent(Authentication authentication) {
-    Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "date");
+    Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "date"));
     
     Long doctorId = null;
     Long patientId = null;

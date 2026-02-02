@@ -20,7 +20,11 @@ const RecentAppointments = ({ appointments, onCancel, onComplete }) => {
 
   const formatTime = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false });
+  };
+  
+  const isPastAppointment = (dateString) => {
+    return new Date(dateString) < new Date();
   };
 
   if (!appointments || appointments.length === 0) {
@@ -69,12 +73,14 @@ const RecentAppointments = ({ appointments, onCancel, onComplete }) => {
             </div>
             {appointment.status === 'SCHEDULED' && (
               <div className={styles.cardActions}>
-                <button
-                  className={styles.completeBtn}
-                  onClick={() => onComplete && onComplete(appointment.id)}
-                >
-                  Marcar como Concluída
-                </button>
+                {isPastAppointment(appointment.date) && (
+                  <button
+                    className={styles.completeBtn}
+                    onClick={() => onComplete && onComplete(appointment.id)}
+                  >
+                    Marcar como Concluída
+                  </button>
+                )}
                 <button
                   className={styles.cancelBtn}
                   onClick={() => onCancel && onCancel(appointment.id)}

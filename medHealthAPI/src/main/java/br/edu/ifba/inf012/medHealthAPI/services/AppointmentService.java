@@ -14,8 +14,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import br.edu.ifba.inf012.medHealthAPI.dtos.appointment.AppointmentDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.appointment.AppointmentFormDto;
-import br.edu.ifba.inf012.medHealthAPI.dtos.cancelation.CancellationFormDto;
-import br.edu.ifba.inf012.medHealthAPI.dtos.cancelation.CancellationReasonDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.cancellation.CancellationFormDto;
+import br.edu.ifba.inf012.medHealthAPI.dtos.cancellation.CancellationReasonDto;
 import br.edu.ifba.inf012.medHealthAPI.exceptions.EntityNotFoundException;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Appointment;
 import br.edu.ifba.inf012.medHealthAPI.models.entities.Cancellation;
@@ -106,7 +106,7 @@ public class AppointmentService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Motivo de cancelamento é obrigatório quando a razão for 'OUTROS'.");
     }
 
-    appointment.setStatus(AppointmentStatus.CANCELED);
+    appointment.setStatus(AppointmentStatus.CANCELLED);
     appointment = appointmentRepository.save(appointment);
 
     Cancellation cancellation = new Cancellation(appointment, dto.reason(), dto.message());
@@ -125,7 +125,7 @@ public class AppointmentService {
     Appointment appointment = appointmentRepository.findById(appointmentId)
         .orElseThrow(() -> new EntityNotFoundException(Appointment.class.getSimpleName(), appointmentId));
 
-    if(appointment.getStatus() == AppointmentStatus.CANCELED){
+    if(appointment.getStatus() == AppointmentStatus.CANCELLED){
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível completar uma consulta cancelada");
     }
 

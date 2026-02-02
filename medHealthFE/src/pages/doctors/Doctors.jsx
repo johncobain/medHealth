@@ -52,7 +52,6 @@ const Doctors = () => {
     try {
       const data = await doctorService.getAll({ page, size, sort: 'person.fullName,asc' });
       setList(data);
-      console.log('Médicos carregados:', data);
     } catch (err) {
       toast.error(extractErrorMessage(err, 'Erro ao carregar médicos.'));
     } finally {
@@ -104,9 +103,8 @@ const Doctors = () => {
         fullName: fullDoctor.fullName || '',
         email: fullDoctor.email || '',
         phone: fullDoctor.phone || '',
-        cpf: fullDoctor.cpf || '',
         crm: fullDoctor.crm || '',
-        specialty: fullDoctor.specialty || '',
+        specialty: fullDoctor.specialtyDescription || '',
         address: fullDoctor.address || emptyAddress(),
       });
       setDetailDoctor(fullDoctor);
@@ -376,36 +374,11 @@ const Doctors = () => {
               <strong>E-mail:</strong> {detailDoctor.email}
             </p>
             <p>
-              <strong>CPF:</strong> {detailDoctor.cpf}
-            </p>
-            <p>
               <strong>CRM:</strong> {detailDoctor.crm}
             </p>
             <p>
-              <strong>Especialidade:</strong> {detailDoctor.specialty}
+              <strong>Especialidade:</strong> {detailDoctor.specialtyDescription}
             </p>
-            {detailDoctor.phone && (
-              <p>
-                <strong>Telefone:</strong> {detailDoctor.phone}
-              </p>
-            )}
-            {detailDoctor.address && (
-              <div>
-                <p>
-                  <strong>Endereço:</strong>
-                </p>
-                <p style={{ marginLeft: '1rem', fontSize: '0.9rem', color: '#6b7280' }}>
-                  {detailDoctor.address.street}
-                  {detailDoctor.address.number && `, ${detailDoctor.address.number}`}
-                  {detailDoctor.address.complement && ` - ${detailDoctor.address.complement}`}
-                  <br />
-                  {detailDoctor.address.neighborhood} - {detailDoctor.address.city}/
-                  {detailDoctor.address.state}
-                  <br />
-                  CEP: {detailDoctor.address.zipCode}
-                </p>
-              </div>
-            )}
           </div>
         )}
       </Modal>

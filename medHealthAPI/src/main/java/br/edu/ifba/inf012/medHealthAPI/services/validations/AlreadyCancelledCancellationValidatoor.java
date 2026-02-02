@@ -11,7 +11,7 @@ public class AlreadyCancelledCancellationValidatoor implements CancellationValid
 
     @Override
     public void validate(Appointment appointment) {
-        if(appointment.getStatus().equals(AppointmentStatus.CANCELED)){
+        if(appointment.getStatus().equals(AppointmentStatus.CANCELLED)){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Consulta ja foi cancelada.");
         }
     }

@@ -5,6 +5,7 @@ public record LoginResponseDto(
   String role,
   Long userId,
   Long specificId,
-  String fullName
+  String fullName,
+  String email
 ) {
 }

@@ -218,8 +218,8 @@ public class EmailService {
 
   private String translateCancellationReason(CancellationReason reason) {
     return switch (reason) {
-      case PATIENT_CANCELED -> "Solicitado pelo paciente";
-      case DOCTOR_CANCELED -> "Solicitado pelo médico";
+      case PATIENT_CANCELLED -> "Solicitado pelo paciente";
+      case DOCTOR_CANCELLED -> "Solicitado pelo médico";
       case PERSONAL_REASON -> "Paciente não compareceu";
       case MEDICAL_REASON -> "Médico não compareceu";
       case OTHER -> "Outros motivos";
