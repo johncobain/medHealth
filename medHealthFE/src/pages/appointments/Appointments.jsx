@@ -404,27 +404,27 @@ const Appointments = () => {
                     </td>
                     <td>
                       <div className={styles.actions}>
-                        <Button variant="outline" size="sm" onClick={() => openDetail(row)}>
+                        <Button variant="outline" size="fit" onClick={() => openDetail(row)}>
                           Ver
                         </Button>
                         {row.status === 'SCHEDULED' && (
                           <>
+                            <Button
+                              variant="danger"
+                              size="fit"
+                              onClick={() => openCancelModal(row)}
+                            >
+                              Cancelar
+                            </Button>
                             {isPastAppointment(row.date) && (
                               <Button
-                                variant="outline"
-                                size="sm"
+                                variant="primary"
+                                size="fit"
                                 onClick={() => handleComplete(row.id)}
                               >
                                 Concluir
                               </Button>
                             )}
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => openCancelModal(row)}
-                            >
-                              Cancelar
-                            </Button>
                           </>
                         )}
                       </div>

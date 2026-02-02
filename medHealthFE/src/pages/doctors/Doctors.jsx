@@ -300,15 +300,15 @@ const Doctors = () => {
                     <td>{row.specialtyDescription}</td>
                     <td>
                       <div className={styles.actions}>
-                        <Button variant="outline" size="sm" onClick={() => openDetail(row)}>
+                        <Button variant="outline" size="fit" onClick={() => openDetail(row)}>
                           Ver
                         </Button>
                         {isAdmin && (
                           <>
-                            <Button variant="outline" size="sm" onClick={() => openEdit(row)}>
+                            <Button variant="primary" size="fit" onClick={() => openEdit(row)}>
                               Editar
                             </Button>
-                            <Button variant="outline" size="sm" onClick={() => handleDelete(row)}>
+                            <Button variant="danger" size="fit" onClick={() => handleDelete(row)}>
                               Desativar
                             </Button>
                           </>
