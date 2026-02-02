@@ -183,83 +183,83 @@ INSERT INTO persons (full_name, email, phone, cpf, address_id, status) VALUES
 \echo '🔐 Inserindo usuários...'
 
 -- Senha padrão para todos: "senha123" (hash bcrypt)
--- $2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC
+-- $2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e
 
 -- Usuários para médicos (IDs 2-21)
 INSERT INTO users (person_id, password) VALUES
-(2, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(3, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(4, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(5, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(6, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(7, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(8, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(9, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(10, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(11, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(12, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(13, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(14, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(15, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(16, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(17, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(18, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(19, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(20, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(21, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC');
+(2, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(3, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(4, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(5, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(6, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(7, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(8, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(9, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(10, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(11, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(12, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(13, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(14, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(15, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(16, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(17, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(18, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(19, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(20, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(21, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e');
 
 -- Usuários para pacientes (IDs 22-71)
 INSERT INTO users (person_id, password) VALUES
-(22, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(23, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(24, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(25, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(26, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(27, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(28, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(29, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(30, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(31, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(32, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(33, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(34, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(35, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(36, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(37, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(38, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(39, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(40, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(41, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(42, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(43, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(44, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(45, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(46, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(47, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(48, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(49, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(50, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(51, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(52, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(53, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(54, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(55, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(56, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(57, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(58, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(59, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(60, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(61, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(62, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(63, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(64, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(65, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(66, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(67, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(68, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(69, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(70, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC'),
-(71, '$2a$10$3jv.H5kMwLvMAY0XDHJP2.9PdpmXejSOLL5ihOShv1Tg9/dagT.HC');
+(22, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(23, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(24, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(25, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(26, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(27, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(28, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(29, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(30, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(31, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(32, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(33, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(34, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(35, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(36, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(37, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(38, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(39, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(40, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(41, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(42, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(43, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(44, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(45, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(46, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(47, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(48, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(49, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(50, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(51, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(52, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(53, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(54, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(55, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(56, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(57, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(58, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(59, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(60, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(61, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(62, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(63, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(64, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(65, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(66, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(67, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(68, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(69, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(70, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e'),
+(71, '$2a$10$u0dwp2tWNLm7SEsL8OFK4.5JJWW3mFqQv/8stxnc3AfYXuVNPCj3e');
 
 \echo '   ✓ 70 usuários inseridos'
 \echo '   ℹ️ Senha padrão para todos: senha123'
@@ -272,14 +272,14 @@ INSERT INTO users (person_id, password) VALUES
 
 -- Admin (user_id 1 já inserido na migration)
 -- Médicos (user_ids 2-21) → ROLE_DOCTOR (role_id 2)
-INSERT INTO user_roles (user_id, role_id) VALUES
+INSERT INTO user_roles (user_id, roles_id) VALUES
 (2, 2), (3, 2), (4, 2), (5, 2), (6, 2),
 (7, 2), (8, 2), (9, 2), (10, 2), (11, 2),
 (12, 2), (13, 2), (14, 2), (15, 2), (16, 2),
 (17, 2), (18, 2), (19, 2), (20, 2), (21, 2);
 
 -- Pacientes (user_ids 22-71) → ROLE_PATIENT (role_id 3)
-INSERT INTO user_roles (user_id, role_id) VALUES
+INSERT INTO user_roles (user_id, roles_id) VALUES
 (22, 3), (23, 3), (24, 3), (25, 3), (26, 3),
 (27, 3), (28, 3), (29, 3), (30, 3), (31, 3),
 (32, 3), (33, 3), (34, 3), (35, 3), (36, 3),
@@ -531,17 +531,17 @@ INSERT INTO doctor_request (full_name, email, phone, cpf, crm, specialty, addres
 \echo ''
 \echo '🔹 ADMIN:'
 \echo '   Email: admin@medhealth.com'
-\echo '   Senha: admin123'
+\echo '   Senha: admin'
 \echo ''
 \echo '🔹 MÉDICOS (exemplos):'
 \echo '   Email: carlos.mendes@medhealth.com'
 \echo '   Email: maria.costa@medhealth.com'
-\echo '   Senha: senha123'
+\echo '   Senha: senha'
 \echo ''
 \echo '🔹 PACIENTES (exemplos):'
 \echo '   Email: maria.silva@email.com'
 \echo '   Email: jose.santos@email.com'
-\echo '   Senha: senha123'
+\echo '   Senha: senha'
 \echo ''
 \echo '══════════════════════════════════════════'
 \echo ''
