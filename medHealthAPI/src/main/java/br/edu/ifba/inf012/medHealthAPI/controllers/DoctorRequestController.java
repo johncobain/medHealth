@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctor.DoctorDto;
 import br.edu.ifba.inf012.medHealthAPI.dtos.doctorRequest.DoctorRequestDto;
+import br.edu.ifba.inf012.medHealthAPI.models.enums.DoctorRequestStatus;
 import br.edu.ifba.inf012.medHealthAPI.services.DoctorRequestService;
 import br.edu.ifba.inf012.medHealthAPI.services.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,10 +32,14 @@ public class DoctorRequestController {
     @GetMapping
     @Operation(summary = "Retorna todas as solicitações de acesso de médicos")
     public ResponseEntity<Page<DoctorRequestDto>> findAll(
+        @RequestParam(required = false) DoctorRequestStatus status,
         @ParameterObject
         @PageableDefault(size = 10, sort = {"fullName"}, direction = Sort.Direction.ASC)
         Pageable pageable
     ){
+        if (status != null) {
+            return ResponseEntity.ok(doctorRequestService.findByStatus(status, pageable));
+        }
         return ResponseEntity.ok(doctorRequestService.findAll(pageable));
     }
 

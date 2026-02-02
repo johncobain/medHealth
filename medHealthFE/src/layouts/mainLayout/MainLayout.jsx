@@ -31,6 +31,13 @@ const MainLayout = () => {
           <NavLink to="/appointments" className={({ isActive }) => (isActive ? styles.active : '')}>
             Consultas
           </NavLink>
+
+          {user?.role === 'ROLE_ADMIN' && (
+            <NavLink to="/doctor-requests" className={({ isActive }) => (isActive ? styles.active : '')}>
+              Solicitações
+            </NavLink>
+          )}
+
           <NavLink to="/settings" className={({ isActive }) => (isActive ? styles.active : '')}>
             Configurações
           </NavLink>

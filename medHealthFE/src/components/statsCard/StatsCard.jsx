@@ -31,10 +31,12 @@ const StatsCard = ({
           <Eye size={16} strokeWidth={2} />
           {primaryActionLabel}
         </button>
-        <Button variant="outline" size="sm" onClick={secondaryAction}>
-          <Plus size={16} strokeWidth={2} />
-          {secondaryActionLabel}
-        </Button>
+        {secondaryAction && secondaryActionLabel && (
+          <Button variant="outline" size="sm" onClick={secondaryAction}>
+            <Plus size={16} strokeWidth={2} />
+            {secondaryActionLabel}
+          </Button>
+        )}
       </div>
     </div>
   );

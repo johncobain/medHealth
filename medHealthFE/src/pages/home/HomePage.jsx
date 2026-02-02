@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import statusService from '../../services/statusService';
 import dashboardService from '../../services/dashboardService';
 import appointmentService from '../../services/appointmentService';
+import doctorRequestService from '../../services/doctorRequestService';
 import { useAuth } from '../../context/AuthContext';
 import styles from './HomePage.module.css';
 import StatsCard from '../../components/statsCard/StatsCard';
@@ -12,7 +13,7 @@ import RecentAppointments from '../../components/recentAppointments/RecentAppoin
 import Modal from '../../components/modal/Modal';
 import Button from '../../components/button/Button';
 import { useHomeActions } from '../../hooks/useHomeActions';
-import { DoctorIcon, PatientIcon, AppointmentIcon } from '../../components/icons/AppIcons';
+import { DoctorIcon, PatientIcon, AppointmentIcon, RequestIcon } from '../../components/icons/AppIcons';
 
 const HomePage = () => {
   const { user } = useAuth();
@@ -24,6 +25,7 @@ const HomePage = () => {
   const [stats, setStats] = useState(null);
   const [recentAppointments, setRecentAppointments] = useState([]);
   const [totalAppointments, setTotalAppointments] = useState(0);
+  const [pendingRequests, setPendingRequests] = useState(0);
   
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
@@ -56,6 +58,9 @@ const HomePage = () => {
       if (isAdmin) {
         const statsData = await dashboardService.getStats().catch(() => null);
         if (statsData) setStats(statsData);
+        
+        const requestsData = await doctorRequestService.getAll({ size: 1, status: 'PENDING' }).catch(() => ({ total: 0 }));
+        setPendingRequests(requestsData.total);
       }
     } catch (error) {
       toast.error('Erro ao carregar o dashboard. Tente novamente.');
@@ -172,9 +177,20 @@ const HomePage = () => {
               mainLabel="Agendadas para hoje"
               subLabel={`Pendentes: ${stats.appointments.pending} | Total: ${stats.appointments.total}`}
               primaryAction={() => navigate('/appointments')}
-              primaryActionLabel="Ver Consultas"
+              primaryActionLabel="Ver Todas"
               secondaryAction={() => navigate('/appointments?action=new')}
               secondaryActionLabel="Agendar"
+            />
+            <StatsCard
+              icon={<RequestIcon />}
+              title="Solicitações"
+              mainValue={pendingRequests}
+              mainLabel="Pendentes"
+              subLabel="Solicitações de médicos aguardando aprovação"
+              primaryAction={() => navigate('/doctor-requests')}
+              primaryActionLabel="Gerenciar"
+              secondaryAction={null}
+              secondaryActionLabel={null}
             />
           </div>
         </section>

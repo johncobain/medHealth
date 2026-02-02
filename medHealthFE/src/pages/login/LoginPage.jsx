@@ -66,6 +66,13 @@ const LoginPage = () => {
           </Link>
         </div>
         <Button type="submit">Entrar</Button>
+        
+        <div className="text-center mt-md">
+          <span className="text-sm text-secondary">Não tem uma conta? </span>
+          <Link to="/register" className="text-sm text-primary link">
+            Cadastre-se
+          </Link>
+        </div>
       </form>
     </div>
   );

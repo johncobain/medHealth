@@ -44,6 +44,11 @@ public class DoctorRequestService {
             .map(DoctorRequestDto::fromEntity);
     }
 
+    public Page<DoctorRequestDto> findByStatus(DoctorRequestStatus status, Pageable pageable){
+        return this.doctorRequestRepository.findByStatus(status, pageable)
+            .map(DoctorRequestDto::fromEntity);
+    }
+
     @Transactional
     public DoctorDto accept(Long id) {
         DoctorRequest doctorRequest = findById(id);

@@ -11,12 +11,15 @@ import LoginPage from './pages/login/LoginPage';
 import ProtectedRoute from './components/protectedRoute/ProtectedRoute';
 import ForgotPasswordPage from './pages/login/ForgotPasswordPage';
 import ResetPasswordPage from './pages/login/ResetPasswordPage';
+import RegisterPage from './pages/register/RegisterPage';
+import DoctorRequests from './pages/doctorRequests/DoctorRequests';
 
 function App() {
   return (
     <AuthProvider>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
 
@@ -64,6 +67,15 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_DOCTOR', 'ROLE_PATIENT']}>
                 <Appointments />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/doctor-requests"
+            element={
+              <ProtectedRoute allowedRoles={['ROLE_ADMIN']}>
+                <DoctorRequests />
               </ProtectedRoute>
             }
           />
