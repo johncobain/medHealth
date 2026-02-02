@@ -43,8 +43,10 @@ public class EmailService {
       mailSender.send(message);
       email.setStatus(EmailStatus.SENT);
     }catch (MailException e){
+      System.err.println("Falha no envio de email: " + e.getMessage());
       email.setStatus(EmailStatus.ERROR);
     }
+    
     return emailRepository.save(email);
   }
 
