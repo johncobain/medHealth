@@ -8,6 +8,11 @@ Sistema de gestão de clínica médica: cadastro de médicos e pacientes, agenda
 - [Gabriel Nascimento](https://github.com/uKuroo)
 - [Lara Carolina](https://github.com/laraeucarolina)
 
+## Vídeo de Demonstração do Projeto
+
+Clique na imagem para assistir ao vídeo:
+[![Vídeo de Demonstração](thumbnail.png)](https://youtu.be/1iiOwpajZKM?si=rQ0u2mIF_MOhs9OC)
+
 ## Estrutura do projeto
 
 ```plaintext
