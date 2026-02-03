@@ -1,3 +1,5 @@
+import { extractErrorMessage } from '../utils/errorHandler';
+
 import apiClient from './apiClient';
 
 const dashboardService = {
@@ -16,8 +18,7 @@ const dashboardService = {
         },
       };
     } catch (error) {
-      console.error('Error fetching dashboard stats', error);
-      throw error;
+      throw new Error(extractErrorMessage(error));
     }
   }
 };

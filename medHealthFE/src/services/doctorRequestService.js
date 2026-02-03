@@ -1,3 +1,5 @@
+import { extractErrorMessage } from '../utils/errorHandler';
+
 import apiClient from './apiClient';
 
 const getAll = async (params = {}) => {
@@ -10,19 +12,26 @@ const getAll = async (params = {}) => {
       totalPages: response.data.totalPages || 0,
     };
   } catch (error) {
-    console.error('Erro ao buscar solicitações de médicos', error);
-    throw error;
+    throw new Error(extractErrorMessage(error));
   }
 };
 
 const accept = async (id) => {
-  const response = await apiClient.post(`/doctors-request/accept/${id}`);
-  return response.data;
+  try {
+    const response = await apiClient.post(`/doctors-request/accept/${id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 const decline = async (id) => {
-  const response = await apiClient.post(`/doctors-request/decline/${id}`);
-  return response.data;
+  try {
+    const response = await apiClient.post(`/doctors-request/decline/${id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 const doctorRequestService = {

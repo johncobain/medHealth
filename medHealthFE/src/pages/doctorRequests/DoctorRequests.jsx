@@ -153,7 +153,7 @@ const DoctorRequests = () => {
                   <tr key={request.id}>
                     <td>{request.fullName}</td>
                     <td>{formatCRM(request.crm)}</td>
-                    <td>{request.specialty?.description || request.specialty}</td>
+                    <td>{request.specialtyDescription || request.specialty}</td>
                     <td>{request.email}</td>
                     <td>
                       <span className={`${styles.status} ${styles[getStatusClass(request.status)]}`}>
@@ -265,7 +265,7 @@ const DoctorRequests = () => {
                 <div className={styles.detailItem}>
                   <span className={styles.detailLabel}>Especialidade</span>
                   <span className={styles.detailValue}>
-                    {detailRequest.specialty?.description || detailRequest.specialty}
+                    {detailRequest.specialtyDescription || detailRequest.specialty}
                   </span>
                 </div>
 

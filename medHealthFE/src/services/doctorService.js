@@ -1,3 +1,5 @@
+import { extractErrorMessage } from "../utils/errorHandler";
+
 import apiClient from "./apiClient";
 
 const getAll = async (params = {}) => {
@@ -10,68 +12,107 @@ const getAll = async (params = {}) => {
       totalPages: response.data.totalPages || 0
     };
   } catch (error) {
-    console.error("Erro ao buscar médicos", error);
-    throw error;
+    throw new Error(extractErrorMessage(error));
   }
 };
 
 const getById = async (id) => {
-  const response = await apiClient.get(`/doctors/${id}`);
-  return response.data;
+  try {
+    const response = await apiClient.get(`/doctors/${id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 const getByEmail = async (email) => {
-  const response = await apiClient.get(`/doctors/email/${encodeURIComponent(email)}`);
-  return response.data;
+  try {
+    const response = await apiClient.get(`/doctors/email/${encodeURIComponent(email)}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 const getByCpf = async (cpf) => {
-  const response = await apiClient.get(`/doctors/cpf/${encodeURIComponent(cpf)}`);
-  return response.data;
+  try {
+    const response = await apiClient.get(`/doctors/cpf/${encodeURIComponent(cpf)}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 const getByCrm = async (crm) => {
-  const response = await apiClient.get(`/doctors/crm/${encodeURIComponent(crm)}`);
-  return response.data;
+  try {
+    const response = await apiClient.get(`/doctors/crm/${encodeURIComponent(crm)}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 const getBySpecialty = async (specialty, params = {}) => {
-  const response = await apiClient.get(`/doctors/specialty/${specialty}`, { params });
-  return {
-    content: response.data.content || [],
-    total: response.data.totalElements || 0,
-    totalPages: response.data.totalPages || 0
-  };
+  try {
+    const response = await apiClient.get(`/doctors/specialty/${specialty}`, { params });
+    return {
+      content: response.data.content || [],
+      total: response.data.totalElements || 0,
+      totalPages: response.data.totalPages || 0
+    };
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 /**
  * DoctorFormDto (fullName, email, phone, cpf, crm, address, specialty)
  */
 const create = async (doctorData) => {
-  const response = await apiClient.post('/doctors', doctorData);
-  return response.data;
+  try {
+    const response = await apiClient.post('/doctors', doctorData);
+    return response.data;
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 /**
  * DoctorUpdateDto (fullName?, phone?, address?)
  */
 const update = async (id, doctorData) => {
-  const response = await apiClient.put(`/doctors/${id}`, doctorData);
-  return response.data;
+  try {
+    const response = await apiClient.put(`/doctors/${id}`, doctorData);
+    return response.data;
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 const remove = async (id) => {
-  await apiClient.delete(`/doctors/${id}`);
+  try {
+    await apiClient.delete(`/doctors/${id}`);
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 const getMyData = async () => {
-  const response = await apiClient.get('/doctors/me');
-  return response.data;
+  try {
+    const response = await apiClient.get('/doctors/me');
+    return response.data;
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 const updateMyData = async (doctorData) => {
-  const response = await apiClient.put('/doctors/me', doctorData);
-  return response.data;
+  try {
+    const response = await apiClient.put('/doctors/me', doctorData);
+    return response.data;
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 const getSpecialties = async () => {
@@ -79,8 +120,7 @@ const getSpecialties = async () => {
     const response = await apiClient.get('/doctors/getSpecialties');
     return response.data || [];
   } catch (error) {
-    console.error("Erro ao buscar especialidades dos médicos", error);
-    throw error;
+    throw new Error(extractErrorMessage(error));
   }
 }
 

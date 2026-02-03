@@ -1,3 +1,5 @@
+import { extractErrorMessage } from '../utils/errorHandler';
+
 import apiClient from './apiClient';
 
 const appointmentService = {
@@ -11,8 +13,7 @@ const appointmentService = {
         totalPages: response.data.totalPages || 0
       };
     } catch (error) {
-      console.error("Erro ao buscar consultas", error);
-      throw error;
+      throw new Error(extractErrorMessage(error));
     }
   },
   
@@ -21,33 +22,48 @@ const appointmentService = {
       const response = await apiClient.get('/appointments/recent');
       return response.data.content || [];
     } catch (error) {
-      console.error("Erro ao buscar consultas recentes", error);
-      throw error;
+      throw new Error(extractErrorMessage(error));
     }
   },
 
   getById: async (id) => {
-    const response = await apiClient.get(`/appointments/${id}`);
-    return response.data;
+    try {
+      const response = await apiClient.get(`/appointments/${id}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(extractErrorMessage(error));
+    }
   },
 
   create: async (appointmentData) => {
-    const response = await apiClient.post('/appointments', appointmentData);
-    return response.data;
+    try {
+      const response = await apiClient.post('/appointments', appointmentData);
+      return response.data;
+    } catch (error) {
+      throw new Error(extractErrorMessage(error));
+    }
   },
 
   complete: async (id) => {
-    const response = await apiClient.patch(`/appointments/${id}/complete`);
-    return response.data;
+    try {
+      const response = await apiClient.patch(`/appointments/${id}/complete`);
+      return response.data;
+    } catch (error) {
+      throw new Error(extractErrorMessage(error));
+    }
   },
 
   cancel: async (id, reason, reasonMessage) => {
-    const payload = {
-      reason: reason || 'OTHER',
-      message: reasonMessage || 'Cancelado pelo usuário via Dashboard'
-    };
-    const response = await apiClient.patch(`/appointments/${id}/cancel`, payload);
-    return response.data;
+    try {
+      const payload = {
+        reason: reason || 'OTHER',
+        message: reasonMessage || 'Cancelado pelo usuário via Dashboard'
+      };
+      const response = await apiClient.patch(`/appointments/${id}/cancel`, payload);
+      return response.data;
+    } catch (error) {
+      throw new Error(extractErrorMessage(error));
+    }
   },
 
   getCancellationReasons: async () => {
@@ -55,8 +71,7 @@ const appointmentService = {
       const response = await apiClient.get('/appointments/getCancellationReasons');
       return response.data || [];
     } catch (error) {
-      console.error("Erro ao buscar motivos de cancelamento", error);
-      throw error;
+      throw new Error(extractErrorMessage(error));
     }
   }
 };

@@ -1,3 +1,5 @@
+import { extractErrorMessage } from "../utils/errorHandler";
+
 import apiClient from "./apiClient";
 
 const getAll = async (params = {}) => {
@@ -10,54 +12,85 @@ const getAll = async (params = {}) => {
       totalPages: response.data.totalPages || 0
     };
   } catch (error) {
-    console.error("Erro ao buscar pacientes", error);
-    throw error;
+    throw new Error(extractErrorMessage(error));
   }
 };
 
 const getById = async (id) => {
-  const response = await apiClient.get(`/patients/${id}`);
-  return response.data;
+  try {
+    const response = await apiClient.get(`/patients/${id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 const getByEmail = async (email) => {
-  const response = await apiClient.get(`/patients/email/${encodeURIComponent(email)}`);
-  return response.data;
+  try {
+    const response = await apiClient.get(`/patients/email/${encodeURIComponent(email)}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 const getByCpf = async (cpf) => {
-  const response = await apiClient.get(`/patients/cpf/${encodeURIComponent(cpf)}`);
-  return response.data;
+  try {
+    const response = await apiClient.get(`/patients/cpf/${encodeURIComponent(cpf)}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 /**
  * Payload: PatientFormDto (fullName, email, phone, cpf, address)
  */
 const create = async (patientData) => {
-  const response = await apiClient.post('/patients', patientData);
-  return response.data;
+  try {
+    const response = await apiClient.post('/patients', patientData);
+    return response.data;
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 /**
  * PatientUpdateDto (fullName?, phone?, address?)
  */
 const update = async (id, patientData) => {
-  const response = await apiClient.put(`/patients/${id}`, patientData);
-  return response.data;
+  try {
+    const response = await apiClient.put(`/patients/${id}`, patientData);
+    return response.data;
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 const remove = async (id) => {
-  await apiClient.delete(`/patients/${id}`);
+  try {
+    await apiClient.delete(`/patients/${id}`);
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 const getMyData = async () => {
-  const response = await apiClient.get('/patients/me');
-  return response.data;
+  try {
+    const response = await apiClient.get('/patients/me');
+    return response.data;
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 const updateMyData = async (patientData) => {
-  const response = await apiClient.put('/patients/me', patientData);
-  return response.data;
+  try {
+    const response = await apiClient.put('/patients/me', patientData);
+    return response.data;
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 const patientService = {

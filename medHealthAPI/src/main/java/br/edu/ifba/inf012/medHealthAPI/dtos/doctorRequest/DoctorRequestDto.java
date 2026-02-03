@@ -18,6 +18,7 @@ public record DoctorRequestDto(
     String crm,
 
     Specialty specialty,
+    String specialtyDescription,
     
     DoctorRequestStatus status,
 
@@ -45,6 +46,7 @@ public record DoctorRequestDto(
             doctorRequest.getCpf(),
             doctorRequest.getCrm(),
             doctorRequest.getSpecialty(),
+            doctorRequest.getSpecialty().getDescription(),
             doctorRequest.getStatus(),
             doctorRequest.getState(),
             doctorRequest.getCity(),
