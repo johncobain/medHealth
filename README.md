@@ -38,6 +38,7 @@ medHealth/
 
 - **Para rodar local (só infra no Docker):** Java 21, Maven, Node.js, Docker
 - **Para rodar tudo no Docker:** Docker e Docker Compose
+- **Criar o arquivo `.env` na raiz do projeto /medHealthNotifications:** copiar de `.env.example` e configurar variáveis de e-mail (Usuário, Senha)
 
 ## Formas de executar
 
