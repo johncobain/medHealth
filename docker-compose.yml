@@ -70,10 +70,14 @@ services:
     networks:
       - medhealth-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8761/"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://localhost:8761/ || exit 1",
+        ]
       interval: 10s
       timeout: 5s
-      retries: 10
+      retries: 30
 
   api:
     build:
@@ -104,7 +108,11 @@ services:
     extra_hosts:
       - "localhost:host-gateway"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081/"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://localhost:8081/ || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -139,7 +147,11 @@ services:
     extra_hosts:
       - "localhost:host-gateway"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8082/"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://localhost:8082/ || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -163,7 +175,11 @@ services:
     extra_hosts:
       - "localhost:host-gateway"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://localhost:8080/ || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5

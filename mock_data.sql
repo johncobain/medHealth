@@ -3,7 +3,8 @@
 -- ========================================
 -- Este script insere dados de teste para demonstração
 -- Volume: 50 pacientes, 20 médicos, 100+ consultas
--- Execute: docker exec -i medhealth-db psql -U meduser -d medhealth < mock_data.sql
+-- Execute(Linux): docker exec -i medhealth-db psql -U meduser -d medhealth < mock_data.sql
+-- Execute(PowerShell): Get-Content mock_data.sql | docker exec -i medhealth-db psql -U meduser -d medhealth
 -- ========================================
 
 \echo '🚀 Iniciando inserção de dados mockados...'

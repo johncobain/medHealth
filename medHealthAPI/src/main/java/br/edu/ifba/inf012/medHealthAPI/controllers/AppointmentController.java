@@ -82,7 +82,7 @@ public class AppointmentController {
   @Operation(summary = "Retorna os cinco agendamentos mais recentes")
   @ApiResponse(responseCode = "200")
   public ResponseEntity<Page<AppointmentDto>> getRecent(Authentication authentication) {
-    Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "date"));
+    Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.ASC, "date"));
     
     Long doctorId = null;
     Long patientId = null;
@@ -105,7 +105,7 @@ public class AppointmentController {
         }
     }
     
-    return ResponseEntity.ok(appointmentService.findAll(pageable, doctorId, patientId, null, null, null));
+    return ResponseEntity.ok(appointmentService.findAll(pageable, doctorId, patientId, "SCHEDULED", null, null));
   }
 
   @GetMapping("/{id}")
