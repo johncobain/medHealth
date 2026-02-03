@@ -202,15 +202,12 @@ const Appointments = () => {
 
     setSubmitLoading(true);
     try {
-      const [datePart, timePart] = formData.date.split('T');
-      const localDate = new Date(`${datePart}T${timePart}`);
-      
-      const adjustedDate = new Date(localDate.getTime());
-      const isoDate = adjustedDate.toISOString();
+      const localDateTimeString = `${formData.date}:00`;
+      console.log(localDateTimeString)
       
       const payload = {
         patientId: formData.patientId,
-        date: isoDate,
+        date: localDateTimeString,
       };
 
       if (formData.doctorId) {
@@ -276,7 +273,14 @@ const Appointments = () => {
   };
 
   const formatDateTime = (dateString) => {
-    const date = new Date(dateString);
+    const cleanDateString = dateString.replace('Z', '');
+  
+    const [datePart, timePart] = cleanDateString.split('T');
+    const [year, month, day] = datePart.split('-');
+    const [hour, minute] = timePart.split(':');
+    
+    const date = new Date(year, month - 1, day, hour, minute);
+    
     return date.toLocaleString('pt-BR', {
       day: '2-digit',
       month: '2-digit',
