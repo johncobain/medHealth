@@ -48,6 +48,18 @@ public class DoctorService {
         .map(DoctorDto::fromEntity);
   }
 
+  public Page<DoctorDto> findAll(Pageable pageable, String name) {
+    Page<Doctor> doctors;
+    
+    if (name != null && !name.trim().isEmpty()) {
+      doctors = doctorRepository.findByPersonFullNameContainingIgnoreCase(name, pageable);
+    } else {
+      doctors = doctorRepository.findAll(pageable);
+    }
+    
+    return doctors.map(DoctorDto::new);
+  }
+
   public DoctorDto findById(Long id) {
     Doctor doctor = doctorRepository.findById(id)
         .orElseThrow(() -> new EntityNotFoundException(Doctor.class.getSimpleName(), id));

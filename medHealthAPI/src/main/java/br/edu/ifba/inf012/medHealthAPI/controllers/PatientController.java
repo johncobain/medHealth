@@ -33,9 +33,10 @@ public class PatientController {
   public ResponseEntity<Page<PatientDto>> findAll(
           @ParameterObject
           @PageableDefault(size = 10, sort = {"person.fullName"}, direction = Sort.Direction.ASC)
-          Pageable pageable
+          Pageable pageable,
+          @RequestParam(required = false) String name
   ){
-    return ResponseEntity.ok(patientService.findAll(pageable));
+    return ResponseEntity.ok(patientService.findAll(pageable, name));
   }
 
   @GetMapping("/{id}")

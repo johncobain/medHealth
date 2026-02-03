@@ -16,29 +16,30 @@ const EntitySelector = ({
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
+  const [activeSearch, setActiveSearch] = useState('');
   const size = 10;
 
   useEffect(() => {
     if (isOpen) {
       fetchList();
     }
-  }, [isOpen, page, search]);
+  }, [isOpen, page, activeSearch]);
 
   const fetchList = async () => {
     setLoading(true);
     try {
-      const data = await fetchFunction({ page, size, sort: 'person.fullName,asc' });
-      if (search) {
-        const filtered = data.content.filter((item) => {
-          return searchFields.some((field) => {
-            const value = field.split('.').reduce((obj, key) => obj?.[key], item);
-            return value?.toLowerCase().includes(search.toLowerCase());
-          });
-        });
-        setList({ ...data, content: filtered });
-      } else {
-        setList(data);
+      const params = { 
+        page, 
+        size, 
+        sort: 'person.fullName,asc'
+      };
+      
+      if (activeSearch) {
+        params.name = activeSearch;
       }
+      
+      const data = await fetchFunction(params);
+      setList(data);
     } catch (err) {
       console.error('Erro ao carregar lista', err);
       setList({ content: [], total: 0, totalPages: 0 });
@@ -49,14 +50,31 @@ const EntitySelector = ({
 
   const handleSelect = (entity) => {
     onSelect(entity);
+    handleClose();
+  };
+
+  const handleClose = () => {
     onClose();
     setSearch('');
+    setActiveSearch('');
     setPage(0);
   };
 
-  const handleSearchChange = (e) => {
-    setSearch(e.target.value);
+  const handleSearch = () => {
+    setActiveSearch(search);
     setPage(0);
+  };
+
+  const handleClearSearch = () => {
+    setSearch('');
+    setActiveSearch('');
+    setPage(0);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
   };
 
   const renderCellValue = (item, columnKey) => {
@@ -64,20 +82,50 @@ const EntitySelector = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={title} size="lg">
+    <Modal isOpen={isOpen} onClose={handleClose} title={title} size="lg">
       <div className={styles.container}>
-        <input
-          type="text"
-          className="input"
-          placeholder="Buscar..."
-          value={search}
-          onChange={handleSearchChange}
-        />
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+          <input
+            type="text"
+            className="input"
+            placeholder="Buscar por nome..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyPress={handleKeyPress}
+            style={{ flex: 1 }}
+          />
+          <Button 
+            variant="primary" 
+            size="fit"
+            onClick={handleSearch}
+            disabled={loading}
+          >
+            Buscar
+          </Button>
+          {activeSearch && (
+            <Button 
+              variant="outline" 
+              size="fit"
+              onClick={handleClearSearch}
+              disabled={loading}
+            >
+              Limpar
+            </Button>
+          )}
+        </div>
+
+        {activeSearch && (
+          <p style={{ marginBottom: '0.5rem', color: '#666', fontSize: '0.9rem' }}>
+            Buscando por: <strong>{activeSearch}</strong>
+          </p>
+        )}
 
         {loading ? (
           <div className={styles.loading}>Carregando...</div>
         ) : list.content.length === 0 ? (
-          <div className={styles.empty}>Nenhum resultado encontrado.</div>
+          <div className={styles.empty}>
+            {activeSearch ? 'Nenhum resultado encontrado para a busca.' : 'Nenhum resultado encontrado.'}
+          </div>
         ) : (
           <>
             <div className={styles.tableWrap}>

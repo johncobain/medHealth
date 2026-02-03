@@ -49,4 +49,6 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 
   @Query("SELECT d FROM Doctor d WHERE d.id = :id AND d.status = 'ACTIVE'")
   Optional<Doctor> findActiveById(Long id);
+
+  Page<Doctor> findByPersonFullNameContainingIgnoreCase(String name, Pageable pageable);
 }

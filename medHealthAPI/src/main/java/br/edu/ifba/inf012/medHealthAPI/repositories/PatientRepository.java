@@ -30,4 +30,6 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
     Optional<Patient> findActiveByCpf(String cpf);
 
     Page<Patient> findByStatus(PatientStatus status, Pageable pageable);
+
+    Page<Patient> findByPersonFullNameContainingIgnoreCase(String name, Pageable pageable);
 }
